@@ -15,18 +15,19 @@ jobs:
 
 before_install:
   - choco install python --version=3.7.7
+  - choco install vcbuildtools
   
 install:
   - wget --quiet https://github.com/pyinstaller/pyinstaller/archive/$PYINSTALLER_COMMIT.tar.gz
   - tar xf $PYINSTALLER_COMMIT.tar.gz
-  - if [ -z "$shortpath" ]; then
+  - if [ -v "${shortpath}" ]; then
       mv pyinstaller-$PYINSTALLER_COMMIT pyinstaller;
       cd pyinstaller/bootloader;
     else
       cd pyinstaller-$PYINSTALLER_COMMIT/bootloader;
     fi
   - pwd
-  - /c/Python37/python.exe ./waf all
+  - /c/Python37/python.exe ./waf all --target-arch=${BITS}bit --msvc_version "msvc 14.0"
   - /c/Python37/python,exe setup.py install
   - /c/Python37/bin/pyinstaller.exe hello-world.py
   
