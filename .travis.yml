@@ -26,11 +26,24 @@ jobs:
       env:
         - shortpath="yes"
         - vcver="15.0"
+    - os: windows
+      name: "Windows LONG foldername VC 2019"
+      language: shell
+      env:
+        - vcver="16.0"
+    - os: windows
+      name: "Windows SHORT foldername VC 2019"
+      language: shell
+      env:
+        - shortpath="yes"
+        - vcver="16.0"
 
 before_install:
   - choco install python --version=3.7.7
   - if [[ "${vcver}" == "14.0" ]]; then
       choco install vcbuildtools;
+    elif [[ "${vcver}" == "16.0" ]]; then
+      choco install visualstudio2019buildtools;
     fi
 
 install:
@@ -49,3 +62,4 @@ install:
   - /c/Python37/python.exe setup.py install
   - cd $mypath
   - /c/Python37/python.exe -m PyInstaller hello-world.py
+  - dist/hello-world
