@@ -44,5 +44,6 @@ install:
     fi
   - pwd
   - /c/Python37/python.exe ./waf all --msvc_version "msvc ${vcver}"
+  - cd ..
   - /c/Python37/python.exe setup.py install
   - /c/Python37/bin/pyinstaller.exe hello-world.py
