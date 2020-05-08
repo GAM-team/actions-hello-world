@@ -5,18 +5,32 @@ env:
 jobs:
   include:
     - os: windows
-      name: "Windows long foldername"
+      name: "Windows LONG foldername VC 14"
       language: shell
+      env:
+        - vc14="yes"
     - os: windows
-      name: "Windows short foldername"
+      name: "Windows SHORT foldername VC 14"
       language: shell
       env:
         - shortpath="yes"
+        - vc14="yes"
+    - os: windows
+      name: "Windows LONG foldername VC 2017"
+      language: shell
+    - os: windows
+      name: "Windows SHORT foldername VC 2017"
+      language: shell
+      env:
+        - shortpath="yes"
+     
 
 before_install:
   - choco install python --version=3.7.7
-  - choco install vcbuildtools
-  
+  - if [[ -v vc14 ]]; then
+      choco install vcbuildtools;
+      wafopts='--msvc_version "msvc 14.0"'
+
 install:
   - wget --quiet https://github.com/pyinstaller/pyinstaller/archive/$PYINSTALLER_COMMIT.tar.gz
   - tar xf $PYINSTALLER_COMMIT.tar.gz
@@ -27,7 +41,7 @@ install:
       cd pyinstaller-$PYINSTALLER_COMMIT/bootloader;
     fi
   - pwd
-  - /c/Python37/python.exe ./waf all --msvc_version "msvc 14.0"
-  - /c/Python37/python,exe setup.py install
+  - /c/Python37/python.exe ./waf all $wafopts
+  - /c/Python37/python.exe setup.py install
   - /c/Python37/bin/pyinstaller.exe hello-world.py
   
