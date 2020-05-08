@@ -44,7 +44,12 @@ install:
       cd pyinstaller-$PYINSTALLER_COMMIT/bootloader;
     fi
   - pwd
-  - /c/Python37/python.exe ./waf all --msvc_version "msvc ${vcver}" || cat build/config.log
+  - /c/Python37/python.exe ./waf all --msvc_version "msvc ${vcver}"
+  - BOOTLOADER_SUCCESS=$?
+  - cat build/config.log
+  - if [ $BOOTLOADER_SUCCESS -ne 0 ]]; then
+      false;
+    fi
   - cd ..
   - /c/Python37/python.exe setup.py install
   - cd $mypath
