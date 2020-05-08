@@ -62,4 +62,4 @@ install:
   - /c/Python37/python.exe setup.py install
   - cd $mypath
   - /c/Python37/python.exe -m PyInstaller hello-world.py
-  - dist/hello-world
+  - dist/hello-world/hello-world.exe
