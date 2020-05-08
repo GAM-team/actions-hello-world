@@ -8,41 +8,41 @@ jobs:
       name: "Windows LONG foldername VC 14"
       language: shell
       env:
-        - vc14="yes"
+        - vcver="14.0"
     - os: windows
       name: "Windows SHORT foldername VC 14"
       language: shell
       env:
         - shortpath="yes"
-        - vc14="yes"
+        - vcver="14.0"
     - os: windows
       name: "Windows LONG foldername VC 2017"
       language: shell
+      env:
+        - vcver="15.0"
     - os: windows
       name: "Windows SHORT foldername VC 2017"
       language: shell
       env:
         - shortpath="yes"
-     
+        - vcver="15.0"
 
 before_install:
   - choco install python --version=3.7.7
-  - if [[ -v vc14 ]]; then
+  - if [[ "${vcver} == "14.0" ]]; then
       choco install vcbuildtools;
-      wafopts='--msvc_version "msvc 14.0"';
     fi
 
 install:
   - wget --quiet https://github.com/pyinstaller/pyinstaller/archive/$PYINSTALLER_COMMIT.tar.gz
   - tar xf $PYINSTALLER_COMMIT.tar.gz
   - if [[ -v shortpath ]]; then
-      mv pyinstaller-$PYINSTALLER_COMMIT pyinstaller;
-      cd pyinstaller/bootloader;
+      mv pyinstaller-$PYINSTALLER_COMMIT /c/pyinstaller;
+      cd /c/pyinstaller/bootloader;
     else
       cd pyinstaller-$PYINSTALLER_COMMIT/bootloader;
     fi
   - pwd
-  - /c/Python37/python.exe ./waf all $wafopts
+  - /c/Python37/python.exe ./waf all --msvc_version " msvc ${vcver}"
   - /c/Python37/python.exe setup.py install
   - /c/Python37/bin/pyinstaller.exe hello-world.py
-  
