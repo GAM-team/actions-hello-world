@@ -25,7 +25,7 @@ install:
     else
       cd pyinstaller-$PYINSTALLER_COMMIT;
     fi
-  - python3 ./waf all
-  - python3 setup.py install
-  - pyinstaller hello-world.py
+  - /c/Python37/python.exe ./waf all
+  - /c/Python37/python,exe setup.py install
+  - /c/Python37/bin/pyinstaller.exe hello-world.py
   
