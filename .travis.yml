@@ -29,7 +29,8 @@ before_install:
   - choco install python --version=3.7.7
   - if [[ -v vc14 ]]; then
       choco install vcbuildtools;
-      wafopts='--msvc_version "msvc 14.0"'
+      wafopts='--msvc_version "msvc 14.0"';
+    fi
 
 install:
   - wget --quiet https://github.com/pyinstaller/pyinstaller/archive/$PYINSTALLER_COMMIT.tar.gz
