@@ -29,7 +29,7 @@ jobs:
 
 before_install:
   - choco install python --version=3.7.7
-  - if [[ "${vcver} == "14.0" ]]; then
+  - if [[ "${vcver}" == "14.0" ]]; then
       choco install vcbuildtools;
     fi
 
