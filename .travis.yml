@@ -30,19 +30,19 @@ jobs:
       name: "Windows LONG foldername VC 2019"
       language: shell
       env:
-        - vcver="16.0"
+        - vcver="16.5"
     - os: windows
       name: "Windows SHORT foldername VC 2019"
       language: shell
       env:
         - shortpath="yes"
-        - vcver="16.0"
+        - vcver="16.5"
 
 before_install:
   - choco install python --version=3.7.7
   - if [[ "${vcver}" == "14.0" ]]; then
       choco install vcbuildtools;
-    elif [[ "${vcver}" == "16.0" ]]; then
+    elif [[ "${vcver}" == "16.5" ]]; then
       choco install visualstudio2019buildtools;
     fi
 
