@@ -25,8 +25,7 @@ install:
     else
       cd pyinstaller-$PYINSTALLER_COMMIT;
     fi
-  - echo "bootloader before:"
-  - md5sum ../PyInstaller/bootloader/Windows-${BITS}bit/*
-  - $python ./waf all
-  - echo "bootloader after:"
-  - md5sum ../PyInstaller/bootloader/Windows-${BITS}bit/*
+  - python3 ./waf all
+  - python3 setup.py install
+  - pyinstaller hello-world.py
+  
