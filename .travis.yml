@@ -23,7 +23,7 @@ install:
       mv pyinstaller-$PYINSTALLER_COMMIT pyinstaller;
       cd pyinstaller/bootloader;
     else
-      cd pyinstaller-$PYINSTALLER_COMMIT;
+      cd pyinstaller-$PYINSTALLER_COMMIT/bootloader;
     fi
   - pwd
   - /c/Python37/python.exe ./waf all
