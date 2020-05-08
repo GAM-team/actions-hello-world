@@ -34,6 +34,7 @@ before_install:
     fi
 
 install:
+  - mypath=$(pwd)
   - wget --quiet https://github.com/pyinstaller/pyinstaller/archive/$PYINSTALLER_COMMIT.tar.gz
   - tar xf $PYINSTALLER_COMMIT.tar.gz
   - if [[ -v shortpath ]]; then
@@ -46,4 +47,5 @@ install:
   - /c/Python37/python.exe ./waf all --msvc_version "msvc ${vcver}"
   - cd ..
   - /c/Python37/python.exe setup.py install
-  - /c/Python37/bin/pyinstaller.exe hello-world.py
+  - cd $mypath
+  - /c/Python37/python.exe -m PyInstaller.exe hello-world.py
