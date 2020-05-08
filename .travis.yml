@@ -11,7 +11,7 @@ jobs:
       name: "Windows short foldername"
       language: shell
       env:
-        - shortpath=true
+        - shortpath="yes"
 
 before_install:
   - choco install python --version=3.7.7
@@ -20,7 +20,7 @@ before_install:
 install:
   - wget --quiet https://github.com/pyinstaller/pyinstaller/archive/$PYINSTALLER_COMMIT.tar.gz
   - tar xf $PYINSTALLER_COMMIT.tar.gz
-  - if [ -v "${shortpath}" ]; then
+  - if [[ -v shortpath ]]; then
       mv pyinstaller-$PYINSTALLER_COMMIT pyinstaller;
       cd pyinstaller/bootloader;
     else
