@@ -1,0 +1,32 @@
+env:
+  global:
+    - PYINSTALLER_COMMIT=3010fdfaa037e9b19e936711d0c0be9b314b03c6
+
+jobs:
+  include:
+    - os: windows
+      name: "Windows long foldername"
+      language: shell
+    - os: windows
+      name: "Windows short foldername"
+      language: shell
+      env:
+        - shortpath=true
+
+before_install:
+  - choco install python --version=3.7.7
+  
+install:
+  - wget --quiet https://github.com/pyinstaller/pyinstaller/archive/$PYINSTALLER_COMMIT.tar.gz
+  - tar xf $PYINSTALLER_COMMIT.tar.gz
+  - if [ -z "$shortpath" ]; then
+      mv pyinstaller-$PYINSTALLER_COMMIT pyinstaller;
+      cd pyinstaller/bootloader;
+    else
+      cd pyinstaller-$PYINSTALLER_COMMIT;
+    fi
+  - echo "bootloader before:"
+  - md5sum ../PyInstaller/bootloader/Windows-${BITS}bit/*
+  - $python ./waf all
+  - echo "bootloader after:"
+  - md5sum ../PyInstaller/bootloader/Windows-${BITS}bit/*
