@@ -1,0 +1,42 @@
+name: GitHub Actions Hello World
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '30 20 * * *'
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  BUILD_PYTHON_VERSION: "3.9.1"
+  MIN_PYTHON_VERSION: "3.9.1"
+  BUILD_OPENSSL_VERSION: "1.1.1i"
+  MIN_OPENSSL_VERSION: "1.1.1g"
+  PATCHELF_VERSION: "0.12"
+  #PYINSTALLER_COMMIT: "61d846d46bdc8b6d926bb57ae05e6c9bb884a144"
+  PYINSTALLER_VERSION: "4.2"
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-16.04
+          - os: ubuntu-18.04
+          - os: ubuntu-20.04
+          - os: macos-10.15
+          - os: macos-11.0
+          - os: windows-2019
+          - os: windows-2016
+
+    steps:
+
+      - name: Hello World
+        run: |
+                set
+                uname
+
