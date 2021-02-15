@@ -39,4 +39,3 @@ jobs:
         run: |
                 set
                 uname
-                python3 hello-world.py
