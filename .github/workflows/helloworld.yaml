@@ -42,9 +42,9 @@ jobs:
           
       - name: Hello World
         run: |
+                cd ..
+                ls
                 pwd
                 python3 -V
                 pip3 install passlib
-                cd ~/runners/
-                ls
                 python3 helloworld.py
