@@ -44,4 +44,5 @@ jobs:
         run: |
                 python3 -V
                 pip3 install passlib
+                ls
                 python3 helloworld.py
