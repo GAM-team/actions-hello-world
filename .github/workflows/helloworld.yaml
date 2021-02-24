@@ -35,8 +35,12 @@ jobs:
 
     steps:
 
+      - name: Use pre-compiled Python for testing
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9.2
+          
       - name: Hello World
         run: |
-                set
-                uname
-                pwd
+                python3 -V
+                pip3 install passlib
