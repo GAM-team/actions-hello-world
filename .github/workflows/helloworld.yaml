@@ -48,6 +48,7 @@ jobs:
                 python3 -V
                 pip3 install passlib
                 python3 - <<-EOF
+                import platform
                 if platform.system() == 'Windows':
                   # No crypt module on Win, use passlib
                   from passlib.hash import sha512_crypt
