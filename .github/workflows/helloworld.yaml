@@ -33,13 +33,14 @@ jobs:
 
     steps:
 
-      - name: Use pre-compiled Python for testing
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9.5
+      #      - name: Use pre-compiled Python for testing
+      #  uses: actions/setup-python@v2
+      #  with:
+      #    python-version: 3.9.5
           
       - name: Hello World
         run: |
+                set
                 python3 -V
                 pip3 install git+git://github.com/pyinstaller/pyinstaller.git@$PYINSTALLER_VERSION
                 echo -e "from platform import machine\n\nprint(f'Hello {machine()}')" > helloarch.py
