@@ -48,6 +48,7 @@ jobs:
                     sudo installer -pkg ./$pyfile -target /
                 fi
                 python3 -V
+                pip3 install --upgrade pip
                 pip3 install git+git://github.com/pyinstaller/pyinstaller.git@$PYINSTALLER_VERSION
                 echo -e "from platform import machine\n\nprint(f'Hello {machine()}')" > helloarch.py
                 python3 -OO -m PyInstaller --clean --noupx --strip helloarch.py
