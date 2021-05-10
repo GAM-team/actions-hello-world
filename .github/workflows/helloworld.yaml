@@ -38,7 +38,7 @@ jobs:
          location: '${{ runner.workspace }}\dl\'
         if: matrix.os == 'windows-latest'
 
-      - name: Install Python debug (x64)
+      - name: Install Windows Python
         run: |
           Start-Process -FilePath "${{ runner.workspace }}\dl\python.exe" -ArgumentList "/quiet TargetDir=c:\python" -Verb runas -Wait
         if: matrix.os == 'windows-latest'
@@ -62,12 +62,9 @@ jobs:
                     export PATH=/c/python:/c/python/Scripts:$PATH
                 fi
                 $python -V
-                $python -c 'help("modules")'
                 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
                 $python get-pip.py
                 $pip -V
-                $pip install future
-                $pip install pefile
                 $pip install git+git://github.com/pyinstaller/pyinstaller.git@$PYINSTALLER_VERSION
                 echo -e "from platform import machine\n\nprint(f'Hello {machine()}')" > helloarch.py
                 $python -OO -m PyInstaller --clean --noupx --strip --onedir helloarch.py
@@ -75,3 +72,11 @@ jobs:
                 ls -al dist/helloarch/
                 du -sch dist/helloarch
                 dist/helloarch/helloarch
+                tar cjvvf "${ImageOS}.tar.xz" dist/helloarch
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: hello-arch
+          path: |
+            *.tar.xz
