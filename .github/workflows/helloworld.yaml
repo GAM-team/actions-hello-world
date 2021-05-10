@@ -51,7 +51,6 @@ jobs:
                     export pip='/c/python/python.exe -m pip'
                     export PATH=/c/python:/c/python/Scripts:$PATH
                     rm /c/python/python3?._pth
-                    #echo -e "import sys\nsys.path.insert(0, '')" > /c/python/sitecustomize.py
                 fi
                 $python -V
                 $python -c 'help("modules")'
@@ -62,7 +61,7 @@ jobs:
                 $pip install pefile
                 $pip install git+git://github.com/pyinstaller/pyinstaller.git@$PYINSTALLER_VERSION
                 echo -e "from platform import machine\n\nprint(f'Hello {machine()}')" > helloarch.py
-                $python -OO -m PyInstaller --clean --noupx --strip helloarch.py
+                $python -OO -m PyInstaller --clean --noupx --strip --onedir  --log-level TRACE helloarch.py
                 ls -al dist/
                 ls -al dist/helloarch/
                 du -sch dist/helloarch
