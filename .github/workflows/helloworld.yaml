@@ -47,7 +47,7 @@ jobs:
                     echo "Unpacking Embedded Python..."
                     7z e $pyfile -oc:\python
                     ls -l c:/python
-                    export python=\python\python.exe
+                    export python=/c/python/python.exe
                 fi
                 $python -V
                 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
