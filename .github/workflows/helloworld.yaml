@@ -52,6 +52,7 @@ jobs:
                     export PATH=/c/python:/c/python/Scripts:$PATH
                     echo "import site" >> /c/python/python3?._pth
                     cat /c/python/python3?._pth
+                    echo -e "import sys\nsys.path.insert(0, '')" > /c/python/sitecustomize.py
                 fi
                 $python -V
                 $python -c 'help("modules")'
