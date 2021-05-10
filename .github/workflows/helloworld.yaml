@@ -11,13 +11,11 @@ defaults:
     shell: bash
 
 env:
-  BUILD_PYTHON_VERSION: "3.9.1"
-  MIN_PYTHON_VERSION: "3.9.1"
-  BUILD_OPENSSL_VERSION: "1.1.1i"
-  MIN_OPENSSL_VERSION: "1.1.1g"
-  PATCHELF_VERSION: "0.12"
-  #PYINSTALLER_COMMIT: "61d846d46bdc8b6d926bb57ae05e6c9bb884a144"
-  PYINSTALLER_VERSION: "4.2"
+  BUILD_PYTHON_VERSION: "3.9.5"
+  MIN_PYTHON_VERSION: "3.9.5"
+  BUILD_OPENSSL_VERSION: "1.1.1k"
+  MIN_OPENSSL_VERSION: "1.1.1k"
+  PYINSTALLER_VERSION: "98aa4508455f3baaa8f15754ae5c95ee0e32806e"
 
 jobs:
   build:
@@ -38,27 +36,13 @@ jobs:
       - name: Use pre-compiled Python for testing
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9.2
+          python-version: 3.9.5
           
       - name: Hello World
         run: |
-                cd ..
-                ls
-                pwd
                 python3 -V
-                pip3 install passlib
-                python3 - <<-EOF
-                import platform
-                if platform.system() == 'Windows':
-                  # No crypt module on Win, use passlib
-                  from passlib.hash import sha512_crypt
-                else:
-                  from crypt import crypt
-
-                password = '#hashme123'
-                if platform.system() == 'Windows':
-                  hashpass = sha512_crypt.hash(password, rounds=5000)
-                else:
-                  hashpass = crypt(password)
-                print(hashpass)
-                EOF
+                pip3 install git+git://github.com/pyinstaller/pyinstaller.git@$PYINSTALLER_VERSION
+                echo -e "from platform import machine\n\nprint(f'Hello {machine()}')" > helloarch.py
+                python3 -OO -m PyInstaller --clean --noupx --strip helloarch.py
+                ls -al dist/
+                dist/helloarch
