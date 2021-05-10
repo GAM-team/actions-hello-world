@@ -40,18 +40,22 @@ jobs:
       - name: Hello World
         run: |
                 set
+                export python=python3
+                export pip=pip3
                 if [ "${ImageOS}" == "macos" ]; then
                     export pyfile=python-$BUILD_PYTHON_VERSION-macos11.pkg
                     wget https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
                     echo "installing Python $BUILD_PYTHON_VERSION..."
                     sudo installer -pkg ./$pyfile -target /
+                    export python=/usr/local/bin/python3
+                    export pip=/usr/local/bin/pip3
                 fi
-                python3 -V
+                $python -V
                 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-                python3 get-pip.py
-                pip3 install git+git://github.com/pyinstaller/pyinstaller.git@$PYINSTALLER_VERSION
+                $python get-pip.py
+                $pip install git+git://github.com/pyinstaller/pyinstaller.git@$PYINSTALLER_VERSION
                 echo -e "from platform import machine\n\nprint(f'Hello {machine()}')" > helloarch.py
-                python3 -OO -m PyInstaller --clean --noupx --strip helloarch.py
+                $python -OO -m PyInstaller --clean --noupx --strip helloarch.py
                 ls -al dist/
                 ls -al dist/helloarch/
                 dist/helloarch/helloarch
