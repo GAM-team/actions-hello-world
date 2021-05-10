@@ -41,7 +41,7 @@ jobs:
                     sudo installer -pkg ./$pyfile -target /
                     export python=/usr/local/bin/python3
                     export pip=/usr/local/bin/pip3
-                elif [ "${ImageOS:0:7}" == "windows" ]; then
+                elif [ "${ImageOS:0:3}" == "win" ]; then
                     export pyfile=python-$BUILD_PYTHON_VERSION-embed-amd64.zip
                     curl -o $pyfile https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
                     echo "Unpacking Embedded Python..."
