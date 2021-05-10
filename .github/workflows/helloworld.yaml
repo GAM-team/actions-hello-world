@@ -34,13 +34,13 @@ jobs:
         id: download-python
         with:
          file-url: 'https://www.python.org/ftp/python/${{ env.BUILD_PYTHON_VERSION }}/python-${{ env.BUILD_PYTHON_VERSION }}-amd64.exe'
-         file-name: 'python-${{ env.BUILD_PYTHON_VERSION }}-amd64.exe'
+         file-name: 'python.exe'
          location: '${{ runner.workspace }}\dl\'
         if: matrix.os == 'windows-latest'
 
       - name: Install Python debug (x64)
         run: |
-          Start-Process -FilePath "${{ runner.workspace }}\dl\python-${{ matrix.python-version }}-${{ matrix.python-platform }}.exe" -ArgumentList "/quiet TargetDir=c:\python" -Verb runas -Wait
+          Start-Process -FilePath "${{ runner.workspace }}\dl\python.exe" -ArgumentList "/quiet TargetDir=c:\python" -Verb runas -Wait
         if: matrix.os == 'windows-latest'
         shell: pwsh
 
