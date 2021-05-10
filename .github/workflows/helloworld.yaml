@@ -47,6 +47,11 @@ jobs:
                     ls -l
                     echo "Installing Python..."
                     cmd /c start /wait pyinstall.exe /quiet TargetDir=c:\python Shortcuts=0 Include_launcher=1 InstallLauncherAllUsers=1 Include_test=0 PrependPath=1
+                    while [ ! -f /c/python/python.exe ]
+                        do
+                           echo "no python.exe..."
+                           sleep 30
+                        done
                     echo "done installing..."
                     export python=/c/python/python.exe
                     export pip='/c/python/python.exe -m pip'
