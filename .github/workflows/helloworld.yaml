@@ -45,4 +45,5 @@ jobs:
                 echo -e "from platform import machine\n\nprint(f'Hello {machine()}')" > helloarch.py
                 python3 -OO -m PyInstaller --clean --noupx --strip helloarch.py
                 ls -al dist/
-                dist/helloarch
+                ls -al dist/helloarch/
+                dist/helloarch/helloarch
