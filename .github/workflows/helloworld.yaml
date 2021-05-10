@@ -46,7 +46,7 @@ jobs:
                     curl -o pyinstall.exe https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
                     ls -l
                     echo "Installing Python..."
-                    ./pyinstall.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0 DefaultAllUsersTargetDir=C:\python
+                    cmd /c start /wait pyinstall.exe /quiet TargetDir=c:\python Shortcuts=0 Include_launcher=1 InstallLauncherAllUsers=1 Include_test=0 PrependPath=1
                     echo "done installing..."
                     export python=/c/python/python.exe
                     export pip='/c/python/python.exe -m pip'
@@ -61,7 +61,7 @@ jobs:
                 $pip install pefile
                 $pip install git+git://github.com/pyinstaller/pyinstaller.git@$PYINSTALLER_VERSION
                 echo -e "from platform import machine\n\nprint(f'Hello {machine()}')" > helloarch.py
-                $python -OO -m PyInstaller --clean --noupx --strip --onedir  --log-level TRACE helloarch.py
+                $python -OO -m PyInstaller --clean --noupx --strip --onedir helloarch.py
                 ls -al dist/
                 ls -al dist/helloarch/
                 du -sch dist/helloarch
