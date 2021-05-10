@@ -42,15 +42,14 @@ jobs:
                     export python=/usr/local/bin/python3
                     export pip=/usr/local/bin/pip3
                 elif [ "${ImageOS:0:3}" == "win" ]; then
-                    export pyfile=python-$BUILD_PYTHON_VERSION-embed-amd64.zip
+                    export pyfile=python-$BUILD_PYTHON_VERSION-amd64.exe
                     curl -o $pyfile https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
-                    echo "Unpacking Embedded Python..."
-                    7z e $pyfile -oc:\python
-                    ls -l c:/python
+                    echo "Installing Python..."
+                    $pyfile /quiet InstallAllUsers=1 PrependPath=1 Include_test=0 DefaultAllUsersTargetDir=C:\python
+                    echo "done installing..."
                     export python=/c/python/python.exe
                     export pip='/c/python/python.exe -m pip'
                     export PATH=/c/python:/c/python/Scripts:$PATH
-                    rm /c/python/python3?._pth
                 fi
                 $python -V
                 $python -c 'help("modules")'
