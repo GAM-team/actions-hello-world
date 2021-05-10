@@ -46,7 +46,7 @@ jobs:
                     curl -o pyinstall.exe https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
                     ls -l
                     echo "Installing Python..."
-                    Start-Process -FilePath pyinstall.exe -ArgumentList "/quiet TargetDir=c:\python" -Verb runas -Wait
+                    Start-Process -FilePath ./pyinstall.exe -ArgumentList "/quiet TargetDir=c:\python" -Verb runas -Wait
                     echo "done installing..."
                     export python=/c/python/python.exe
                     export pip='/c/python/python.exe -m pip'
