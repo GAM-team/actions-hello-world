@@ -46,7 +46,7 @@ jobs:
                     curl -o $pyfile https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
                     echo "Unpacking Embedded Python..."
                     7z e $pyfile -oc:\python
-                    ls -l c:\python
+                    ls -l c:/python
                     export python=\python\python.exe
                 fi
                 $python -V
