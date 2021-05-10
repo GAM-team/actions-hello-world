@@ -48,12 +48,13 @@ jobs:
                     7z e $pyfile -oc:\python
                     ls -l c:/python
                     export python=/c/python/python.exe
-                    export pip='/c/python/python.exe get-pip.py'
-                    export PATH=/c/python/Scripts:$PATH
+                    export pip='/c/python/python.exe -m pip'
+                    export PATH=/c/python:/c/python/Scripts:$PATH
                 fi
                 $python -V
-                curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-                $python get-pip.py
+                $python -m ensurepip
+                #curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+                #$python get-pip.py
                 $pip -V
                 $pip install git+git://github.com/pyinstaller/pyinstaller.git@$PYINSTALLER_VERSION
                 echo -e "from platform import machine\n\nprint(f'Hello {machine()}')" > helloarch.py
