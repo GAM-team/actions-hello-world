@@ -42,7 +42,7 @@ jobs:
                 set
                 export python=python3
                 export pip=pip3
-                if [ "${ImageOS}" == "macos" ]; then
+                if [ "${ImageOS:0:5}" == "macos" ]; then
                     export pyfile=python-$BUILD_PYTHON_VERSION-macos11.pkg
                     wget https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
                     echo "installing Python $BUILD_PYTHON_VERSION..."
