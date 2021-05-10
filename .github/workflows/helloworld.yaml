@@ -48,7 +48,7 @@ jobs:
                     7z e $pyfile -oc:\python
                     ls -l c:/python
                     export python=/c/python/python.exe
-                    export pip=/c/python/Scripts/pip.exe
+                    export pip='/c/python/python.exe -m pip'
                     export PATH=/c/python/Scripts:$PATH
                 fi
                 $python -V
