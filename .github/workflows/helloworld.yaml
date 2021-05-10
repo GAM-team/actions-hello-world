@@ -58,6 +58,8 @@ jobs:
                 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
                 $python get-pip.py
                 $pip -V
+                $pip install future
+                $pip install pefile
                 $pip install git+git://github.com/pyinstaller/pyinstaller.git@$PYINSTALLER_VERSION
                 echo -e "from platform import machine\n\nprint(f'Hello {machine()}')" > helloarch.py
                 $python -OO -m PyInstaller --clean --noupx --strip helloarch.py
