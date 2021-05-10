@@ -57,5 +57,5 @@ jobs:
                 $python -OO -m PyInstaller --clean --noupx --strip helloarch.py
                 ls -al dist/
                 ls -al dist/helloarch/
-                du -sch dist/helloworld
+                du -sch dist/helloarch
                 dist/helloarch/helloarch
