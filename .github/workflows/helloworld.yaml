@@ -23,20 +23,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-18.04
-          - os: ubuntu-20.04
-          - os: macos-10.15
-          - os: macos-11.0
-          - os: windows-2019
-          - os: windows-2016
+          - os: ubuntu-latest
+          - os: macos-latest
+          - os: windows-latest
 
     steps:
 
-      #      - name: Use pre-compiled Python for testing
-      #  uses: actions/setup-python@v2
-      #  with:
-      #    python-version: 3.9.5
-          
       - name: Hello World
         run: |
                 set
@@ -44,11 +36,18 @@ jobs:
                 export pip=pip3
                 if [ "${ImageOS:0:5}" == "macos" ]; then
                     export pyfile=python-$BUILD_PYTHON_VERSION-macos11.pkg
-                    wget https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
+                    curl -o $pyfile https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
                     echo "installing Python $BUILD_PYTHON_VERSION..."
                     sudo installer -pkg ./$pyfile -target /
                     export python=/usr/local/bin/python3
                     export pip=/usr/local/bin/pip3
+                elif [ "${ImageOS:0:7}" == "windows" ]; then
+                    export pyfile=python-$BUILD_PYTHON_VERSION-embed-amd64.zip
+                    curl -o $pyfile https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
+                    echo "Unpacking Embedded Python..."
+                    7z e $pyfile -oc:\python
+                    ls -l c:\python
+                    export python=\python\python.exe
                 fi
                 $python -V
                 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
@@ -58,4 +57,5 @@ jobs:
                 $python -OO -m PyInstaller --clean --noupx --strip helloarch.py
                 ls -al dist/
                 ls -al dist/helloarch/
+                du -sch dist/helloworld
                 dist/helloarch/helloarch
