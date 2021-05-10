@@ -29,6 +29,21 @@ jobs:
 
     steps:
 
+            - name: Download Python
+        uses: carlosperate/download-file-action@v1.0.3
+        id: download-python
+        with:
+         file-url: 'https://www.python.org/ftp/python/${{ env.BUILD_PYTHON_VERSION }}/python-${{ env.BUILD_PYTHON_VERSION }}-amd64.exe'
+         file-name: 'python-${{ env.BUILD_PYTHON_VERSION }}-amd64.exe'
+         location: '${{ runner.workspace }}\dl\'
+        if: matrix.os == 'windows-latest'
+
+      - name: Install Python debug (x64)
+        run: |
+          Start-Process -FilePath "${{ runner.workspace }}\dl\python-${{ matrix.python-version }}-${{ matrix.python-platform }}.exe" -ArgumentList "/quiet TargetDir=c:\python" -Verb runas -Wait
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+
       - name: Hello World
         run: |
                 set
@@ -42,14 +57,8 @@ jobs:
                     export python=/usr/local/bin/python3
                     export pip=/usr/local/bin/pip3
                 elif [ "${ImageOS:0:3}" == "win" ]; then
-                    export pyfile=python-$BUILD_PYTHON_VERSION-amd64.exe
-                    curl -o pyinstall.exe https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
-                    ls -l
-                    echo "Installing Python..."
-                    Start-Process -FilePath ./pyinstall.exe -ArgumentList "/quiet TargetDir=c:\python" -Verb runas -Wait
-                    echo "done installing..."
                     export python=/c/python/python.exe
-                    export pip='/c/python/python.exe -m pip'
+                    export pip='/c/python/Scripts/pip.exe'
                     export PATH=/c/python:/c/python/Scripts:$PATH
                 fi
                 $python -V
