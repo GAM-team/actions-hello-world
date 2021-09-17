@@ -35,7 +35,6 @@ jobs:
           curl -o openssl.tar.gz -s "${url}"
           
       - name: Extracting OpenSSL
-      - name: Hello World
         run: |
           tar xvvf openssl.tar.gz
           
