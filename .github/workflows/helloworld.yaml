@@ -49,6 +49,8 @@ jobs:
       
       - name: Config OpenSSL
         run: |
+          pwd
+          cd "${HOME}"
           ls
           mkdir "${HOME}/ssl"
           cd openssl-${BUILD_OPENSSL_VERSION}
