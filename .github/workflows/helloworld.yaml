@@ -28,11 +28,7 @@ jobs:
           - os: windows-latest
 
     steps:
-      - name: Install Strawberry Perl on Win
-        if: matrix.os == 'windows-latest'
-        run: |
-          choco install strawberryperl
-          
+
       - name: Download OpenSSL
         run: |
           url="https://www.openssl.org/source/openssl-${BUILD_OPENSSL_VERSION}.tar.gz"
@@ -43,11 +39,21 @@ jobs:
         run: |
           tar xvvf openssl.tar.gz
           
-      - name: Compile OpenSSL
+      - uses: actions/checkout@v2
+      
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          distribution: strawberry
+      
+      - name: Config OpenSSL
         run: |
           mkdir "${HOME}/ssl"
           cd openssl-*
           ./config shared --prefix="${HOME}/ssl"
+      
+      - name: Make OpenSSL
+        run: |
+          cd openssl-*
           make
           
       - name: Install OpenSSL
