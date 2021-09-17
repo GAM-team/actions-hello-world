@@ -48,15 +48,15 @@ jobs:
       - name: Config OpenSSL
         run: |
           mkdir "${HOME}/ssl"
-          cd openssl-*
+          cd openssl-${BUILD_OPENSSL_VERSION}
           ./config shared --prefix="${HOME}/ssl"
       
       - name: Make OpenSSL
         run: |
-          cd openssl-*
+          cd openssl-${BUILD_OPENSSL_VERSION}
           make
           
       - name: Install OpenSSL
         run: |
-          cd openssl-*
+          cd openssl-${BUILD_OPENSSL_VERSION}
           make install
