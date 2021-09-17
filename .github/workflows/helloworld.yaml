@@ -49,19 +49,16 @@ jobs:
       
       - name: Config OpenSSL
         run: |
-          pwd
-          cd "${HOME}"
-          ls
           mkdir "${HOME}/ssl"
-          cd openssl-${BUILD_OPENSSL_VERSION}
+          cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
           ./config shared --prefix="${HOME}/ssl"
       
       - name: Make OpenSSL
         run: |
-          cd openssl-${BUILD_OPENSSL_VERSION}
+          cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
           make
           
       - name: Install OpenSSL
         run: |
-          cd openssl-${BUILD_OPENSSL_VERSION}
+          cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
           make install
