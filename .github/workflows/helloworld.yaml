@@ -23,60 +23,30 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
-          - os: macos-latest
+          - os: ubuntu-16.04
+          - os: macos-10.15
           - os: windows-latest
 
     steps:
-
-      - name: Download Windows Python
-        uses: carlosperate/download-file-action@v1.0.3
-        id: download-python
-        with:
-         file-url: 'https://www.python.org/ftp/python/${{ env.BUILD_PYTHON_VERSION }}/python-${{ env.BUILD_PYTHON_VERSION }}-amd64.exe'
-         file-name: 'python.exe'
-         location: '${{ runner.workspace }}\dl\'
-        if: matrix.os == 'windows-latest'
-
-      - name: Install Windows Python
+      - name: Download OpenSSL
         run: |
-          Start-Process -FilePath "${{ runner.workspace }}\dl\python.exe" -ArgumentList "/quiet TargetDir=c:\python" -Verb runas -Wait
-        if: matrix.os == 'windows-latest'
-        shell: pwsh
-
+          url="https://www.openssl.org/source/openssl-${BUILD_OPENSSL_VERSION}.tar.gz"
+          echo "Downloading ${url}..."
+          curl -o openssl.tar.gz -s "${url}"
+          
+      - name: Extracting OpenSSL
       - name: Hello World
         run: |
-                set
-                export python=python3
-                export pip=pip3
-                if [ "${ImageOS:0:5}" == "macos" ]; then
-                    export pyfile=python-$BUILD_PYTHON_VERSION-macos11.pkg
-                    curl -o $pyfile https://www.python.org/ftp/python/$BUILD_PYTHON_VERSION/$pyfile
-                    echo "installing Python $BUILD_PYTHON_VERSION..."
-                    sudo installer -pkg ./$pyfile -target /
-                    export python=/usr/local/bin/python3
-                    export pip=/usr/local/bin/pip3
-                elif [ "${ImageOS:0:3}" == "win" ]; then
-                    export python=/c/python/python.exe
-                    export pip='/c/python/Scripts/pip.exe'
-                    export PATH=/c/python:/c/python/Scripts:$PATH
-                fi
-                $python -V
-                curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-                $python get-pip.py
-                $pip -V
-                $pip install git+git://github.com/pyinstaller/pyinstaller.git@$PYINSTALLER_VERSION
-                echo -e "from platform import machine\n\nprint(f'Hello {machine()}')" > helloarch.py
-                $python -OO -m PyInstaller --clean --noupx --strip --onedir helloarch.py
-                ls -al dist/
-                ls -al dist/helloarch/
-                du -sch dist/helloarch
-                dist/helloarch/helloarch
-                tar cjvvf "${ImageOS}.tar.xz" dist/helloarch
-
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: hello-arch-${{ matrix.os }}.tar.xz
-          path: |
-            *.tar.xz
+          tar xvvf openssl.tar.gz
+          
+      - name: Compile OpenSSL
+        run: |
+          mkdir "${HOME}/ssl"
+          cd openssl-*
+          ./config shared --prefix="${HOME}/ssl"
+          make
+          
+      - name: Install OpenSSL
+        run: |
+          cd openssl-*
+          make install
