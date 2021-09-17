@@ -31,12 +31,14 @@ jobs:
 
       - name: Download OpenSSL
         run: |
+          cd "${HOME}"
           url="https://www.openssl.org/source/openssl-${BUILD_OPENSSL_VERSION}.tar.gz"
           echo "Downloading ${url}..."
           curl -o openssl.tar.gz -s "${url}"
 
       - name: Extracting OpenSSL
         run: |
+          cd "${HOME}"
           tar xvvf openssl.tar.gz
           
       - uses: actions/checkout@v2
@@ -47,6 +49,7 @@ jobs:
       
       - name: Config OpenSSL
         run: |
+          ls
           mkdir "${HOME}/ssl"
           cd openssl-${BUILD_OPENSSL_VERSION}
           ./config shared --prefix="${HOME}/ssl"
