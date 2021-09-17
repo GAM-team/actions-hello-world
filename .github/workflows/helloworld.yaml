@@ -28,12 +28,17 @@ jobs:
           - os: windows-latest
 
     steps:
+      - name: Install Strawberry Perl on Win
+        runs-on: 'windows-latest'
+        run: |
+          choco install strawberryperl
+          
       - name: Download OpenSSL
         run: |
           url="https://www.openssl.org/source/openssl-${BUILD_OPENSSL_VERSION}.tar.gz"
           echo "Downloading ${url}..."
           curl -o openssl.tar.gz -s "${url}"
-          
+
       - name: Extracting OpenSSL
         run: |
           tar xvvf openssl.tar.gz
