@@ -12,15 +12,14 @@ defaults:
 
 env:
   BUILD_PYTHON_VERSION: "3.9.7"
-  MIN_PYTHON_VERSION: "3.9.7"
   BUILD_OPENSSL_VERSION: "3.0.0"
-  MIN_OPENSSL_VERSION: "1.1.1l"
   PYINSTALLER_VERSION: "5a02f55c696f16b98f23a8b487f3daa8f644a8d2"
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-16.04
@@ -40,12 +39,6 @@ jobs:
         run: |
           cd "${HOME}"
           tar xvvf openssl.tar.gz
-          
-      - uses: actions/checkout@v2
-      
-      - uses: shogo82148/actions-setup-perl@v1
-        with:
-          distribution: strawberry
       
       - name: Config OpenSSL
         run: |
