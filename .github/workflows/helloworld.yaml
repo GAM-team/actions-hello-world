@@ -89,6 +89,7 @@ jobs:
 
       - name: Install OpenSSL Windows
         if: matrix.os == 'windows-latest'
+        shell: powershell
         run: |
           cd ~
           cd "openssl-$env:BUILD_OPENSSL_VERSION"
@@ -96,6 +97,7 @@ jobs:
 
       - name: Run OpenSSL
         run: |
+          export LD_LIBRARY_PATH=~/ssl/lib
           ~/ssl/bin/openssl version
 
 
