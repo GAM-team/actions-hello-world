@@ -28,12 +28,6 @@ jobs:
 
     steps:
 
-      - name: Reinstall Windows Perl
-        if: matrix.os == 'windows-latest'
-        run: |
-          choco uninstall strawberryperl
-          choco install strawberryperl
-
       - name: Download OpenSSL
         run: |
           cd "${HOME}"
@@ -47,11 +41,19 @@ jobs:
           tar xvvf openssl.tar.gz
 
       - name: Config OpenSSL
+        if: matrix.os != 'windows-latest'
         run: |
           mkdir "${HOME}/ssl"
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
           ./config shared --prefix="${HOME}/ssl"
 
+      - name: Config Windows OpenSSL
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir "${HOME}/ssl"
+          cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
+          perl Configure VC-WIN64A
+          
       - name: Make OpenSSL
         run: |
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
