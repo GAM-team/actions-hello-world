@@ -53,9 +53,10 @@ jobs:
         shell: powershell
         run: |
           cd ~
-          mkdir ssl
+          ssl_install="$HOME/ssl"
+          mkdir $env:ssl_install
           cd "openssl-$env:BUILD_OPENSSL_VERSION"
-          perl Configure VC-WIN64A shared --prefix="~/ssl"
+          perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
           
       - name: Make OpenSSL
         run: |
