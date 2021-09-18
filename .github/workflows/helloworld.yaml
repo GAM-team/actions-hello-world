@@ -61,15 +61,17 @@ jobs:
           perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
           
       - name: Make OpenSSL
+        if: matrix.os != 'windows-latest'
         run: |
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
-          UNAME=$(uname)
-          if ([ "${UNAME}" == "Linux" ] || [ "${UNAME}" == "Darwin" ]); then
-            make
-          else
-            "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
-            nmake
-          fi
+          make
+          
+      - name: Make OpenSSL Windows
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
+          nmake
 
       - name: Install OpenSSL
         run: |
