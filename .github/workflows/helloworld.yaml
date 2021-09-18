@@ -57,6 +57,7 @@ jobs:
           New-Item -Path "~" -Name ssl -ItemType "directory"
           $env:ssl_install = Resolve-Path -Path "$HOME/ssl"
           cd "openssl-$env:BUILD_OPENSSL_VERSION"
+          vcvarsall.bat x86_x64
           perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
           
       - name: Make OpenSSL
@@ -66,6 +67,7 @@ jobs:
           if ([ "${UNAME}" == "Linux" ] || [ "${UNAME}" == "Darwin" ]); then
             make
           else
+            vcvarsall.bat x86_x64
             nmake
           fi
 
