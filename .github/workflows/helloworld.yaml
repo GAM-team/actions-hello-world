@@ -57,7 +57,7 @@ jobs:
           New-Item -Path "~" -Name ssl -ItemType "directory"
           $env:ssl_install = Resolve-Path -Path "$HOME/ssl"
           cd "openssl-$env:BUILD_OPENSSL_VERSION"
-          "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
           perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
           
       - name: Make OpenSSL
@@ -68,9 +68,9 @@ jobs:
           
       - name: Make OpenSSL Windows
         if: matrix.os == 'windows-latest'
-        shell: powershell
+        shell: cmd
         run: |
-          "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
           nmake
 
       - name: Install OpenSSL
