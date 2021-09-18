@@ -58,8 +58,6 @@ jobs:
           $env:ssl_install = Resolve-Path -Path "$HOME/ssl"
           cd "openssl-$env:BUILD_OPENSSL_VERSION"
           "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
-          "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" help
-          "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
           perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
           
       - name: Make OpenSSL
@@ -69,7 +67,7 @@ jobs:
           if ([ "${UNAME}" == "Linux" ] || [ "${UNAME}" == "Darwin" ]); then
             make
           else
-            "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+            "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
             nmake
           fi
 
