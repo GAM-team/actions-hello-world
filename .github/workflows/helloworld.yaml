@@ -69,6 +69,8 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: cmd
         run: |
+          cd ~
+          cd "openssl-$env:BUILD_OPENSSL_VERSION"
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
           nmake
 
