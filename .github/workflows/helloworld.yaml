@@ -63,9 +63,11 @@ jobs:
       - name: Make OpenSSL
         run: |
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
-          uname
-          cat makefile
-          make
+          UNAME=$(uname)
+          if [ "${UNAME}" == 'Linux' || "${UNAME}" == 'Darwin' ]; then
+            make
+          else
+            nmake
 
       - name: Install OpenSSL
         run: |
