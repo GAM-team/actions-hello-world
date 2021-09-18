@@ -82,6 +82,20 @@ jobs:
           nmake
 
       - name: Install OpenSSL
+        if: matrix.os != 'windows-latest'
         run: |
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
           make install
+
+      - name: Install OpenSSL Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          cd ~
+          cd "openssl-$env:BUILD_OPENSSL_VERSION"
+          nmake install
+
+      - name: Run OpenSSL
+        run: |
+          ~/ssl/bin/openssl version
+
+
