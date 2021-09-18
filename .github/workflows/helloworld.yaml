@@ -52,6 +52,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
+          choco install nasm
           cd ~
           New-Item -Path "~" -Name ssl -ItemType "directory"
           $env:ssl_install = Resolve-Path -Path "$HOME/ssl"
