@@ -63,6 +63,8 @@ jobs:
       - name: Make OpenSSL
         run: |
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
+          uname
+          cat makefile
           make
 
       - name: Install OpenSSL
