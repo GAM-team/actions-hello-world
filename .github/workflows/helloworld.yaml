@@ -63,7 +63,7 @@ jobs:
         run: |
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
           UNAME=$(uname)
-          if [ "${UNAME}" == "Linux" || "${UNAME}" == "Darwin" ]; then
+          if [[ "${UNAME}" == "Linux" ] || [ "${UNAME}" == "Darwin" ]]; then
             make
           else
             nmake
