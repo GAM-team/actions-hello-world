@@ -53,6 +53,7 @@ jobs:
         shell: powershell
         run: |
           choco install nasm
+          $ENV:PATH="$ENV:PATH;c:\Program Files\NASM\"
           cd ~
           New-Item -Path "~" -Name ssl -ItemType "directory"
           $env:ssl_install = Resolve-Path -Path "$HOME/ssl"
