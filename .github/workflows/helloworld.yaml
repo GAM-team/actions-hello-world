@@ -30,7 +30,7 @@ jobs:
 
       - name: Reinstall Windows Perl
         if: matrix.os == 'windows-latest'
-        run:
+        run: |
           choco uninstall strawberryperl
           choco install strawberryperl
 
