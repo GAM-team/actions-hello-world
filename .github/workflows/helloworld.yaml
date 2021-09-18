@@ -49,7 +49,7 @@ jobs:
 
       - name: Config Windows OpenSSL
         if: matrix.os == 'windows-latest'
-        shell: powershell
+        shell: cmd
         run: |
           choco install nasm
           $ENV:PATH="$ENV:PATH;c:\Program Files\NASM\"
