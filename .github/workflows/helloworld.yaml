@@ -69,7 +69,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: cmd
         run: |
-          cd ~
+          cd %HOMEPATH%
           cd "openssl-$env:BUILD_OPENSSL_VERSION"
           pwd
           ls
