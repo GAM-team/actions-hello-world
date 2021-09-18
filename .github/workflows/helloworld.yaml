@@ -53,8 +53,8 @@ jobs:
         shell: powershell
         run: |
           cd ~
-          $env:ssl_install = Resolve-Path -Path "$HOME/ssl"
           New-Item -Path "~" -Name ssl -ItemType "directory"
+          $env:ssl_install = Resolve-Path -Path "$HOME/ssl"
           cd "openssl-$env:BUILD_OPENSSL_VERSION"
           perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
           
