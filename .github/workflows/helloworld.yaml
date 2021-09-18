@@ -39,6 +39,7 @@ jobs:
         run: |
           cd "${HOME}"
           tar xvvf openssl.tar.gz
+          pwd
 
       - name: Config OpenSSL
         if: matrix.os != 'windows-latest'
@@ -49,10 +50,11 @@ jobs:
 
       - name: Config Windows OpenSSL
         if: matrix.os == 'windows-latest'
+        shell: powershell
         run: |
           mkdir "${HOME}/ssl"
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
-          perl Configure VC-WIN64A
+          perl Configure VC-WIN64A shared --prefix="${HOME}/ssl"
           
       - name: Make OpenSSL
         run: |
