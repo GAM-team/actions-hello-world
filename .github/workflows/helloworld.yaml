@@ -54,7 +54,7 @@ jobs:
         run: |
           cd ~
           mkdir ssl
-          cd "openssl-${BUILD_OPENSSL_VERSION}"
+          cd "openssl-$env:BUILD_OPENSSL_VERSION"
           perl Configure VC-WIN64A shared --prefix="~/ssl"
           
       - name: Make OpenSSL
