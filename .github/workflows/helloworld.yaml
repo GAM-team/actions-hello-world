@@ -75,7 +75,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: bash
         run: |
-          sudo mv /usr/bin/link /usr/bin/gnulink
+         mv /usr/bin/link /usr/bin/gnulink
 
       - name: Make OpenSSL
         run: |
