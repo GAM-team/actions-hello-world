@@ -48,6 +48,9 @@ jobs:
           OPENSSL_SOURCE_DIR=$(pwd)
           MAKE=make
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
+          OPENSS_INSTALL_DIR="${HOME}/ssl"
+          echo "OPENSSL_INSTALL_DIR="${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=\"${OPENSSL_INSTALL_DIR}/lib64\"" >> $GITHUB_ENV
           echo "MAKE=${MAKE}" >> $GITHUB_ENV
           ./config shared --prefix="${HOME}/ssl"
 
@@ -58,7 +61,7 @@ jobs:
           choco install nasm
           cd ~
           New-Item -Path "~" -Name ssl -ItemType "directory"
-          $env:ssl_install = Resolve-Path -Path "$HOME/ssl"
+          $env:OPENSSL_INSTALL_DIR = Resolve-Path -Path "$HOME/ssl"
           cd "openssl-$env:BUILD_OPENSSL_VERSION"
           $env:OPENSSL_SOURCE_DIR=$(pwd)
           $env:PATH="$ENV:PATH;c:\Program Files\NASM\"
@@ -69,7 +72,7 @@ jobs:
              Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
            }
           }
-          perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
+          perl Configure VC-WIN64A shared --prefix="$env:OPENSSL_INSTALL_DIR"
 
       - name: Rename GNU link on Windows
         if: matrix.os == 'windows-latest'
@@ -91,7 +94,7 @@ jobs:
 
       - name: Run OpenSSL
         run: |
-          LD_LIBRARY_PATH="${HOME}/ssl/lib64"
+          ls -alRF "${OPENSSL_INSTALL_DIR}"
           $HOME/ssl/bin/openssl version
 
 
