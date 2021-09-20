@@ -120,4 +120,7 @@ jobs:
           ./configure --with-openssl="${OPENSSL_INSTALL_DIR}" --enable-shared --prefix="${PYTHON_INSTALL_DIR}" --with-ensurepip=upgrade --enable-optimizations --with-lto
           $MAKE
           $MAKE install
-          "${PYTHON_INSTALL_DIR}/python" -V
+
+      - name: Run Python
+        run: |
+          "${PYTHON_INSTALL_DIR}/bin/python" -V
