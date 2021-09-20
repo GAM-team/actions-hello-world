@@ -70,7 +70,7 @@ jobs:
            }
           }
           # Get GNU link out of our way
-          sudo mv /usr/bin/link /usr/bin/gnu-link
+          mv /usr/bin/link /usr/bin/gnu-link
 
           perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
           
