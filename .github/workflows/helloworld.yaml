@@ -99,7 +99,7 @@ jobs:
       - name: Download Python
         run: |
           cd "${HOME}"
-          url="https://www.python.org/ftp/python/${BUILD_PYTHON_VERSION}/Python-${BUILD_PYTHON_VERSION}.tar.xz
+          url="https://www.python.org/ftp/python/${BUILD_PYTHON_VERSION}/Python-${BUILD_PYTHON_VERSION}.tar.xz"
           echo "Downloading ${url}..."
           curl -o python.tar.xz -s "${url}"
 
