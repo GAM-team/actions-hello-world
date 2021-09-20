@@ -66,7 +66,7 @@ jobs:
           Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
            if ($_ -match "^(.*?)=(.*)$") {
              Set-Content "env:\$($matches[1])" $matches[2]
-             Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=${env:$matches[2]}"
+             Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=env:\$($matches[2])"
            }
           }
           perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
