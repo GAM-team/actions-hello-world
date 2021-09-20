@@ -69,11 +69,14 @@ jobs:
              Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
            }
           }
-          # Get GNU link out of our way
-          mv /usr/bin/link /usr/bin/gnu-link
-
           perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
-          
+
+      - name: Rename GNU link on Windows
+        if: os == 'windows-latest'
+        shell: bash
+        run: |
+          sudo mv /usr/bin/link /usr/bin/gnulink
+
       - name: Make OpenSSL
         run: |
           echo "LINK LINK LINK"
