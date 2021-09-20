@@ -116,7 +116,7 @@ jobs:
 
       - name: Configure Python
         run: |
-          cd "${PYTHON_SOURCE_DIR}
+          cd "${PYTHON_SOURCE_DIR}"
           ./configure --with-openssl="${OPENSSL_INSTALL_DIR}" --enable-shared --prefix="${PYTHON_INSTALL_DIR}" --with-ensurepip=upgrade --enable-optimizations --with-lto
           $MAKE
           $MAKE install
