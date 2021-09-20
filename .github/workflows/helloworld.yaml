@@ -45,6 +45,10 @@ jobs:
         run: |
           mkdir "${HOME}/ssl"
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
+          OPENSSL_SOURCE_DIR=$(pwd)
+          MAKE=make
+          echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
+          echo "MAKE=${MAKE}" >> $GITHUB_ENV
           ./config shared --prefix="${HOME}/ssl"
 
       - name: Config Windows OpenSSL
@@ -52,52 +56,35 @@ jobs:
         shell: powershell
         run: |
           choco install nasm
-          $ENV:PATH="$ENV:PATH;c:\Program Files\NASM\"
-          Add-Content -Path $env:GITHUB_ENV -Value "PATH=${env:PATH}"
           cd ~
           New-Item -Path "~" -Name ssl -ItemType "directory"
           $env:ssl_install = Resolve-Path -Path "$HOME/ssl"
           cd "openssl-$env:BUILD_OPENSSL_VERSION"
-          perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
-          
-      - name: Make OpenSSL
-        if: matrix.os != 'windows-latest'
-        run: |
-          cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
-          make
-          
-      - name: Make OpenSSL Windows
-        if: matrix.os == 'windows-latest'
-        shell: powershell
-        run: |
-          cd ~
-          cd "openssl-$env:BUILD_OPENSSL_VERSION"
-          echo "$env:PATH"
+          OPENSSL_SOURCE_DIR=$(pwd)
+          $ENV:PATH="$ENV:PATH;c:\Program Files\NASM\"
+          MAKE=nmake
           cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && set > %temp%\vcvars.txt'
           Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
            if ($_ -match "^(.*?)=(.*)$") {
              Set-Content "env:\$($matches[1])" $matches[2]
+             Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=${env:$matches[2]}"
            }
           }
-          nmake
+          perl Configure VC-WIN64A shared --prefix="$env:ssl_install"
+          
+      - name: Make OpenSSL
+        run: |
+          cd "${OPENSSL_SOURCE_DIR}"
+          $MAKE
 
       - name: Install OpenSSL
-        if: matrix.os != 'windows-latest'
         run: |
-          cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
-          make install
-
-      - name: Install OpenSSL Windows
-        if: matrix.os == 'windows-latest'
-        shell: powershell
-        run: |
-          cd ~
-          cd "openssl-$env:BUILD_OPENSSL_VERSION"
-          nmake install
+          cd "${OPENSSL_SOURCE_DIR}"
+          $MAKE install
 
       - name: Run OpenSSL
         run: |
-          export LD_LIBRARY_PATH=~/ssl/lib
-          ~/ssl/bin/openssl version
+          LD_LIBRARY_PATH="${HOME}/ssl/lib64"
+          $HOME/ssl/bin/openssl version
 
 
