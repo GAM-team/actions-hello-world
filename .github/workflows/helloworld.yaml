@@ -62,8 +62,8 @@ jobs:
           cd "openssl-$env:BUILD_OPENSSL_VERSION"
           $env:OPENSSL_SOURCE_DIR=$(pwd)
           $env:PATH="$ENV:PATH;c:\Program Files\NASM\"
-          $env:MAKE=nmake
           cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && set > %temp%\vcvars.txt'
+          $env:MAKE=nmake
           Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
            if ($_ -match "^(.*?)=(.*)$") {
              Set-Content "env:\$($matches[1])" $matches[2]
