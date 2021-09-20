@@ -73,6 +73,8 @@ jobs:
           
       - name: Make OpenSSL
         run: |
+          echo "LINK LINK LINK"
+          which link
           cd "${OPENSSL_SOURCE_DIR}"
           $MAKE
 
