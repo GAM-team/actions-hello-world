@@ -43,14 +43,14 @@ jobs:
       - name: Config OpenSSL
         if: matrix.os != 'windows-latest'
         run: |
-          mkdir "${HOME}/ssl"
+          OPENSSL_INSTALL_DIR="${HOME}/ssl"
+          mkdir "${OPENSSL_INSTALL_DIR}"
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
           OPENSSL_SOURCE_DIR=$(pwd)
           MAKE=make
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
-          OPENSS_INSTALL_DIR="${HOME}/ssl"
-          echo "OPENSSL_INSTALL_DIR="${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=\"${OPENSSL_INSTALL_DIR}/lib64\"" >> $GITHUB_ENV
+          echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib64" >> $GITHUB_ENV
           echo "MAKE=${MAKE}" >> $GITHUB_ENV
           ./config shared --prefix="${HOME}/ssl"
 
