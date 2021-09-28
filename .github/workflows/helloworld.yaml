@@ -11,7 +11,6 @@ defaults:
     shell: bash
 
 env:
-  BUILD_PYTHON_VERSION: "3.9.7"
   BUILD_OPENSSL_VERSION: "3.0.0"
   PYINSTALLER_VERSION: "5a02f55c696f16b98f23a8b487f3daa8f644a8d2"
 
@@ -99,7 +98,7 @@ jobs:
       - name: Download Python
         run: |
           cd "${HOME}"
-          url="https://www.python.org/ftp/python/${BUILD_PYTHON_VERSION}/Python-${BUILD_PYTHON_VERSION}.tar.xz"
+          url="https://www.python.org/ftp/python/3.10.0/Python-3.10.0rc2.tar.xz"
           echo "Downloading ${url}..."
           curl -o python.tar.xz -s "${url}"
 
@@ -115,15 +114,20 @@ jobs:
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
       - name: Configure Python
+        if: matrix.os != 'windows-latest'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           ./configure --with-openssl="${OPENSSL_INSTALL_DIR}" --enable-shared --prefix="${PYTHON_INSTALL_DIR}" --with-ensurepip=upgrade --enable-optimizations --with-lto
           echo "Using MAKE ${MAKE}"
           $MAKE
           $MAKE install
+      
+      - name: Config Python Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          cd "${PYTHON_SOURCE_DIR}"
+          PCbuild\build.bat
 
       - name: Run Python
         run: |
-          ls -al ${PYTHON_INSTALL_DIR}
-          ls -al ${PYTHON_INSTALL_DIR}/bin
-          "${PYTHON_INSTALL_DIR}/bin/python" -V
+          "${PYTHON_INSTALL_DIR}/bin/python3" -V
