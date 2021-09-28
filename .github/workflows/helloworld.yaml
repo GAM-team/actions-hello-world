@@ -124,8 +124,9 @@ jobs:
       
       - name: Config Python Windows
         if: matrix.os == 'windows-latest'
+        shell: powershell
         run: |
-          cd "${PYTHON_SOURCE_DIR}"
+          cd $env:PYTHON_SOURCE_DIR
           PCbuild\build.bat
 
       - name: Run Python
