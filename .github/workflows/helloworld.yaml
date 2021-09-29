@@ -103,18 +103,23 @@ jobs:
       - name: Download Python
         run: |
           cd "${HOME}"
-          url="https://www.python.org/ftp/python/3.10.0/Python-3.10.0rc2.tar.xz"
-          echo "Downloading ${url}..."
-          curl -o python.tar.xz -s "${url}"
-
-      - name: Extracting Python
-        run: |
-          cd "${HOME}"
-          tar xf python.tar.xz
-          cd Python-*
+          git clone https://github.com/python/cpython.git
+          git checkout v3.10.0rc2
+          cd cpython
           PYTHON_SOURCE_DIR=$(pwd)
-          echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
+          #url="https://www.python.org/ftp/python/3.10.0/Python-3.10.0rc2.tar.xz"
+          #echo "Downloading ${url}..."
+          #curl -o python.tar.xz -s "${url}"
+
+      #- name: Extracting Python
+      #  run: |
+      #    cd "${HOME}"
+      #    tar xf python.tar.xz
+      #    cd Python-*
+      #    PYTHON_SOURCE_DIR=$(pwd)
+      #    echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
+      #    echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
       - name: Configure Python
         if: matrix.os != 'windows-latest'
