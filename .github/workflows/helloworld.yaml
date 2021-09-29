@@ -117,7 +117,7 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
-          ./configure --with-openssl="${OPENSSL_INSTALL_DIR}" --enable-shared --prefix="${PYTHON_INSTALL_DIR}" --with-ensurepip=upgrade --enable-optimizations --with-lto
+          ./configure --with-openssl="${OPENSSL_INSTALL_DIR}" --enable-shared --prefix="${PYTHON_INSTALL_DIR}" --with-ensurepip=upgrade --enable-optimizations --with-lto --with-openssl-rpath=auto
           echo "Using MAKE ${MAKE}"
           $MAKE
           $MAKE install
@@ -126,7 +126,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          cd $env:PYTHON_SOURCE_DIR
+          cd $HOME\python-*
           PCbuild\build.bat
 
       - name: Run Python
