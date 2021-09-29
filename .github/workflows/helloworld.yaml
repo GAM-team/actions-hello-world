@@ -42,8 +42,13 @@ jobs:
       - name: Config OpenSSL
         if: matrix.os != 'windows-latest'
         run: |
+          cd "${HOME}"
           OPENSSL_INSTALL_DIR="${HOME}/ssl"
           mkdir "${OPENSSL_INSTALL_DIR}"
+          PYTHON_INSTALL_DIR="${HOME}/python"
+          mkdir "${PYTHON_INSTALL_DIR}"
+          echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
+          echo "PATH=$PYTHON_INSTALL_DIR/bin:$OPENSSL_INSTALL_DIR/bin:${PATH}" >> $GITHUB_ENV
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
           OPENSSL_SOURCE_DIR=$(pwd)
           MAKE=make
@@ -105,8 +110,6 @@ jobs:
       - name: Extracting Python
         run: |
           cd "${HOME}"
-          mkdir python
-          PYTHON_INSTALL_DIR="${HOME}/python"
           tar xf python.tar.xz
           cd Python-*
           PYTHON_SOURCE_DIR=$(pwd)
@@ -117,7 +120,7 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
-          ./configure --with-openssl="${OPENSSL_INSTALL_DIR}" --enable-shared --prefix="${PYTHON_INSTALL_DIR}" --with-ensurepip=upgrade --enable-optimizations --with-lto --with-openssl-rpath=auto
+          ./configure --with-openssl-rpath=auto --with-openssl="${OPENSSL_INSTALL_DIR}" --enable-shared --prefix="${PYTHON_INSTALL_DIR}" --with-ensurepip=upgrade --enable-optimizations --with-lto
           echo "Using MAKE ${MAKE}"
           $MAKE
           $MAKE install
