@@ -105,7 +105,7 @@ jobs:
           cd "${HOME}"
           git clone https://github.com/python/cpython.git
           cd cpython
-          git checkout v3.10.0rc2
+          git checkout 3.10
           PYTHON_SOURCE_DIR=$(pwd)
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
           #url="https://www.python.org/ftp/python/3.10.0/Python-3.10.0rc2.tar.xz"
@@ -125,7 +125,13 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
-          ./configure --with-openssl-rpath=auto --with-openssl="${OPENSSL_INSTALL_DIR}" --enable-shared --prefix="${PYTHON_INSTALL_DIR}" --with-ensurepip=upgrade --enable-optimizations --with-lto
+          ./configure --with-openssl-rpath=auto \
+                      --with-openssl="${OPENSSL_INSTALL_DIR}" \
+                      --enable-shared \
+                      --prefix="${PYTHON_INSTALL_DIR}" \
+                      --with-ensurepip=upgrade \
+                      --enable-optimizations \
+                      --with-lto
           echo "Using MAKE ${MAKE}"
           $MAKE
           $MAKE install
@@ -134,7 +140,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          cd $HOME\python-*
+          cd $HOME\cpython
           PCbuild\build.bat
 
       - name: Run Python
