@@ -104,8 +104,8 @@ jobs:
         run: |
           cd "${HOME}"
           git clone https://github.com/python/cpython.git
-          git checkout v3.10.0rc2
           cd cpython
+          git checkout v3.10.0rc2
           PYTHON_SOURCE_DIR=$(pwd)
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
           #url="https://www.python.org/ftp/python/3.10.0/Python-3.10.0rc2.tar.xz"
