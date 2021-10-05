@@ -18,6 +18,8 @@ jobs:
 
       - name: Download OpenSSL
         run: |
+          pwd
+          ls
           cd "${HOME}"
           url="https://www.openssl.org/source/openssl-1.1.1l.tar.gz"
           echo "Downloading ${url}..."
@@ -108,8 +110,8 @@ jobs:
           
       - name: Make Static helloworld
         run: |
-          "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx --loglevel DEBUG ~/dist/helloworld ~/dist/helloworld-staticx
+          "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx --loglevel DEBUG dist/helloworld dist/helloworld-staticx
           
       - name: Run StaticX-ed helloworld
         run: |
-          ~/dist/helloworld-staticx
+          dist/helloworld-staticx
