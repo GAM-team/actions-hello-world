@@ -16,6 +16,11 @@ jobs:
 
     steps:
 
+      - uses: actions/checkout@master
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
       - name: Download OpenSSL
         run: |
           pwd
