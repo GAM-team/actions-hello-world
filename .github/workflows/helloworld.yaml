@@ -74,7 +74,14 @@ jobs:
                       --with-ensurepip=upgrade \
                       --enable-optimizations \
                       --with-lto
+      - name: Build Python
+        run: |
+          cd "${PYTHON_SOURCE_DIR}"
           make
+          
+      - name: Install Python
+        run: |
+          cd "${PYTHON_SOURCE_DIR}"
           make install
   
       - name: Run Python
