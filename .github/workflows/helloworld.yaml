@@ -33,7 +33,7 @@ jobs:
           mkdir "${PYTHON_INSTALL_DIR}"
           echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
           echo "PATH=$PYTHON_INSTALL_DIR/bin:$OPENSSL_INSTALL_DIR/bin:${PATH}" >> $GITHUB_ENV
-          cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
+          cd "${HOME}/openssl*
           OPENSSL_SOURCE_DIR=$(pwd)
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
