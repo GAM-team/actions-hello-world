@@ -23,8 +23,6 @@ jobs:
 
       - name: Download OpenSSL
         run: |
-          pwd
-          ls -alRF
           cd "${HOME}"
           url="https://www.openssl.org/source/openssl-1.1.1l.tar.gz"
           echo "Downloading ${url}..."
@@ -109,9 +107,9 @@ jobs:
         run: |
           "${PYTHON_INSTALL_DIR}/bin/python3" -m PyInstaller -F helloworld.py
           
-      - name: Run PYinstaller-compiled helloworld
+      - name: Run PyInstaller-compiled helloworld
         run: |
-          ~/dist/helloworld
+          dist/helloworld
           
       - name: Make Static helloworld
         run: |
