@@ -38,7 +38,7 @@ jobs:
           cd $OPENSSL_SOURCE_DIR
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib64:${HOME}/python/lib" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:${HOME}/python/lib" >> $GITHUB_ENV
           ./config shared --prefix="${HOME}/ssl"
 
       - name: Make OpenSSL
