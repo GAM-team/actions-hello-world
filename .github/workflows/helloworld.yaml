@@ -9,11 +9,7 @@ on:
 defaults:
   run:
     shell: bash
-
-env:
-  BUILD_OPENSSL_VERSION: "3.0.0"
-  PYINSTALLER_VERSION: "5a02f55c696f16b98f23a8b487f3daa8f644a8d2"
-
+  
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -22,15 +18,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-18.04
-          - os: macos-10.15
-          - os: windows-latest
 
     steps:
 
       - name: Download OpenSSL
         run: |
           cd "${HOME}"
-          url="https://www.openssl.org/source/openssl-${BUILD_OPENSSL_VERSION}.tar.gz"
+          url="https://www.openssl.org/source/openssl-1.1.1l.tar.gz"
           echo "Downloading ${url}..."
           curl -o openssl.tar.gz -s "${url}"
 
@@ -40,7 +34,6 @@ jobs:
           tar xf openssl.tar.gz
 
       - name: Config OpenSSL
-        if: matrix.os != 'windows-latest'
         run: |
           cd "${HOME}"
           OPENSSL_INSTALL_DIR="${HOME}/ssl"
@@ -51,50 +44,20 @@ jobs:
           echo "PATH=$PYTHON_INSTALL_DIR/bin:$OPENSSL_INSTALL_DIR/bin:${PATH}" >> $GITHUB_ENV
           cd "${HOME}/openssl-${BUILD_OPENSSL_VERSION}"
           OPENSSL_SOURCE_DIR=$(pwd)
-          MAKE=make
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib64:${HOME}/python/lib" >> $GITHUB_ENV
-          echo "MAKE=${MAKE}" >> $GITHUB_ENV
           ./config shared --prefix="${HOME}/ssl"
-
-      - name: Config Windows OpenSSL
-        if: matrix.os == 'windows-latest'
-        shell: powershell
-        run: |
-          choco install nasm
-          cd ~
-          New-Item -Path "~" -Name ssl -ItemType "directory"
-          $env:OPENSSL_INSTALL_DIR = Resolve-Path -Path "$HOME/ssl"
-          cd "openssl-$env:BUILD_OPENSSL_VERSION"
-          $env:OPENSSL_SOURCE_DIR=$(pwd)
-          $env:PATH="$ENV:PATH;c:\Program Files\NASM\"
-          cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && set MAKE=nmake && set > %temp%\vcvars.txt'
-          Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
-           if ($_ -match "^(.*?)=(.*)$") {
-             Set-Content "env:\$($matches[1])" $matches[2]
-             Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
-           }
-          }
-          perl Configure VC-WIN64A shared --prefix="$env:OPENSSL_INSTALL_DIR"
-
-      - name: Rename GNU link on Windows
-        if: matrix.os == 'windows-latest'
-        shell: bash
-        run: |
-         mv /usr/bin/link /usr/bin/gnulink
 
       - name: Make OpenSSL
         run: |
-          echo "LINK LINK LINK"
-          which link
           cd "${OPENSSL_SOURCE_DIR}"
-          $MAKE
+          make
 
       - name: Install OpenSSL
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
-          $MAKE install
+          make install
 
       - name: Run OpenSSL
         run: |
@@ -105,24 +68,11 @@ jobs:
           cd "${HOME}"
           git clone https://github.com/python/cpython.git
           cd cpython
-          git checkout 3.10
+          git checkout v3.9.7
           PYTHON_SOURCE_DIR=$(pwd)
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
-          #url="https://www.python.org/ftp/python/3.10.0/Python-3.10.0rc2.tar.xz"
-          #echo "Downloading ${url}..."
-          #curl -o python.tar.xz -s "${url}"
-
-      #- name: Extracting Python
-      #  run: |
-      #    cd "${HOME}"
-      #    tar xf python.tar.xz
-      #    cd Python-*
-      #    PYTHON_SOURCE_DIR=$(pwd)
-      #    echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
-      #    echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
       - name: Configure Python
-        if: matrix.os != 'windows-latest'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           ./configure --with-openssl-rpath=auto \
@@ -132,17 +82,9 @@ jobs:
                       --with-ensurepip=upgrade \
                       --enable-optimizations \
                       --with-lto
-          echo "Using MAKE ${MAKE}"
-          $MAKE
-          $MAKE install
-      
-      - name: Config Python Windows
-        if: matrix.os == 'windows-latest'
-        shell: powershell
-        run: |
-          cd $HOME\cpython
-          PCbuild\build.bat
-
+          make
+          make install
+  
       - name: Run Python
         run: |
           "${PYTHON_INSTALL_DIR}/bin/python3" -c "import platform; import ssl; print(f'Python {platform.python_version()} {ssl.OPENSSL_VERSION}')"
