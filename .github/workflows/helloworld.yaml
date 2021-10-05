@@ -23,6 +23,7 @@ jobs:
         run: |
           cd "${HOME}"
           tar xf openssl.tar.gz
+          mv openssl-*/ openssl/
 
       - name: Config OpenSSL
         run: |
@@ -33,8 +34,8 @@ jobs:
           mkdir "${PYTHON_INSTALL_DIR}"
           echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
           echo "PATH=$PYTHON_INSTALL_DIR/bin:$OPENSSL_INSTALL_DIR/bin:${PATH}" >> $GITHUB_ENV
-          cd openssl*
-          OPENSSL_SOURCE_DIR=$(pwd)
+          OPENSSL_SOURCE_DIR=~/openssl
+          cd $OPENSSL_SOURCE_DIR
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib64:${HOME}/python/lib" >> $GITHUB_ENV
