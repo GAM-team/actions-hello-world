@@ -8,7 +8,9 @@ defaults:
   
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: [ubuntu-18.04, ubuntu-20.04]
+    strategy:
+      fail-fast: false
 
     steps:
 
@@ -86,4 +88,26 @@ jobs:
   
       - name: Run Python
         run: |
-          "${PYTHON_INSTALL_DIR}/bin/python3" -c "import platform; import ssl; print(f'Python {platform.python_version()} {ssl.OPENSSL_VERSION}')"
+          "${PYTHON_INSTALL_DIR}/bin/python3" helloworld.py
+          
+      - name: Install PyInstaller and StaticX
+        run: | 
+          "${PYTHON_INSTALL_DIR}/bin/pip3" install pyinstaller
+          "${PYTHON_INSTALL_DIR}/bin/pip3" install patchelf-wrapper
+          "${PYTHON_INSTALL_DIR}/bin/pip3" install staticx
+ 
+      - name: Compile helloworld with PyInstaller
+        run: |
+          "${PYTHON_INSTALL_DIR}/bin/python3" -m PyInstaller -F helloworld.py
+          
+      - name: Run PYinstaller-compiled helloworld
+        run: |
+          ~/dist/helloworld
+          
+      - name: Make Static helloworld
+        run: |
+          "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx --loglevel DEBUG ~/dist/helloworld ~/dist/helloworld-staticx
+          
+      - name: Run StaticX-ed helloworld
+        run: |
+          ~/dist/helloworld-staticx
