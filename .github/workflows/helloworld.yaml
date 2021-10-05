@@ -1,6 +1,6 @@
 name: GitHub Actions Hello World
 
-on: push
+on: [push, pull_request]
 
 defaults:
   run:
@@ -8,12 +8,7 @@ defaults:
   
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-18.04
+    runs-on: ubuntu-18.04
 
     steps:
 
