@@ -26,14 +26,14 @@ jobs:
 
       - name: Config OpenSSL
         run: |
-          cd "${HOME}"
-          OPENSSL_INSTALL_DIR="${HOME}/ssl"
+          cd ~
+          OPENSSL_INSTALL_DIR=~/ssl
           mkdir "${OPENSSL_INSTALL_DIR}"
-          PYTHON_INSTALL_DIR="${HOME}/python"
+          PYTHON_INSTALL_DIR=~/python
           mkdir "${PYTHON_INSTALL_DIR}"
           echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
           echo "PATH=$PYTHON_INSTALL_DIR/bin:$OPENSSL_INSTALL_DIR/bin:${PATH}" >> $GITHUB_ENV
-          cd "${HOME}/openssl*
+          cd openssl*
           OPENSSL_SOURCE_DIR=$(pwd)
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
