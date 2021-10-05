@@ -19,7 +19,7 @@ jobs:
       - name: Download OpenSSL
         run: |
           pwd
-          ls
+          ls -alRF
           cd "${HOME}"
           url="https://www.openssl.org/source/openssl-1.1.1l.tar.gz"
           echo "Downloading ${url}..."
