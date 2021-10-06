@@ -14,27 +14,33 @@ jobs:
       matrix:
         include:
           - os: ubuntu-18.04
+            mid: 0
           - os: ubuntu-20.04
+            mid: 1
           - os: ubuntu-18.04
+            mid: 2
             python: "3.6"
           - os: ubuntu-18.04
+            mid: 3
             python: "3.7"
           - os: ubuntu-18.04
+            mid: 4
             python: "3.8"
           - os: ubuntu-18.04
+            mid: 5
             python: "3.9"
-          - os: ubuntu-18.04
-            python: "3.10"
           - os: ubuntu-20.04
+            mid: 6
             python: "3.6"
           - os: ubuntu-20.04
+            mid: 7
             python: "3.7"
           - os: ubuntu-20.04
+            mid: 8
             python: "3.8"
           - os: ubuntu-20.04
+            mid: 9
             python: "3.9"
-          - os: ubuntu-20.04
-            python: "3.10"
 
     steps:
 
@@ -43,6 +49,16 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
+      - name: Cache Python build
+        id: cache-python
+        uses: actions/cache@v2
+        if: matrix.python == ''
+        with:
+          path: |
+            ~/python
+            ~/ssl
+          key: ${{ matrix.os }}-${{ matrix.mid }}-20211006
+
       - name: Use pre-compiled Python where specified
         if: matrix.python != ''
         uses: actions/setup-python@v2
@@ -50,12 +66,13 @@ jobs:
           python-version: ${{ matrix.python }}
 
       - name: Set PYTHON and PIP variables for pre-installed Python
+        if: matrix.python != ''
         run: |
           echo "PYTHON=python3" >> $GITHUB_ENV
           echo "PIP=pip3" >> $GITHUB_ENV
 
       - name: Download OpenSSL
-        if: matrix.python == ''
+        if: matrix.python == '' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
           url="https://www.openssl.org/source/openssl-1.1.1l.tar.gz"
@@ -63,14 +80,14 @@ jobs:
           curl -o openssl.tar.gz -s "${url}"
 
       - name: Extracting OpenSSL
-        if: matrix.python == ''
+        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
           tar xf openssl.tar.gz
           mv openssl-*/ openssl/
 
       - name: Config OpenSSL
-        if: matrix.python == ''
+        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd ~
           OPENSSL_INSTALL_DIR=~/ssl
@@ -87,24 +104,24 @@ jobs:
           ./config shared --prefix="${HOME}/ssl"
 
       - name: Make OpenSSL
-        if: matrix.python == ''
+        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           make
 
       - name: Install OpenSSL
-        if: matrix.python == ''
+        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           make install
 
       - name: Run OpenSSL
-        if: matrix.python == ''
+        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           "${OPENSSL_INSTALL_DIR}/bin/openssl" version
 
       - name: Download Python
-        if: matrix.python == ''
+        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
           git clone https://github.com/python/cpython.git
@@ -114,7 +131,7 @@ jobs:
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
       - name: Configure Python
-        if: matrix.python == ''
+        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           ./configure --with-openssl-rpath=auto \
@@ -126,13 +143,13 @@ jobs:
                       --with-lto
 
       - name: Build Python
-        if: matrix.python == ''
+        if: matrix.python == ''  && if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           make
           
       - name: Install Python and set PYTHON / PIP env variables
-        if: matrix.python == ''
+        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           make install
@@ -140,7 +157,6 @@ jobs:
           echo "PIP=$PYTHON_INSTALL_DIR/bin/pip3" >> $GITHUB_ENV
   
       - name: Run Python
-        if: matrix.python == ''
         run: |
           "${PYTHON}" helloworld.py
           
