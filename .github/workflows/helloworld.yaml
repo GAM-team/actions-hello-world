@@ -148,11 +148,15 @@ jobs:
           cd "${PYTHON_SOURCE_DIR}"
           make
           
-      - name: Install Python and set PYTHON / PIP env variables
+      - name: Install Python
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           make install
+          
+      - name: Set PYTHON and PIP variables for compiled Python
+        if: matrix.python == ''
+        run: |
           echo "PYTHON=$PYTHON_INSTALL_DIR/bin/python3" >> $GITHUB_ENV
           echo "PIP=$PYTHON_INSTALL_DIR/bin/pip3" >> $GITHUB_ENV
   
@@ -181,3 +185,11 @@ jobs:
       - name: Run StaticX-ed helloworld
         run: |
           dist/helloworld-staticx
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: helloworld-binaries
+          path: |
+            dist/helloworld*
+          
