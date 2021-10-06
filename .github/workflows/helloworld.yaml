@@ -10,9 +10,21 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
-      matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
       fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-18.04
+          - os: ubuntu-20.04
+          - os: ubuntu-18.04
+            python: 3.6
+          - os: ubuntu-18.04
+            python: 3.7
+          - os: ubuntu-18.04
+            python: 3.8
+          - os: ubuntu-18.04
+            python: 3.9
+          - os: ubuntu-18.04
+            python: 3.10
 
     steps:
 
@@ -21,7 +33,19 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
+      - name: Use pre-compiled Python where specified
+        if: matrix.python != ''
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Set PYTHON and PIP variables for pre-installed Python
+        run: |
+          echo "PYTHON=python3" >> $GITHUB_ENV
+          echo "PIP=pip3" >> $GITHUB_ENV
+
       - name: Download OpenSSL
+        if: matrix.python == ''
         run: |
           cd "${HOME}"
           url="https://www.openssl.org/source/openssl-1.1.1l.tar.gz"
@@ -29,12 +53,14 @@ jobs:
           curl -o openssl.tar.gz -s "${url}"
 
       - name: Extracting OpenSSL
+        if: matrix.python == ''
         run: |
           cd "${HOME}"
           tar xf openssl.tar.gz
           mv openssl-*/ openssl/
 
       - name: Config OpenSSL
+        if: matrix.python == ''
         run: |
           cd ~
           OPENSSL_INSTALL_DIR=~/ssl
@@ -51,20 +77,24 @@ jobs:
           ./config shared --prefix="${HOME}/ssl"
 
       - name: Make OpenSSL
+        if: matrix.python == ''
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           make
 
       - name: Install OpenSSL
+        if: matrix.python == ''
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           make install
 
       - name: Run OpenSSL
+        if: matrix.python == ''
         run: |
           "${OPENSSL_INSTALL_DIR}/bin/openssl" version
 
       - name: Download Python
+        if: matrix.python == ''
         run: |
           cd "${HOME}"
           git clone https://github.com/python/cpython.git
@@ -74,6 +104,7 @@ jobs:
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
       - name: Configure Python
+        if: matrix.python == ''
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           ./configure --with-openssl-rpath=auto \
@@ -83,29 +114,35 @@ jobs:
                       --with-ensurepip=upgrade \
                       --enable-optimizations \
                       --with-lto
+
       - name: Build Python
+        if: matrix.python == ''
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           make
           
-      - name: Install Python
+      - name: Install Python and set PYTHON / PIP env variables
+        if: matrix.python == ''
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           make install
+          echo "PYTHON=$PYTHON_INSTALL_DIR/bin/python3" >> $GITHUB_ENV
+          echo "PIP=$PYTHON_INSTALL_DIR/bin/pip3" >> $GITHUB_ENV
   
       - name: Run Python
+        if: matrix.python == ''
         run: |
-          "${PYTHON_INSTALL_DIR}/bin/python3" helloworld.py
+          "${PYTHON}" helloworld.py
           
       - name: Install PyInstaller and StaticX
         run: | 
-          "${PYTHON_INSTALL_DIR}/bin/pip3" install pyinstaller
-          "${PYTHON_INSTALL_DIR}/bin/pip3" install patchelf-wrapper
-          "${PYTHON_INSTALL_DIR}/bin/pip3" install staticx
+          "${PIP}" install pyinstaller
+          "${PIP}" install patchelf-wrapper
+          "${PIP}" install staticx
  
       - name: Compile helloworld with PyInstaller
         run: |
-          "${PYTHON_INSTALL_DIR}/bin/python3" -m PyInstaller -F helloworld.py
+          "${PYTHON}" -m PyInstaller -F helloworld.py
           
       - name: Run PyInstaller-compiled helloworld
         run: |
@@ -113,7 +150,7 @@ jobs:
           
       - name: Make Static helloworld
         run: |
-          "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx --loglevel DEBUG dist/helloworld dist/helloworld-staticx
+          "${PYTHON}" -m staticx --loglevel DEBUG dist/helloworld dist/helloworld-staticx
           
       - name: Run StaticX-ed helloworld
         run: |
