@@ -143,7 +143,7 @@ jobs:
                       --with-lto
 
       - name: Build Python
-        if: matrix.python == ''  && if: steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           make
