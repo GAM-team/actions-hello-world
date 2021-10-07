@@ -16,32 +16,32 @@ jobs:
         include:
           - os: ubuntu-18.04
             mid: 0
-          - os: ubuntu-20.04
-            mid: 1
-          - os: ubuntu-18.04
-            mid: 2
-            python: "3.6"
-          - os: ubuntu-18.04
-            mid: 3
-            python: "3.7"
-          - os: ubuntu-18.04
-            mid: 4
-            python: "3.8"
-          - os: ubuntu-18.04
-            mid: 5
-            python: "3.9"
-          - os: ubuntu-20.04
-            mid: 6
-            python: "3.6"
-          - os: ubuntu-20.04
-            mid: 7
-            python: "3.7"
-          - os: ubuntu-20.04
-            mid: 8
-            python: "3.8"
-          - os: ubuntu-20.04
-            mid: 9
-            python: "3.9"
+#          - os: ubuntu-20.04
+#            mid: 1
+#          - os: ubuntu-18.04
+#            mid: 2
+#            python: "3.6"
+#          - os: ubuntu-18.04
+#            mid: 3
+#            python: "3.7"
+#          - os: ubuntu-18.04
+#            mid: 4
+#            python: "3.8"
+#          - os: ubuntu-18.04
+#            mid: 5
+#            python: "3.9"
+#          - os: ubuntu-20.04
+#            mid: 6
+#            python: "3.6"
+#          - os: ubuntu-20.04
+#            mid: 7
+#            python: "3.7"
+#          - os: ubuntu-20.04
+#            mid: 8
+#            python: "3.8"
+#          - os: ubuntu-20.04
+#            mid: 9
+#            python: "3.9"
 
     steps:
 
@@ -183,9 +183,9 @@ jobs:
         run: |
           "${PYTHON}" -m staticx --loglevel DEBUG dist/helloworld dist/helloworld-staticx
           
-      - name: Run StaticX-ed helloworld
-        run: |
-          dist/helloworld-staticx
+#      - name: Run StaticX-ed helloworld
+#        run: |
+#          dist/helloworld-staticx
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
