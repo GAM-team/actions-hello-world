@@ -195,6 +195,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: helloworld-binaries-{{ matrix.mid }}
+          name: helloworld-binaries {{ matrix.mid }}
           path: dist/helloworld*
           
