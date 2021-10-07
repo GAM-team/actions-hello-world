@@ -72,6 +72,16 @@ jobs:
           echo "PYTHON=python3" >> $GITHUB_ENV
           echo "PIP=pip3" >> $GITHUB_ENV
 
+      - name: Set compiled Python/SSL env variables
+        if: matrix.python == ''
+        run: |
+          OPENSSL_INSTALL_DIR=~/ssl
+          PYTHON_INSTALL_DIR=~/python
+          echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
+          echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
+          echo "PATH=$PYTHON_INSTALL_DIR/bin:$OPENSSL_INSTALL_DIR/bin:${PATH}" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:${HOME}/python/lib" >> $GITHUB_ENV
+          
       - name: Download OpenSSL
         if: matrix.python == '' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
@@ -91,18 +101,12 @@ jobs:
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd ~
-          OPENSSL_INSTALL_DIR=~/ssl
           mkdir "${OPENSSL_INSTALL_DIR}"
-          PYTHON_INSTALL_DIR=~/python
           mkdir "${PYTHON_INSTALL_DIR}"
-          echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
-          echo "PATH=$PYTHON_INSTALL_DIR/bin:$OPENSSL_INSTALL_DIR/bin:${PATH}" >> $GITHUB_ENV
           OPENSSL_SOURCE_DIR=~/openssl
           cd $OPENSSL_SOURCE_DIR
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
-          echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:${HOME}/python/lib" >> $GITHUB_ENV
-          ./config shared --prefix="${HOME}/ssl"
+          ./config shared --prefix="${OPENSSL_INSTALL_DIR}"
 
       - name: Make OpenSSL
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
