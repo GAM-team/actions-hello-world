@@ -185,7 +185,7 @@ jobs:
           
       - name: Make Static helloworld
         run: |
-          "${PYTHON}" -m staticx --loglevel DEBUG dist/helloworld dist/helloworld-staticx
+          "${PYTHON}" -m staticx --loglevel DEBUG --debug dist/helloworld dist/helloworld-staticx
           
       - name: Run StaticX-ed helloworld
         run: |
