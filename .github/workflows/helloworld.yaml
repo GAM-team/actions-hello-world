@@ -58,7 +58,7 @@ jobs:
           path: |
             ~/python
             ~/ssl
-          key: ${{ matrix.os }}-${{ matrix.mid }}-20211006
+          key: ${{ matrix.os }}-${{ matrix.mid }}-20211009
 
       - name: Use pre-compiled Python where specified
         if: matrix.python != ''
@@ -170,10 +170,11 @@ jobs:
           "${PYTHON}" helloworld.py
           
       - name: Install PyInstaller and StaticX
-        run: | 
-          "${PIP}" install pyinstaller
-          "${PIP}" install patchelf-wrapper
-          "${PIP}" install staticx
+        run: |
+          "${PIP}" install --upgrade pip
+          "${PIP}" install --upgrade pyinstaller
+          "${PIP}" install --upgrade patchelf-wrapper
+          "${PIP}" install --upgrade staticx
  
       - name: Compile helloworld with PyInstaller
         run: |
