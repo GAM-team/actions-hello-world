@@ -42,6 +42,12 @@ jobs:
           - os: ubuntu-20.04
             mid: 9
             python: "3.9"
+          - os: ubuntu-18.04
+            mid: 10
+            python: "3.10"
+          - os: ubuntu-20.04
+            mid: 11
+            python: "3.10"
 
     steps:
 
