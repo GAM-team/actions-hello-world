@@ -177,9 +177,17 @@ jobs:
           
       - name: Install PyInstaller and StaticX
         run: |
+echo "Downloading PatchELF $PATCHELF_VERSION"
+          PATCHELF_VERSION=0.13
+          wget https://github.com/NixOS/patchelf/archive/$PATCHELF_VERSION.tar.gz 
+          tar xf $PATCHELF_VERSION.tar.gz
+          cd patchelf-$PATCHELF_VERSION/
+          ./bootstrap.sh
+          ./configure
+          make
+          sudo make install
           "${PIP}" install --upgrade pip
           "${PIP}" install --upgrade pyinstaller
-          "${PIP}" install --upgrade patchelf-wrapper
           "${PIP}" install --upgrade staticx
  
       - name: Compile helloworld with PyInstaller
