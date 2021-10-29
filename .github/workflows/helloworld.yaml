@@ -63,7 +63,7 @@ jobs:
           OPENSSL_SOURCE_DIR=~/openssl
           cd $OPENSSL_SOURCE_DIR
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
-          ./config shared
+          ./Configure --libdir=lib
 
       - name: Make OpenSSL
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
