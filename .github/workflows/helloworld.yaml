@@ -149,10 +149,12 @@ jobs:
           dist/helloworld
           
       - name: Make Static helloworld
+        if: matrx.os == 'ubuntu-20.04'
         run: |
           "${PYTHON}" -m staticx --loglevel DEBUG --debug dist/helloworld dist/helloworld-staticx
           
       - name: Run StaticX-ed helloworld
+        if: matrx.os == 'ubuntu-20.04'
         run: |
           dist/helloworld-staticx
 
