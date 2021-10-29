@@ -18,36 +18,6 @@ jobs:
             mid: 0
           - os: ubuntu-20.04
             mid: 1
-          - os: ubuntu-18.04
-            mid: 2
-            python: "3.6"
-          - os: ubuntu-18.04
-            mid: 3
-            python: "3.7"
-          - os: ubuntu-18.04
-            mid: 4
-            python: "3.8"
-          - os: ubuntu-18.04
-            mid: 5
-            python: "3.9"
-          - os: ubuntu-20.04
-            mid: 6
-            python: "3.6"
-          - os: ubuntu-20.04
-            mid: 7
-            python: "3.7"
-          - os: ubuntu-20.04
-            mid: 8
-            python: "3.8"
-          - os: ubuntu-20.04
-            mid: 9
-            python: "3.9"
-          - os: ubuntu-18.04
-            mid: 10
-            python: "3.10"
-          - os: ubuntu-20.04
-            mid: 11
-            python: "3.10"
 
     steps:
 
@@ -64,35 +34,18 @@ jobs:
           path: |
             ~/python
             ~/ssl
-          key: ${{ matrix.os }}-${{ matrix.mid }}-20211009
-
-      - name: Use pre-compiled Python where specified
-        if: matrix.python != ''
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python }}
-
-      - name: Set PYTHON and PIP variables for pre-installed Python
-        if: matrix.python != ''
-        run: |
-          echo "PYTHON=python3" >> $GITHUB_ENV
-          echo "PIP=pip3" >> $GITHUB_ENV
+          key: ${{ matrix.os }}-${{ matrix.mid }}-20211029
 
       - name: Set compiled Python/SSL env variables
         if: matrix.python == ''
         run: |
-          OPENSSL_INSTALL_DIR=~/ssl
-          PYTHON_INSTALL_DIR=~/python
-          echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
-          echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
-          echo "PATH=$PYTHON_INSTALL_DIR/bin:$OPENSSL_INSTALL_DIR/bin:${PATH}" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:${HOME}/python/lib" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64" >> $GITHUB_ENV
           
       - name: Download OpenSSL
         if: matrix.python == '' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
-          url="https://www.openssl.org/source/openssl-1.1.1l.tar.gz"
+          url="https://www.openssl.org/source/openssl-3.0.0.tar.gz"
           echo "Downloading ${url}..."
           curl -o openssl.tar.gz -s "${url}"
 
@@ -107,29 +60,27 @@ jobs:
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd ~
-          mkdir "${OPENSSL_INSTALL_DIR}"
-          mkdir "${PYTHON_INSTALL_DIR}"
           OPENSSL_SOURCE_DIR=~/openssl
           cd $OPENSSL_SOURCE_DIR
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
-          ./config shared --prefix="${OPENSSL_INSTALL_DIR}"
+          ./config shared
 
       - name: Make OpenSSL
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
-          make
+          make -j $(nproc)
 
       - name: Install OpenSSL
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
-          make install
+          sudo make install
 
       - name: Run OpenSSL
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          "${OPENSSL_INSTALL_DIR}/bin/openssl" version
+          "/usr/local/bin/openssl" version
 
       - name: Download Python
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
@@ -137,7 +88,7 @@ jobs:
           cd "${HOME}"
           git clone https://github.com/python/cpython.git
           cd cpython
-          git checkout v3.9.7
+          git checkout 3.10
           PYTHON_SOURCE_DIR=$(pwd)
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
@@ -146,9 +97,8 @@ jobs:
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           ./configure --with-openssl-rpath=auto \
-                      --with-openssl="${OPENSSL_INSTALL_DIR}" \
+                      --with-openssl="/usr/local" \
                       --enable-shared \
-                      --prefix="${PYTHON_INSTALL_DIR}" \
                       --with-ensurepip=upgrade \
                       --enable-optimizations \
                       --with-lto
@@ -157,19 +107,19 @@ jobs:
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
-          make
+          make -j$(nproc)
           
       - name: Install Python
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
-          make install
+          sudo make install
           
       - name: Set PYTHON and PIP variables for compiled Python
         if: matrix.python == ''
         run: |
-          echo "PYTHON=$PYTHON_INSTALL_DIR/bin/python3" >> $GITHUB_ENV
-          echo "PIP=$PYTHON_INSTALL_DIR/bin/pip3" >> $GITHUB_ENV
+          echo "PYTHON=/usr/local/bin/python3" >> $GITHUB_ENV
+          echo "PIP=/usr/local/bin/pip3" >> $GITHUB_ENV
   
       - name: Run Python
         run: |
