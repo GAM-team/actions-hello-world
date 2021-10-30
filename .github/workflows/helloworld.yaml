@@ -68,7 +68,7 @@ jobs:
 
       - name: Ubuntu Set compiled Python/SSL env variables
         if: matrix.os == 'ubuntu-20.04'
-        run: echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:~/python/lib" >> $GITHUB_ENV
+        run: echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:${HOME}/python/lib" >> $GITHUB_ENV
 
       - name: Windows Config OpenSSL
         if: matrix.os == 'windows-latest'
