@@ -188,7 +188,7 @@ jobs:
           "${PYTHON}" -m staticx --loglevel DEBUG --debug dist/helloworld dist/helloworld-staticx
           
       - name: Run StaticX-ed helloworld
-        if: matrx.os == 'ubuntu-20.04'
+        if: matrix.os == 'ubuntu-20.04'
         run: |
           dist/helloworld-staticx
 
