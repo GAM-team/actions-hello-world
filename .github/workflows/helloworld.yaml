@@ -19,8 +19,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
+            mid: 0
           - os: macos-10.15
+            mid: 1
           - os: windows-latest
+            mid: 2
 
     steps:
       - uses: actions/checkout@master
@@ -37,7 +40,31 @@ jobs:
             ~/python
             ~/ssl
           key: ${{ matrix.os }}-${{ matrix.mid }}-20211030
-          
+
+      - name: Bash Env Variables
+        run: |
+          cd "${HOME}"
+          mkdir -p ssl
+          mkdir -p python
+          OPENSSL_INSTALL_DIR="${HOME}/ssl"
+          OPENSSL_SOURCE_DIR="${HOME}/openssl"
+          PYTHON_INSTALL_DIR="${HOME}/python"
+          PYTHON_SOURCE_DIR="${HOME}/Python-${PYTHON_VERSION}"
+          cd $OPENSSL_SOURCE_DIR
+          echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
+          echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
+          echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
+          echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
+
+      - name: PowerShell Env Variables
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$HOME/ssl"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$HOME/openssl"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$HOME/python"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$HOME/Python-$PYTHON_VERSION"
+
       - name: Download OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
@@ -75,11 +102,6 @@ jobs:
         shell: powershell
         run: |
           choco install nasm
-          cd ~
-          New-Item -Path "~" -Name ssl -ItemType "directory"
-          $env:OPENSSL_INSTALL_DIR = Resolve-Path -Path "$HOME/ssl"
-          cd "openssl"
-          $env:OPENSSL_SOURCE_DIR=$(pwd)
           $env:PATH="$ENV:PATH;c:\Program Files\NASM\"
           cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && set MAKE=nmake && set > %temp%\vcvars.txt'
           Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
@@ -88,7 +110,7 @@ jobs:
              Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
            }
           }
-          perl Configure VC-WIN64A shared --prefix="$env:OPENSSL_INSTALL_DIR"
+          perl Configure VC-WIN64A shared --prefix="$env:PS_OPENSSL_INSTALL_DIR"
 
       - name: Rename GNU link on Windows
         if: matrix.os == 'windows-latest'
@@ -141,7 +163,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          cd $env:PYTHON_SOURCE_DIR
+          cd $env:PS_PYTHON_SOURCE_DIR
           PCbuild\build.bat
 
       - name: Mac/Linux Build Python
@@ -170,14 +192,15 @@ jobs:
           ./bootstrap.sh
           ./configure
           make
-          sudo make install
-          "${PIP}" install --upgrade pip
-          "${PIP}" install --upgrade pyinstaller
-          "${PIP}" install --upgrade staticx
+          make install
+          
+          "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade pip
+          "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade pyinstaller
+          "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade staticx
  
       - name: Compile helloworld with PyInstaller
         run: |
-          "${PYTHON}" -m PyInstaller -F helloworld.py
+          "${PYTHON_INSTALL_DIR}/bin/python3" -m PyInstaller -F helloworld.py
           
       - name: Run PyInstaller-compiled helloworld
         run: |
@@ -186,7 +209,7 @@ jobs:
       - name: Make Static helloworld
         if: matrix.os == 'ubuntu-20.04'
         run: |
-          "${PYTHON}" -m staticx --loglevel DEBUG --debug dist/helloworld dist/helloworld-staticx
+          "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx --loglevel DEBUG --debug dist/helloworld dist/helloworld-staticx
           
       - name: Run StaticX-ed helloworld
         if: matrix.os == 'ubuntu-20.04'
