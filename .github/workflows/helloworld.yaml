@@ -106,54 +106,59 @@ jobs:
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
-          sudo make install
+          $MAKE install
 
       - name: Run OpenSSL
         run: |
           "${OPENSSL_INSTALL_DIR}/bin/openssl" version
 
       - name: Download Python
-        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
+        if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
-          git clone https://github.com/python/cpython.git
-          cd cpython
-          git checkout 3.10
+          curl -o python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz"
+          tar xf python.tar.xz
+          cd "Python-${PYTHON_VERSION}"
           PYTHON_SOURCE_DIR=$(pwd)
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
-      - name: Configure Python
-        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
+      - name: Mac/Linux Configure Python
+        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
+          export PYTHON_INSTALL_DIR="${HOME}/python"
+          mkdir -p "${PYTHON_INSTALL_DIR}"
+          echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
           cd "${PYTHON_SOURCE_DIR}"
-          ./configure --with-openssl-rpath=auto \
-                      --with-openssl="/usr/local" \
+          ./configure --with-openssl-rpath="${OPENSSL_INSTALL_DIR}/lib \
+                      --with-openssl="${OPENSSL_INSTALL_DIR}" \
+                      --prefix="${PYTHON_INSTALL_DIR}" \
                       --enable-shared \
                       --with-ensurepip=upgrade \
                       --enable-optimizations \
                       --with-lto
 
-      - name: Build Python
-        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
+      - name: Windows Config/Build/Install Python
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          cd $env:PYTHON_SOURCE_DIR
+          PCbuild\build.bat
+
+      - name: Mac/Linux Build Python
+        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
-          make -j$(nproc)
+          $MAKE -j$(nproc)
           
-      - name: Install Python
-        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
+      - name: Mac/Linux Install Python
+        if: matrix.os != 'windows-latest'  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
-          sudo make install
+          $MAKE install
           
-      - name: Set PYTHON and PIP variables for compiled Python
-        if: matrix.python == ''
-        run: |
-          echo "PYTHON=/usr/local/bin/python3" >> $GITHUB_ENV
-          echo "PIP=/usr/local/bin/pip3" >> $GITHUB_ENV
-  
       - name: Run Python
         run: |
-          "${PYTHON}" helloworld.py
+          "${PYTHON_INSTALL_DIR}/bin/python3" helloworld.py
           
       - name: Install PyInstaller and StaticX
         run: |
