@@ -5,7 +5,11 @@ on: [push, pull_request]
 defaults:
   run:
     shell: bash
-  
+
+env:
+  OPENSSL_VERSION: "3.0.0"
+  PYTHON_VERSION: "3.10.0"
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -14,13 +18,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-18.04
-            mid: 0
           - os: ubuntu-20.04
             mid: 1
+          - os: macos-10.15
+            mid: 2
+          - os: windows-latest
+            mid: 3
 
     steps:
-
       - uses: actions/checkout@master
         with:
           persist-credentials: false
@@ -34,53 +39,82 @@ jobs:
           path: |
             ~/python
             ~/ssl
-          key: ${{ matrix.os }}-${{ matrix.mid }}-20211029
+          key: ${{ matrix.os }}-${{ matrix.mid }}-20211030
 
       - name: Set compiled Python/SSL env variables
-        if: matrix.python == ''
+        if: matrix.os == 'ubuntu-20.04'
         run: |
-          echo "LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=/usr/local/lib" >> $GITHUB_ENV
           
       - name: Download OpenSSL
-        if: matrix.python == '' && steps.cache-python.outputs.cache-hit != 'true'
+        if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
-          url="https://www.openssl.org/source/openssl-3.0.0.tar.gz"
+          url="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
           echo "Downloading ${url}..."
           curl -o openssl.tar.gz -s "${url}"
 
       - name: Extracting OpenSSL
-        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
+        if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
           tar xf openssl.tar.gz
           mv openssl-*/ openssl/
 
-      - name: Config OpenSSL
-        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
+      - name: Unix Config OpenSSL
+        if: if matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          cd ~
+          cd "${HOME}"
+          mkdir ssl
+          OPENSSL_INSTALL_DIR= "${HOME}/ssl"
           OPENSSL_SOURCE_DIR=~/openssl
           cd $OPENSSL_SOURCE_DIR
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
-          ./Configure --libdir=lib
+          echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
+          echo "MAKE=make" >> $GITHUB_ENV
+          ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}"
+
+      - name: Windows Config  OpenSSL
+        if: matrix.os == 'windows-latest'
+        shell: powershell
+        run: |
+          choco install nasm
+          cd ~
+          New-Item -Path "~" -Name ssl -ItemType "directory"
+          $env:OPENSSL_INSTALL_DIR = Resolve-Path -Path "$HOME/ssl"
+          cd "openssl-$env:BUILD_OPENSSL_VERSION"
+          $env:OPENSSL_SOURCE_DIR=$(pwd)
+          $env:PATH="$ENV:PATH;c:\Program Files\NASM\"
+          cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && set MAKE=nmake && set > %temp%\vcvars.txt'
+          Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
+           if ($_ -match "^(.*?)=(.*)$") {
+             Set-Content "env:\$($matches[1])" $matches[2]
+             Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
+           }
+          }
+          perl Configure VC-WIN64A shared --prefix="$env:OPENSSL_INSTALL_DIR"
+
+      - name: Rename GNU link on Windows
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+         mv /usr/bin/link /usr/bin/gnulink
 
       - name: Make OpenSSL
-        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
+        if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
-          make -j $(nproc)
+          $MAKE -j$(nproc)
 
       - name: Install OpenSSL
-        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
+        if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           sudo make install
 
       - name: Run OpenSSL
-        if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          "/usr/local/bin/openssl" version
+          "${OPENSSL_INSTALL_DIR}/bin/openssl" version
 
       - name: Download Python
         if: matrix.python == ''  && steps.cache-python.outputs.cache-hit != 'true'
