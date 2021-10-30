@@ -54,6 +54,7 @@ jobs:
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
           echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:${PYTHON_INSTALL_DIR}/lib" >> $GITHUB_ENV
 
       - name: PowerShell Env Variables
         if: matrix.os == 'windows-latest'
@@ -92,10 +93,6 @@ jobs:
           echo "OPENSSL_MAKE_OPTS=-j$(nproc)" >> $GITHUB_ENV
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}"
 
-      - name: Ubuntu Set compiled Python/SSL env variables
-        if: matrix.os == 'ubuntu-20.04'
-        run: echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:${HOME}/python/lib" >> $GITHUB_ENV
-
       - name: Windows Config OpenSSL
         if: matrix.os == 'windows-latest'
         shell: powershell
@@ -109,13 +106,13 @@ jobs:
              Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
            }
           }
+          cd "$PS_OPENSSL_SOURCE_DIR"
           perl Configure VC-WIN64A shared --prefix="$env:PS_OPENSSL_INSTALL_DIR"
 
       - name: Rename GNU link on Windows
         if: matrix.os == 'windows-latest'
         shell: bash
-        run: |
-         mv /usr/bin/link /usr/bin/gnulink
+        run: mv /usr/bin/link /usr/bin/gnulink
 
       - name: Make OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
