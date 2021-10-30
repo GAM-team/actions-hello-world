@@ -50,7 +50,6 @@ jobs:
           OPENSSL_SOURCE_DIR="${HOME}/openssl"
           PYTHON_INSTALL_DIR="${HOME}/python"
           PYTHON_SOURCE_DIR="${HOME}/Python-${PYTHON_VERSION}"
-          cd $OPENSSL_SOURCE_DIR
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
