@@ -129,7 +129,7 @@ jobs:
           mkdir -p "${PYTHON_INSTALL_DIR}"
           echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
           cd "${PYTHON_SOURCE_DIR}"
-          ./configure --with-openssl-rpath="${OPENSSL_INSTALL_DIR}/lib \
+          ./configure --with-openssl-rpath="${OPENSSL_INSTALL_DIR}/lib" \
                       --with-openssl="${OPENSSL_INSTALL_DIR}" \
                       --prefix="${PYTHON_INSTALL_DIR}" \
                       --enable-shared \
