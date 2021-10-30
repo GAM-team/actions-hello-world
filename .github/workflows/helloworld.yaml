@@ -19,11 +19,8 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
-            mid: 1
           - os: macos-10.15
-            mid: 2
           - os: windows-latest
-            mid: 3
 
     steps:
       - uses: actions/checkout@master
@@ -40,11 +37,6 @@ jobs:
             ~/python
             ~/ssl
           key: ${{ matrix.os }}-${{ matrix.mid }}-20211030
-
-      - name: Set compiled Python/SSL env variables
-        if: matrix.os == 'ubuntu-20.04'
-        run: |
-          echo "LD_LIBRARY_PATH=/usr/local/lib" >> $GITHUB_ENV
           
       - name: Download OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
@@ -71,7 +63,12 @@ jobs:
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
           echo "MAKE=make" >> $GITHUB_ENV
+          echo "OPENSSL_MAKE_OPTS=-j$(nproc)" >> $GITHUB_ENV
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}"
+
+      - name: Ubuntu Set compiled Python/SSL env variables
+        if: matrix.os == 'ubuntu-20.04'
+        run: echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib" >> $GITHUB_ENV
 
       - name: Windows Config OpenSSL
         if: matrix.os == 'windows-latest'
@@ -103,7 +100,7 @@ jobs:
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
-          $MAKE -j$(nproc)
+          $MAKE $OPENSSL_MAKE_OPTS
 
       - name: Install OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
