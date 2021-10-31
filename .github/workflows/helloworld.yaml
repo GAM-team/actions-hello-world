@@ -106,7 +106,7 @@ jobs:
              Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
            }
           }
-          cd "$PS_OPENSSL_SOURCE_DIR
+          cd "$PS_OPENSSL_SOURCE_DIR"
           pwd
           perl ./Configure VC-WIN64A --prefix="$env:PS_OPENSSL_INSTALL_DIR"
 
@@ -196,7 +196,7 @@ jobs:
       - name: Make Static helloworld
         if: matrix.os == 'ubuntu-20.04'
         run: |
-          "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx --loglevel DEBUG --debug dist/helloworld dist/helloworld-staticx
+          "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx dist/helloworld dist/helloworld-staticx
           
       - name: Run StaticX-ed helloworld
         if: matrix.os == 'ubuntu-20.04'
