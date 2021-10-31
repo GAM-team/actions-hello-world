@@ -34,7 +34,6 @@ jobs:
       - name: Cache Python build
         id: cache-python
         uses: actions/cache@v2
-        if: matrix.python == ''
         with:
           path: |
             ~/python
@@ -49,7 +48,7 @@ jobs:
           OPENSSL_INSTALL_DIR="${HOME}/ssl"
           OPENSSL_SOURCE_DIR="${HOME}/openssl"
           PYTHON_INSTALL_DIR="${HOME}/python"
-          PYTHON_SOURCE_DIR="${HOME}/Python-${PYTHON_VERSION}"
+          PYTHON_SOURCE_DIR="${HOME}/cpython"
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
@@ -63,7 +62,7 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$HOME\ssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$HOME\openssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$HOME\python"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_SOURCE_DIR=$HOME\Python-$env:PYTHON_VERSION"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_SOURCE_DIR=$HOME\cpython"
 
       - name: Download OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
@@ -137,10 +136,10 @@ jobs:
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
-          curl -o python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz"
-          tar xf python.tar.xz
-          cd "Python-${PYTHON_VERSION}"
+          git clone https://github.com/python/cpython.git
+          cd cpython
           PYTHON_SOURCE_DIR=$(pwd)
+          git checkout "v${PYTHON_VERSION}"
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
       - name: Mac/Linux Configure Python
@@ -184,26 +183,25 @@ jobs:
         run: |
           "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade pip
           "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade pyinstaller
+
+      - name: Linux install patchelf/staticx
+        run: |
           "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade patchelf-wrapper
           "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade staticx
  
       - name: Compile helloworld with PyInstaller
-        run: |
-          "${PYTHON_INSTALL_DIR}/bin/python3" -m PyInstaller -F helloworld.py
+        run: "${PYTHON_INSTALL_DIR}/bin/python3" -m PyInstaller -F helloworld.py
           
       - name: Run PyInstaller-compiled helloworld
-        run: |
-          dist/helloworld
+        run: dist/helloworld
           
-      - name: Make Static helloworld
+      - name: Linux Make Static helloworld
         if: matrix.os == 'ubuntu-20.04'
-        run: |
-          "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx dist/helloworld dist/helloworld-staticx
+        run: "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx dist/helloworld dist/helloworld-staticx
           
-      - name: Run StaticX-ed helloworld
+      - name: Linux Run StaticX-ed helloworld
         if: matrix.os == 'ubuntu-20.04'
-        run: |
-          dist/helloworld-staticx
+        run: dist/helloworld-staticx
 
       - name: Archive artifacts
         if: always()
@@ -211,4 +209,3 @@ jobs:
         with:
           name: helloworld-binaries ${{ matrix.mid }}
           path: dist/helloworld*
-          
