@@ -190,14 +190,16 @@ jobs:
           "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade staticx
  
       - name: Compile helloworld with PyInstaller
-        run: "${PYTHON_INSTALL_DIR}/bin/python3" -m PyInstaller -F helloworld.py
+        run: |
+          "${PYTHON_INSTALL_DIR}/bin/python3" -m PyInstaller -F helloworld.py
           
       - name: Run PyInstaller-compiled helloworld
         run: dist/helloworld
           
       - name: Linux Make Static helloworld
         if: matrix.os == 'ubuntu-20.04'
-        run: "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx dist/helloworld dist/helloworld-staticx
+        run: |
+          "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx dist/helloworld dist/helloworld-staticx
           
       - name: Linux Run StaticX-ed helloworld
         if: matrix.os == 'ubuntu-20.04'
