@@ -60,10 +60,10 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$HOME/ssl"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$HOME/openssl"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$HOME/python"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$HOME/Python-$PYTHON_VERSION"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$HOME\ssl"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$HOME\openssl"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$HOME\python"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$HOME\Python-$PYTHON_VERSION"
 
       - name: Download OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
