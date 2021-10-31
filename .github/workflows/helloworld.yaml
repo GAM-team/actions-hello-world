@@ -100,9 +100,9 @@ jobs:
           choco install nasm
           $env:PATH="$ENV:PATH;c:\Program Files\NASM\"
           echo "PROGRAM FILES"
-          dir "C:\Program Files\"
+          dir "C:\Program Files\Microsoft Visual Studio\"
           echo "PROGRAM FILES x86"
-          dir "C:\Program Files (x86)"
+          dir "C:\Program Files (x86)\Microsoft Visual Studio\"
           cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && set MAKE=nmake && set > %temp%\vcvars.txt'
           Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
            if ($_ -match "^(.*?)=(.*)$") {
