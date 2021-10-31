@@ -106,7 +106,9 @@ jobs:
              Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
            }
           }
-          cd "$PS_OPENSSL_SOURCE_DIR"
+          pwd
+          echo $env:PS_OPENSSL_SOURCE_DIR
+          cd $env:PS_OPENSSL_SOURCE_DIR
           pwd
           perl ./Configure VC-WIN64A --prefix="$env:PS_OPENSSL_INSTALL_DIR"
 
