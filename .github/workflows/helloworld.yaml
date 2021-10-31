@@ -22,7 +22,7 @@ jobs:
             mid: 0
           - os: macos-10.15
             mid: 1
-          - os: windows-latest
+          - os: windows-2022
             mid: 2
 
     steps:
@@ -57,13 +57,13 @@ jobs:
           echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:${PYTHON_INSTALL_DIR}/lib" >> $GITHUB_ENV
 
       - name: PowerShell Env Variables
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2022'
         shell: powershell
         run: |
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$HOME\ssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$HOME\openssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$HOME\python"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$HOME\Python-$PYTHON_VERSION"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_SOURCE_DIR=$HOME\Python-$PYTHON_VERSION"
 
       - name: Download OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
@@ -81,7 +81,7 @@ jobs:
           mv openssl-*/ openssl/
 
       - name: Unix Config OpenSSL
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
           OPENSSL_INSTALL_DIR="${HOME}/ssl"
@@ -94,7 +94,7 @@ jobs:
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}"
 
       - name: Windows Config OpenSSL
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2022'
         shell: powershell
         run: |
           choco install nasm
@@ -113,7 +113,7 @@ jobs:
           perl ./Configure VC-WIN64A --prefix="$env:PS_OPENSSL_INSTALL_DIR"
 
       - name: Rename GNU link on Windows
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2022'
         shell: bash
         run: mv /usr/bin/link /usr/bin/gnulink
 
@@ -144,7 +144,7 @@ jobs:
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
       - name: Mac/Linux Configure Python
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           export PYTHON_INSTALL_DIR="${HOME}/python"
           mkdir -p "${PYTHON_INSTALL_DIR}"
@@ -158,20 +158,20 @@ jobs:
                       --with-lto
 
       - name: Windows Config/Build/Install Python
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2022'
         shell: powershell
         run: |
           cd $env:PS_PYTHON_SOURCE_DIR
           PCbuild\build.bat
 
       - name: Mac/Linux Build Python
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           $MAKE -j$(nproc)
           
       - name: Mac/Linux Install Python
-        if: matrix.os != 'windows-latest'  && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022'  && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           $MAKE install
