@@ -208,6 +208,7 @@ jobs:
       - name: Install PyInstaller and StaticX
         run: |
           "${PYTHON}" -m pip install --upgrade pip
+          "${PYTHON}" -m pip install --upgrade setuptools
           "${PYTHON}" -m pip install --upgrade pyinstaller
 
       - name: Linux install patchelf/staticx
