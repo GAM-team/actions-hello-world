@@ -175,9 +175,6 @@ jobs:
           Invoke-Expression "$env:PYTHON -V"
           Invoke-Expression "$env:PIP install --upgrade --user pip"
           Invoke-Expression "$env:PIP install --upgrade --user sphinx"
-          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
-          Add-Content -Path $env:GITHUB_ENV -Value "PIP=${env:PIP}"
-          Add-Content -Path $env:GITHUB_ENV -Value "PYTHONPATH=${env:PYTHONPATH}"
           $env:SPHINXBUILD = (gcm sphinx-build).Path
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
@@ -189,6 +186,8 @@ jobs:
           dir release\
           dir release\amd64\
           dir release\amd64\binaries\
+          $env:PYTHON = Resolve-Path -Path release\amd64\binaries\python.exe
+          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
 
       - name: Mac/Linux Build Python
         if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
@@ -197,28 +196,30 @@ jobs:
           $MAKE -j$(nproc)
           
       - name: Mac/Linux Install Python
-        if: matrix.os != 'windows-latest'  && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-latest'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           $MAKE install
-          
+          PYTHON="${PYTHON_INSTALL_DIR}/bin/python3"
+          echo "PYTHON=${PYTHON}" >> $GITHUB_ENV
+
       - name: Run Python
         run: |
-          "${PYTHON_INSTALL_DIR}/bin/python3" helloworld.py
+          "${PYTHON}" helloworld.py
           
       - name: Install PyInstaller and StaticX
         run: |
-          "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade pip
-          "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade pyinstaller
+          "${PYTHON}" -m pip install --upgrade pip
+          "${PYTHON}" -m pip install --upgrade pyinstaller
 
       - name: Linux install patchelf/staticx
         run: |
-          "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade patchelf-wrapper
-          "${PYTHON_INSTALL_DIR}/bin/pip3" install --upgrade staticx
+          "${PYTHON}" -m pip install --upgrade patchelf-wrapper
+          "${PYTHON}" -m pip install --upgrade staticx
  
       - name: Compile helloworld with PyInstaller
         run: |
-          "${PYTHON_INSTALL_DIR}/bin/python3" -m PyInstaller -F helloworld.py
+          "${PYTHON}" -m PyInstaller -F helloworld.py
           
       - name: Run PyInstaller-compiled helloworld
         run: dist/helloworld
