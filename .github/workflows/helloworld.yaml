@@ -167,8 +167,8 @@ jobs:
           $env:scriptpath = "$env:PYTHONPATH\Scripts"
           echo "PYTHONPATH: $env:PYTHONPATH"
           Invoke-Expression "$env:PYTHON -V"
-          Invoke-Expression "$env:PIP install --upgrade pip"
-          Invoke-Expression "$env:PIP install --upgrade sphinx"
+          Invoke-Expression "$env:PIP install --upgrade --user pip"
+          Invoke-Expression "$env:PIP install --upgrade --user sphinx"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
           Add-Content -Path $env:GITHUB_ENV -Value "PIP=${env:PIP}"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHONPATH=${env:PYTHONPATH}"
@@ -177,7 +177,7 @@ jobs:
           Invoke-Expression "$env:SPHINXBUILD --version"
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
           PCBuild\get_externals.bat
-          Tools\msi\buildrelease.bat -x64 --out release --python-exe $env:PYTHON --py-source-path $env:PYTHONPATH --skip-msi --skip-nuget
+          Tools\msi\buildrelease.bat -x64 --out release --skip-msi --skip-nuget
           echo "In release:"
           dir release\
           dir release\$env:installerarch\
