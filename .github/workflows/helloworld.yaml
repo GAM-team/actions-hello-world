@@ -186,7 +186,7 @@ jobs:
           ls externals
           ls externals\openssl-bin-1.1.1l
           ls externals\openssl-bin-1.1.1l\amd64
-          rm externals\openssl-bin-1.1.1l\amd64\*
+          Get-ChildItem -Path externals\openssl-1.1.1l\amd64\ -Include *.* -File -Recurse | foreach { $_.Delete()}
           cp "$HOME\ssl\lib\*" externals\openssl-bin-1.1.1l\amd64\
           ls externals\openssl-bin-1.1.1l\amd64
           Tools\msi\buildrelease.bat -x64 --out release --skip-msi --skip-nuget
