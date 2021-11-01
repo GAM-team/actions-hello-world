@@ -178,7 +178,7 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
           Add-Content -Path $env:GITHUB_ENV -Value "PIP=${env:PIP}"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHONPATH=${env:PYTHONPATH}"
-          $env:SPHINXBUILD = "C:\Users\runneradmin\AppData\Roaming\Python\Python37\Scripts\sphinx-build.exe"
+          $env:SPHINXBUILD = (gcm sphinx-build).Path
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
