@@ -43,8 +43,10 @@ jobs:
         with:
           path: |
             ~/python
+            ~/cpython
             ~/ssl
-          key: ${{ matrix.os }}-${{ matrix.mid }}-20211030
+            ~/openssl
+          key: ${{ matrix.os }}-${{ matrix.mid }}-20211101
 
       - name: Bash Env Variables
         run: |
@@ -181,6 +183,9 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
           $env:DefaultWindowsSDKVersion = "10.0.20348.0"
           PCBuild\get_externals.bat
+          ls externals
+          rm externals\openssl-*\*
+          cp "$HOME\ssl\*" externals\openssl-*\
           Tools\msi\buildrelease.bat -x64 --out release --skip-msi --skip-nuget
           echo "In release:"
           dir release\
