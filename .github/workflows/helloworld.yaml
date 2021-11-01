@@ -60,6 +60,7 @@ jobs:
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
           echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:${PYTHON_INSTALL_DIR}/lib" >> $GITHUB_ENV
+          echo "PYTHON=${PYTHON_INSTALL_DIR}/bin/python3" >> $GITHUB_ENV
 
       - name: PowerShell Env Variables
         if: matrix.os == 'windows-latest'
@@ -170,7 +171,6 @@ jobs:
           $env:PYTHON = (gcm python).Path
           $env:PIP = (gcm pip).Path
           $env:PYTHONPATH = Resolve-Path -Path $env:PYTHON\..
-          $env:scriptpath = "$env:PYTHONPATH\Scripts"
           echo "PYTHONPATH: $env:PYTHONPATH"
           Invoke-Expression "$env:PYTHON -V"
           Invoke-Expression "$env:PIP install --upgrade --user pip"
@@ -196,12 +196,10 @@ jobs:
           $MAKE -j$(nproc)
           
       - name: Mac/Linux Install Python
-        if: matrix.os != 'windows-latest'
+        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           $MAKE install
-          PYTHON="${PYTHON_INSTALL_DIR}/bin/python3"
-          echo "PYTHON=${PYTHON}" >> $GITHUB_ENV
 
       - name: Run Python
         run: |
