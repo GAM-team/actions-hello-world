@@ -205,16 +205,11 @@ jobs:
         run: |
           "${PYTHON}" helloworld.py
           
-      - name: Install PyInstaller and StaticX
+      - name: Install PyInstaller
         run: |
           "${PYTHON}" -m pip install --upgrade pip
           "${PYTHON}" -m pip install --upgrade setuptools
           "${PYTHON}" -m pip install --upgrade pyinstaller
-
-      - name: Linux install patchelf/staticx
-        run: |
-          "${PYTHON}" -m pip install --upgrade patchelf-wrapper
-          "${PYTHON}" -m pip install --upgrade staticx
  
       - name: Compile helloworld with PyInstaller
         run: |
@@ -222,7 +217,13 @@ jobs:
           
       - name: Run PyInstaller-compiled helloworld
         run: dist/helloworld
-          
+
+      - name: Linux install patchelf/staticx
+        if: matrix.os == 'ubuntu-20.04'
+        run: |
+          "${PYTHON}" -m pip install --upgrade patchelf-wrapper
+          "${PYTHON}" -m pip install --upgrade staticx
+
       - name: Linux Make Static helloworld
         if: matrix.os == 'ubuntu-20.04'
         run: |
