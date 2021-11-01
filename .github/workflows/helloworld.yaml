@@ -161,7 +161,27 @@ jobs:
         shell: powershell
         run: |
           cd $env:PS_PYTHON_SOURCE_DIR
-          PCbuild\build.bat -e -p x64
+          $env:PYTHON = (gcm python).Path
+          $env:PIP = (gcm pip).Path
+          $env:PYTHONPATH = Resolve-Path -Path $env:PYTHON\..
+          $env:scriptpath = "$env:PYTHONPATH\Scripts"
+          echo "PYTHONPATH: $env:PYTHONPATH"
+          Invoke-Expression "$env:PYTHON -V"
+          Invoke-Expression "$env:PIP install --upgrade pip"
+          Invoke-Expression "$env:PIP install --upgrade sphinx"
+          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
+          Add-Content -Path $env:GITHUB_ENV -Value "PIP=${env:PIP}"
+          Add-Content -Path $env:GITHUB_ENV -Value "PYTHONPATH=${env:PYTHONPATH}"
+          $env:SPHINXBUILD = "$env:scriptpath\sphinx-build.exe"
+          echo "Sphinx Build location: $env:SPHINXBUILD"
+          Invoke-Expression "$env:SPHINXBUILD --version"
+          Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
+          PCBuild\get_externals.bat
+          Tools\msi\buildrelease.bat -x64 --out release --python-exe $env:PYTHON --py-source-path $env:PYTHONPATH --skip-msi --skip-nuget
+          echo "In release:"
+          dir release\
+          dir release\$env:installerarch\
+          dir release\$env:installerarch\binaries\
 
       - name: Mac/Linux Build Python
         if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
