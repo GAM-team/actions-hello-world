@@ -182,6 +182,7 @@ jobs:
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
+          $env:DefaultWindowsSDKVersion = "10.0.20348.0"
           PCBuild\get_externals.bat
           Tools\msi\buildrelease.bat -x64 --out release --skip-msi --skip-nuget
           echo "In release:"
