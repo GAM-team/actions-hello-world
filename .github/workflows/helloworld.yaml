@@ -31,6 +31,12 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
+      - name: Windows install newer Python
+        uses: actions/setup-python@v2
+        if: matrix.os == 'windows-latest'
+        with:
+          python-version: "3.10"
+          
       - name: Cache Python build
         id: cache-python
         uses: actions/cache@v2
