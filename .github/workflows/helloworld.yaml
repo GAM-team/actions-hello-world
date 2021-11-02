@@ -186,9 +186,14 @@ jobs:
           ls externals
           ls externals\openssl-bin-1.1.1l
           ls externals\openssl-bin-1.1.1l\amd64
+          echo "delete..."
           Get-ChildItem -Path externals\openssl-bin-1.1.1l\amd64\ -Include *.* -File -Recurse | foreach { $_.Delete()}
+          echo "copy..."
           cp "$HOME\ssl\lib\*" externals\openssl-bin-1.1.1l\amd64\
+          echo "ls afterwards..."
           ls externals\openssl-bin-1.1.1l\amd64
+          mkdir -p externals\openssl-bin-1.1.1l\amd64\include\openssl
+          cp "$HOME\ssl\lib\include\openssl\*" externals\openssl-bin-1.1.1l\amd64\include\openssl
           Tools\msi\buildrelease.bat -x64 --out release --skip-msi --skip-nuget
           echo "In release:"
           dir release\
