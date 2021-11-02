@@ -183,16 +183,16 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
           $env:DefaultWindowsSDKVersion = "10.0.20348.0"
           PCBuild\get_externals.bat
-          ls externals
           ls externals\openssl-bin-1.1.1l
-          ls externals\openssl-bin-1.1.1l\amd64
+          gci -r -Path externals\openssl-bin-1.1.1l | select -exp FullName
           echo "delete..."
           Get-ChildItem -Path externals\openssl-bin-1.1.1l\amd64\ -Include *.* -File -Recurse | foreach { $_.Delete()}
           echo "copy..."
           cp "$HOME\ssl\lib\*" externals\openssl-bin-1.1.1l\amd64\
+          cp "$HOME\ssl\bin\*" externals\openssl-bin-1.1.1l\amd64\
           echo "ls afterwards..."
           ls externals\openssl-bin-1.1.1l\amd64
-          cp "$HOME\ssl\lib\include\openssl\*" externals\openssl-bin-1.1.1l\amd64\include\openssl
+          cp "$HOME\ssl\lib\include\openssl\*" externals\openssl-bin-1.1.1l\amd64\include
           Tools\msi\buildrelease.bat -x64 --out release --skip-msi --skip-nuget
           echo "In release:"
           dir release\
