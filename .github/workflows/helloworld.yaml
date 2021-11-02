@@ -182,8 +182,9 @@ jobs:
           echo "ssl/include"
           gci -r -Path "$HOME/ssl/include" | select -exp FullName
           cp "$HOME\ssl\include\openssl\*" externals\openssl-bin-1.1.1l\amd64\include\openssl\
-          echo "PC BUILD"
-          ls "$env:GITHUB_WORKSPACE"
+          cp "$HOME\ssl\include\openssl\applink.c" externals\openssl-bin-1.1.1l\amd64\include\
+          echo "INCLUDE OPENSSL"
+          gci -r -Path externals\openssl-bin-1.1.1l\amd64\include\openssl\ | select -exp FullName
           cp "$env:GITHUB_WORKSPACE/openssl.props" PCBuild\
           gci -r -Path PCBuild\ | select -exp FullName
           Tools\msi\buildrelease.bat -x64 --out release --skip-msi --skip-nuget
