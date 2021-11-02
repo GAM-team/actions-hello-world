@@ -1,5 +1,5 @@
 import os, sys
-from platform import python_version
+import platform
 from ssl import OPENSSL_VERSION
 
 if os.environ.get('STATICX_PROG_PATH', False):
@@ -9,5 +9,11 @@ elif getattr(sys, 'frozen', False):
 else:
     execution_type = 'pythonsource'
 
-print(f'Python {python_version()} {OPENSSL_VERSION}')
+proc = platform.processor()
+if not proc:
+    proc = platform.machine()
+
+print(f'Python {platform.python_version()} {OPENSSL_VERSION}')
 print(f'Execution type: {execution_type}')
+print(f'Platform: {platform.platform()}')
+print(f'Processor: {proc}')
