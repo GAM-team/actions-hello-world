@@ -194,7 +194,7 @@ jobs:
           ls externals\openssl-bin-1.1.1l\amd64
           echo "ssl/include"
           gci -r -Path "$HOME/ssl/include" | select -exp FullName
-          cp "$HOME\ssl\include\*" externals\openssl-bin-1.1.1l\amd64\include
+          cp "$HOME\ssl\include\openssl\*" externals\openssl-bin-1.1.1l\amd64\include\openssl\
           Tools\msi\buildrelease.bat -x64 --out release --skip-msi --skip-nuget
           echo "In release:"
           dir release\
