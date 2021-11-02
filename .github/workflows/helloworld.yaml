@@ -214,6 +214,8 @@ jobs:
           
       - name: Install PyInstaller
         run: |
+          curl -O https://bootstrap.pypa.io/get-pip.py
+          "${PYTHON}" get-pip.py
           "${PYTHON}" -m pip install --upgrade pip
           "${PYTHON}" -m pip install --upgrade setuptools
           "${PYTHON}" -m pip install --upgrade pyinstaller
