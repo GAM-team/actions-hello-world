@@ -7,7 +7,7 @@ defaults:
     shell: bash
 
 env:
-  OPENSSL_VERSION: "3.0.0"
+  OPENSSL_VERSION: "3.0"
   PYTHON_VERSION: "3.10.0"
 
 jobs:
@@ -46,7 +46,7 @@ jobs:
             ~/cpython
             ~/ssl
             ~/openssl
-          key: ${{ matrix.os }}-${{ matrix.mid }}-20211101
+          key: ${{ matrix.os }}-${{ matrix.mid }}-20211102
 
       - name: Bash Env Variables
         run: |
@@ -77,26 +77,15 @@ jobs:
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
-          url="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
-          echo "Downloading ${url}..."
-          curl -o openssl.tar.gz -s "${url}"
-
-      - name: Extracting OpenSSL
-        if: steps.cache-python.outputs.cache-hit != 'true'
-        run: |
-          cd "${HOME}"
-          tar xf openssl.tar.gz
-          mv openssl-*/ openssl/
+          git clone https://github.com/openssl/openssl.git
+          cd openssl
+          git checkout "openssl-${OPENSSL_VERSION}"
 
       - name: Unix Config OpenSSL
         if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
-          OPENSSL_INSTALL_DIR="${HOME}/ssl"
-          OPENSSL_SOURCE_DIR="${HOME}/openssl"
-          cd $OPENSSL_SOURCE_DIR
-          echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
-          echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
+          cd "${OPENSSL_SOURCE_DIR}"
           echo "MAKE=make" >> $GITHUB_ENV
           echo "OPENSSL_MAKE_OPTS=-j$(nproc)" >> $GITHUB_ENV
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}"
