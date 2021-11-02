@@ -7,15 +7,13 @@ defaults:
     shell: bash
 
 env:
-  OPENSSL_VERSION: "3.0"
-  PYTHON_VERSION: "3.10.0"
+  OPENSSL_VERSION: "openssl-3.0"
+  PYTHON_VERSION: "3.10"
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
     strategy:
-      fail-fast: false
       matrix:
         include:
           - os: ubuntu-20.04
@@ -46,7 +44,7 @@ jobs:
             ~/cpython
             ~/ssl
             ~/openssl
-          key: ${{ matrix.os }}-${{ matrix.mid }}-20211102
+          key: ${{ matrix.os }}-${{ matrix.mid }}-20211102-01
 
       - name: Bash Env Variables
         run: |
@@ -80,7 +78,7 @@ jobs:
           cd "${HOME}"
           git clone https://github.com/openssl/openssl.git
           cd openssl
-          git checkout "openssl-${OPENSSL_VERSION}"
+          git checkout "${OPENSSL_VERSION}"
 
       - name: Unix Config OpenSSL
         if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
@@ -138,7 +136,7 @@ jobs:
           git clone https://github.com/python/cpython.git
           cd cpython
           PYTHON_SOURCE_DIR=$(pwd)
-          git checkout "v${PYTHON_VERSION}"
+          git checkout "${PYTHON_VERSION}"
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
       - name: Mac/Linux Configure Python
