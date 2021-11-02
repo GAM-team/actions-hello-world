@@ -192,7 +192,8 @@ jobs:
           cp "$HOME\ssl\lib\*" externals\openssl-bin-1.1.1l\amd64\
           echo "ls afterwards..."
           ls externals\openssl-bin-1.1.1l\amd64
-          mkdir -p externals\openssl-bin-1.1.1l\amd64\include\openssl
+          mkdir externals\openssl-bin-1.1.1l\amd64\include
+          mkdir externals\openssl-bin-1.1.1l\amd64\include\openssl
           cp "$HOME\ssl\lib\include\openssl\*" externals\openssl-bin-1.1.1l\amd64\include\openssl
           Tools\msi\buildrelease.bat -x64 --out release --skip-msi --skip-nuget
           echo "In release:"
