@@ -72,7 +72,7 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$HOME\openssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$HOME\python"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_SOURCE_DIR=$HOME\cpython"
-          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=$PS_PYTHON_SOURCE_DIR\release\amd64\binaries\python.exe"
+          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=$env:PYTHON_SOURCE_DIR/release/amd64/binaries/python.exe"
 
       - name: Download OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
