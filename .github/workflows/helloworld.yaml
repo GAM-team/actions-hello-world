@@ -226,9 +226,9 @@ jobs:
              rm -rf PyInstaller/bootloader/*-*/*
              cd bootloader
              export DefaultWindowsSDKVersion="10.0.20348.0"
-             export TARGETARCh=$($PYTHON -c 'import struct; print(struct.calcsize("P")*8)')bit
-             $python ./waf all --target-arch=$TARGETARCH
-             cat build/config.log
+             export TARGETARCh="$(${PYTHON} -c 'import struct; print(struct.calcsize("P")*8)')bit"
+             echo "Using ${TARGETARCH} target arch..."
+             "${PYTHON}" ./waf all --target-arch="${TARGETARCH}"
              cd ..
              "${PYTHON}" -m pip install .
 
