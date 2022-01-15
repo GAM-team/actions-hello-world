@@ -170,18 +170,18 @@ jobs:
           $env:DefaultWindowsSDKVersion = "10.0.20348.0"
           PCBuild\get_externals.bat
           echo "delete..."
-          Get-ChildItem -Path externals\openssl-bin-1.1.1l\amd64\ -Include *.* -File -Recurse | foreach { $_.Delete()}
+          Get-ChildItem -Path externals\openssl-bin-1.1.1m\amd64\ -Include *.* -File -Recurse | foreach { $_.Delete()}
           echo "copy..."
-          cp "$HOME\ssl\lib\*" externals\openssl-bin-1.1.1l\amd64\
-          cp "$HOME\ssl\bin\*" externals\openssl-bin-1.1.1l\amd64\
+          cp "$HOME\ssl\lib\*" externals\openssl-bin-1.1.1m\amd64\
+          cp "$HOME\ssl\bin\*" externals\openssl-bin-1.1.1m\amd64\
           echo "ls afterwards..."
-          ls externals\openssl-bin-1.1.1l\amd64
+          ls externals\openssl-bin-1.1.1m\amd64
           echo "ssl/include"
           gci -r -Path "$HOME/ssl/include" | select -exp FullName
-          cp "$HOME\ssl\include\openssl\*" externals\openssl-bin-1.1.1l\amd64\include\openssl\
-          cp "$HOME\ssl\include\openssl\applink.c" externals\openssl-bin-1.1.1l\amd64\include\
+          cp "$HOME\ssl\include\openssl\*" externals\openssl-bin-1.1.1m\amd64\include\openssl\
+          cp "$HOME\ssl\include\openssl\applink.c" externals\openssl-bin-1.1.1m\amd64\include\
           echo "INCLUDE OPENSSL"
-          gci -r -Path externals\openssl-bin-1.1.1l\amd64\include\openssl\ | select -exp FullName
+          gci -r -Path externals\openssl-bin-1.1.1m\amd64\include\openssl\ | select -exp FullName
           cp "$env:GITHUB_WORKSPACE/openssl.props" PCBuild\
           gci -r -Path PCBuild\ | select -exp FullName
           Tools\msi\buildrelease.bat -x64 --out release --skip-msi --skip-nuget
