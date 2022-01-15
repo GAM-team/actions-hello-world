@@ -6,10 +6,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  OPENSSL_VERSION: "openssl-3.0"
-  PYTHON_VERSION: "3.10"
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -29,7 +25,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Windows install newer Python
+      - name: Windows install newer Python (needed for building Python)
         uses: actions/setup-python@v2
         if: matrix.os == 'windows-latest'
         with:
@@ -78,7 +74,8 @@ jobs:
           cd "${HOME}"
           git clone https://github.com/openssl/openssl.git
           cd openssl
-          git checkout "${OPENSSL_VERSION}"
+          export latest_stable=$(git tag --list openssl-* | grep -v alpha | grep -v beta | sort -Vr | head -n1)
+          git checkout "${latest_stable}"
 
       - name: Unix Config OpenSSL
         if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
@@ -136,7 +133,8 @@ jobs:
           git clone https://github.com/python/cpython.git
           cd cpython
           PYTHON_SOURCE_DIR=$(pwd)
-          git checkout "${PYTHON_VERSION}"
+          export latest_stable=$(git tag --list | grep -v a | grep -v rc | grep -v b | sort -Vr | head -n1)
+          git checkout "${latest_stable}"
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
       - name: Mac/Linux Configure Python
