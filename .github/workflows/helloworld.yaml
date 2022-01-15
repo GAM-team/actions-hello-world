@@ -18,6 +18,10 @@ jobs:
             mid: 1
           - os: windows-latest
             mid: 2
+          - os: [self-hosted, linux, arm64]
+            jid: 3
+          - os: [self-hosted, linux, arm]
+            jid: 4
 
     steps:
       - uses: actions/checkout@master
