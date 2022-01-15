@@ -226,14 +226,11 @@ jobs:
              rm -rf PyInstaller/bootloader/*-*/*
              cd bootloader
              export DefaultWindowsSDKVersion="10.0.20348.0"
-             export TARGETARCh=$($python -c 'import struct; print(struct.calcsize("P")*8)')bit
-             if [ $GAMOS == "macos" ]; then
-               UNIVERsAL="--universal2"
-             fi
-             $python ./waf all --target-arch=$TARGETARCH $UNIVERSAL
+             export TARGETARCh=$($PYTHON -c 'import struct; print(struct.calcsize("P")*8)')bit
+             $python ./waf all --target-arch=$TARGETARCH
              cat build/config.log
              cd ..
-             $pip install . $pipoptions
+             "${PYTHON}" -m pip install .
 
       - name: Compile helloworld with PyInstaller
         run: |
