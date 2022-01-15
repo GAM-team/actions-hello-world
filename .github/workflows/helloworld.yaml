@@ -68,7 +68,7 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_SOURCE_DIR=$HOME\cpython"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=$env:PYTHON_SOURCE_DIR/release/amd64/binaries/python.exe"
 
-      - name: Download OpenSSL
+      - name: Get latest stable OpenSSL source
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
@@ -126,7 +126,7 @@ jobs:
         run: |
           "${OPENSSL_INSTALL_DIR}/bin/openssl" version
 
-      - name: Download Python
+      - name: Get latest stable Python source
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
@@ -208,17 +208,36 @@ jobs:
         run: |
           "${PYTHON}" helloworld.py
           
-      - name: Install PyInstaller
+      - name: Upgrade pip, wheel, etc
         run: |
           curl -O https://bootstrap.pypa.io/get-pip.py
           "${PYTHON}" get-pip.py
           "${PYTHON}" -m pip install --upgrade pip
+          "${PYTHON}" -m pip install --upgrade wheel
           "${PYTHON}" -m pip install --upgrade setuptools
-          "${PYTHON}" -m pip install --upgrade pyinstaller
- 
+
+      - name: Install PyInstaller
+        run: |
+             git clone https://github.com/pyinstaller/pyinstaller.git
+             cd pyinstaller
+             export latest_release=$(git tag --list | grep -v dev | grep -v rc | sort -Vr | head -n1)
+             git checkout "${latest_release}"
+             # remove pre-compiled bootloaders so we fail if bootloader compile fails
+             rm -rf PyInstaller/bootloader/*-*/*
+             cd bootloader
+             export DefaultWindowsSDKVersion="10.0.20348.0"
+             export TARGETARCh=$($python -c 'import struct; print(struct.calcsize("P")*8)')bit
+             if [ $GAMOS == "macos" ]; then
+               UNIVERsAL="--universal2"
+             fi
+             $python ./waf all --target-arch=$TARGETARCH $UNIVERSAL
+             cat build/config.log
+             cd ..
+             $pip install . $pipoptions
+
       - name: Compile helloworld with PyInstaller
         run: |
-          "${PYTHON}" -m PyInstaller -F helloworld.py
+          "${PYTHON}" -OO -m PyInstaller -F helloworld.py
           
       - name: Run PyInstaller-compiled helloworld
         run: dist/helloworld
