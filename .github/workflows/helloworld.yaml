@@ -45,7 +45,9 @@ jobs:
         with:
           path: |
             ./python
+            ./cpython
             ./ssl
+            ./openssl
           key: ${{ matrix.mid }}-20220116-01
 
       - name: Bash Env Variables
