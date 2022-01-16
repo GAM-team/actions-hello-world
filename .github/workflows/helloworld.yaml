@@ -60,13 +60,15 @@ jobs:
           BUILDOS=$(uname)
           echo "We are running on ${BUILDOS}"
           if [[ "${BUILDOS}" == "Darwin" ]]; then
-            CPUCOUNT=$(sysctl -n hw.logicalcpu)
+            MAKEOPT="-j$(sysctl -n hw.logicalcpu)"
+          elif [[ "${BUILDOS}" == "Linux" ]]; then
+            MAKEOPT="-j$(nproc)"
           else
-            CPUCOUNT=$(nproc)
+            MAKEOPT=""
           fi
-          echo "We have ${CPUCOUNT} CPUs"
+          echo "We'll run make with: ${MAKEOPT}"
           echo "BUILDOS=${BUILDOS}" >> $GITHUB_ENV
-          echo "CPUCOUNT=${CPUCOUNT}" >> $GITHUB_ENV
+          echo "MAKEOPT=${MAKEOPT}" >> $GITHUB_ENV
           echo "buildbits=${buildbits}" >> $GITHUB_ENV
           echo "mid=${mid}" >> $GITHUB_ENV
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
@@ -131,7 +133,7 @@ jobs:
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
-          $MAKE "-j${CPUCOUNT}"
+          $MAKE "${MAKEOPT}"
 
       - name: Install OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
@@ -208,7 +210,7 @@ jobs:
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
-          $MAKE "-j${CPUCOUNT}"
+          $MAKE "${MAKEOPT}"
           
       - name: Mac/Linux Install Python
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
