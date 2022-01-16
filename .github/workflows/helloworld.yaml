@@ -40,21 +40,18 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/python
-            ~/cpython
-            ~/ssl
-            ~/openssl
-          key: ${{ matrix.os }}-${{ matrix.mid }}-20211102-01
+            ./python
+            ./ssl
+          key: ${{ matrix.mid }}-20220116
 
       - name: Bash Env Variables
         run: |
-          cd "${HOME}"
-          mkdir -p ssl
-          mkdir -p python
-          OPENSSL_INSTALL_DIR="${HOME}/ssl"
-          OPENSSL_SOURCE_DIR="${HOME}/openssl"
-          PYTHON_INSTALL_DIR="${HOME}/python"
-          PYTHON_SOURCE_DIR="${HOME}/cpython"
+          export BASEDIR=$(pwd)
+          OPENSSL_INSTALL_DIR="${BASEDIR}/ssl"
+          OPENSSL_SOURCE_DIR="${BASEDIR}/openssl"
+          PYTHON_INSTALL_DIR="${BASEDIR}/python"
+          PYTHON_SOURCE_DIR="${BASEDIR}/cpython"
+          echo "BASEDIR=${BASEDIR}" >> $GITHUB_ENV
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
@@ -66,17 +63,15 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$HOME\ssl"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$HOME\openssl"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$HOME\python"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_SOURCE_DIR=$HOME\cpython"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$BASEDIR\ssl"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$BASEDir\openssl"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$BASEDIR\python"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_SOURCE_DIR=$BASEDIR\cpython"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=$env:PYTHON_SOURCE_DIR/release/amd64/binaries/python.exe"
 
       - name: Get latest stable OpenSSL source
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          cd "${HOME}"
-          rm -rf openssl
           git clone https://github.com/openssl/openssl.git
           cd openssl
           export latest_stable=$(git tag --list openssl-* | grep -v alpha | grep -v beta | sort -Vr | head -n1)
@@ -85,7 +80,6 @@ jobs:
       - name: Unix Config OpenSSL
         if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          cd "${HOME}"
           cd "${OPENSSL_SOURCE_DIR}"
           echo "MAKE=make" >> $GITHUB_ENV
           echo "OPENSSL_MAKE_OPTS=-j$(nproc)" >> $GITHUB_ENV
@@ -104,10 +98,7 @@ jobs:
              Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
            }
           }
-          pwd
-          echo $env:PS_OPENSSL_SOURCE_DIR
           cd $env:PS_OPENSSL_SOURCE_DIR
-          pwd
           perl ./Configure VC-WIN64A --prefix="$env:PS_OPENSSL_INSTALL_DIR"
 
       - name: Rename GNU link on Windows
@@ -134,21 +125,14 @@ jobs:
       - name: Get latest stable Python source
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          cd "${HOME}"
-          rm -rf cpython
           git clone https://github.com/python/cpython.git
           cd cpython
-          PYTHON_SOURCE_DIR=$(pwd)
           export latest_stable=$(git tag --list | grep -v a | grep -v rc | grep -v b | sort -Vr | head -n1)
           git checkout "${latest_stable}"
-          echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
 
       - name: Mac/Linux Configure Python
         if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          export PYTHON_INSTALL_DIR="${HOME}/python"
-          mkdir -p "${PYTHON_INSTALL_DIR}"
-          echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
           cd "${PYTHON_SOURCE_DIR}"
           ./configure --with-openssl="${OPENSSL_INSTALL_DIR}" \
                       --prefix="${PYTHON_INSTALL_DIR}" \
@@ -178,14 +162,14 @@ jobs:
           echo "delete..."
           Get-ChildItem -Path externals\openssl-bin-1.1.1m\amd64\ -Include *.* -File -Recurse | foreach { $_.Delete()}
           echo "copy..."
-          cp "$HOME\ssl\lib\*" externals\openssl-bin-1.1.1m\amd64\
-          cp "$HOME\ssl\bin\*" externals\openssl-bin-1.1.1m\amd64\
+          cp "$PS_OPENSSL_INSTALL_DIR\lib\*" externals\openssl-bin-1.1.1m\amd64\
+          cp "$PS_OPENSSL_INSTALL_DIR\bin\*" externals\openssl-bin-1.1.1m\amd64\
           echo "ls afterwards..."
           ls externals\openssl-bin-1.1.1m\amd64
           echo "ssl/include"
-          gci -r -Path "$HOME/ssl/include" | select -exp FullName
-          cp "$HOME\ssl\include\openssl\*" externals\openssl-bin-1.1.1m\amd64\include\openssl\
-          cp "$HOME\ssl\include\openssl\applink.c" externals\openssl-bin-1.1.1m\amd64\include\
+          gci -r -Path "$PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
+          cp "$PS_OPENSSL_INSTALL_DIR\include\openssl\*" externals\openssl-bin-1.1.1m\amd64\include\openssl\
+          cp "$PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" externals\openssl-bin-1.1.1m\amd64\include\
           echo "INCLUDE OPENSSL"
           gci -r -Path externals\openssl-bin-1.1.1m\amd64\include\openssl\ | select -exp FullName
           cp "$env:GITHUB_WORKSPACE/openssl.props" PCBuild\
@@ -254,7 +238,7 @@ jobs:
       - name: Linux Make Static helloworld
         if: matrix.os == 'ubuntu-20.04'
         run: |
-          "${PYTHON_INSTALL_DIR}/bin/python3" -m staticx dist/helloworld dist/helloworld-staticx
+          "${PYTHON}" -m staticx dist/helloworld dist/helloworld-staticx
           
       - name: Linux Run StaticX-ed helloworld
         if: matrix.os == 'ubuntu-20.04'
