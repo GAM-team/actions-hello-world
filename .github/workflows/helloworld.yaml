@@ -57,6 +57,9 @@ jobs:
           OPENSSL_SOURCE_DIR="${GITHUB_WORKSPACE}/openssl"
           PYTHON_INSTALL_DIR="${GITHUB_WORKSPACE}/python"
           PYTHON_SOURCE_DIR="${GITHUB_WORKSPACE}/cpython"
+          CPUCOUNT=$(nproc --all)
+          echo "We have ${CPUCOUNT} CPUs"
+          echo "CPUCOUNT=${CPUCOUNT}" >> $GITHUB_ENV
           echo "buildbits=${buildbits}" >> $GITHUB_ENV
           echo "mid=${mid}" >> $GITHUB_ENV
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
@@ -89,7 +92,6 @@ jobs:
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           echo "MAKE=make" >> $GITHUB_ENV
-          echo "OPENSSL_MAKE_OPTS=-j$(nproc)" >> $GITHUB_ENV
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}"
 
       - name: Windows Perl Install
@@ -122,7 +124,7 @@ jobs:
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
-          $MAKE $OPENSSL_MAKE_OPTS
+          $MAKE "-j${CPUCOUNT}"
 
       - name: Install OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
