@@ -217,7 +217,11 @@ jobs:
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
+          date
           $MAKE altinstall
+          date
+          $MAKE bininstall
+          date
 
       - name: Run Python
         run: |
