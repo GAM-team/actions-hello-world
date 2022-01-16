@@ -13,14 +13,14 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
-            mid: 0
+            jid: 0
           - os: macos-10.15
-            mid: 1
+            jid: 1
           - os: windows-2022
-            mid: 2
+            jid: 2
             buildbits: 64
           #- os: windows-2022
-          #  mid: 3
+          #  jid: 3
           #  buildbits: 32
           - os: [self-hosted, linux, arm64]
             jid: 4
@@ -48,12 +48,12 @@ jobs:
             ./cpython
             ./ssl
             ./openssl
-          key: ${{ matrix.mid }}-20220116-01
+          key: ${{ matrix.jid }}-20220116-01
 
       - name: Bash Env Variables
         env:
           buildbits: ${{ matrix.buildbits }}
-          mid: ${{ matrix.mid }}
+          jid: ${{ matrix.jid }}
         run: |
           OPENSSL_INSTALL_DIR="${GITHUB_WORKSPACE}/ssl"
           OPENSSL_SOURCE_DIR="${GITHUB_WORKSPACE}/openssl"
@@ -73,7 +73,7 @@ jobs:
           echo "BUILDOS=${BUILDOS}" >> $GITHUB_ENV
           echo "MAKEOPT=${MAKEOPT}" >> $GITHUB_ENV
           echo "buildbits=${buildbits}" >> $GITHUB_ENV
-          echo "mid=${mid}" >> $GITHUB_ENV
+          echo "jid=${jid}" >> $GITHUB_ENV
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
@@ -279,5 +279,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: helloworld-binaries ${{ matrix.mid }}
+          name: helloworld-binaries ${{ matrix.jid }}
           path: dist/helloworld*
