@@ -46,12 +46,10 @@ jobs:
 
       - name: Bash Env Variables
         run: |
-          export BASEDIR=$(pwd)
-          OPENSSL_INSTALL_DIR="${BASEDIR}/ssl"
-          OPENSSL_SOURCE_DIR="${BASEDIR}/openssl"
-          PYTHON_INSTALL_DIR="${BASEDIR}/python"
-          PYTHON_SOURCE_DIR="${BASEDIR}/cpython"
-          echo "BASEDIR=${BASEDIR}" >> $GITHUB_ENV
+          OPENSSL_INSTALL_DIR="${GITHUB_WORKSPACE}/ssl"
+          OPENSSL_SOURCE_DIR="${GITHUB_WORKSPACE}/openssl"
+          PYTHON_INSTALL_DIR="${GITHUB_WORKSPACE}/python"
+          PYTHON_SOURCE_DIR="${GITHUB_WORKSPACE}/cpython"
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
@@ -63,10 +61,10 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$BASEDIR\ssl"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$BASEDir\openssl"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$BASEDIR\python"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_SOURCE_DIR=$BASEDIR\cpython"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$GITHUB_WORKSPACE\ssl"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$GITHUB_WORKSPACE\openssl"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$GITHUB_WORKSPACE\python"
+          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_SOURCE_DIR=$GITHUB_WORKSPACE\cpython"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=$env:PYTHON_SOURCE_DIR/release/amd64/binaries/python.exe"
 
       - name: Get latest stable OpenSSL source
