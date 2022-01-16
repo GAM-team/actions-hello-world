@@ -92,6 +92,10 @@ jobs:
           echo "OPENSSL_MAKE_OPTS=-j$(nproc)" >> $GITHUB_ENV
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}"
 
+      - name: Windows Perl Install
+        if: matrix.os == 'windows-2022' && steps.cache.outputs.cache-hit != 'true'
+        uses: shogo82148/actions-setup-perl@v1
+
       - name: Windows Config OpenSSL
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
