@@ -61,7 +61,6 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          dir env:
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$env:GITHUB_WORKSPACE\ssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$env:GITHUB_WORKSPACE\openssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$env:GITHUB_WORKSPACE\python"
