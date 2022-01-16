@@ -16,8 +16,12 @@ jobs:
             mid: 0
           - os: macos-10.15
             mid: 1
-          - os: windows-latest
+          - os: windows-2022
             mid: 2
+            buildbits: 64
+          #- os: windows-2022
+          #  mid: 3
+          #  buildbits: 32
           - os: [self-hosted, linux, arm64]
             jid: 3
           - os: [self-hosted, linux, arm]
@@ -31,7 +35,7 @@ jobs:
 
       - name: Windows install newer Python (needed for building Python)
         uses: actions/setup-python@v2
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2022'
         with:
           python-version: "3.10"
           
@@ -42,14 +46,19 @@ jobs:
           path: |
             ./python
             ./ssl
-          key: ${{ matrix.mid }}-20220116
+          key: ${{ matrix.mid }}-20220116-01
 
       - name: Bash Env Variables
+        env:
+          buildbits: ${{ matrix.buildbits }}
+          mid: ${{ matrix.mid }}
         run: |
           OPENSSL_INSTALL_DIR="${GITHUB_WORKSPACE}/ssl"
           OPENSSL_SOURCE_DIR="${GITHUB_WORKSPACE}/openssl"
           PYTHON_INSTALL_DIR="${GITHUB_WORKSPACE}/python"
           PYTHON_SOURCE_DIR="${GITHUB_WORKSPACE}/cpython"
+          echo "buildbits=${buildbits}" >> $GITHUB_ENV
+          echo "mid=${mid}" >> $GITHUB_ENV
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
           echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
           echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
@@ -58,7 +67,7 @@ jobs:
           echo "PYTHON=${PYTHON_INSTALL_DIR}/bin/python3" >> $GITHUB_ENV
 
       - name: PowerShell Env Variables
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2022'
         shell: powershell
         run: |
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$env:GITHUB_WORKSPACE\ssl"
@@ -76,7 +85,7 @@ jobs:
           git checkout "${latest_stable}"
 
       - name: Unix Config OpenSSL
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           echo "MAKE=make" >> $GITHUB_ENV
@@ -84,12 +93,12 @@ jobs:
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}"
 
       - name: Windows Config OpenSSL
-        if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           choco install nasm
           $env:PATH="$ENV:PATH;c:\Program Files\NASM\"
-          cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && set MAKE=nmake && set > %temp%\vcvars.txt'
+          cmd /c 'call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars$env:buildbits.bat" && set MAKE=nmake && set > %temp%\vcvars.txt'
           Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
            if ($_ -match "^(.*?)=(.*)$") {
              Set-Content "env:\$($matches[1])" $matches[2]
@@ -100,7 +109,7 @@ jobs:
           perl ./Configure VC-WIN64A --prefix="$env:PS_OPENSSL_INSTALL_DIR"
 
       - name: Rename GNU link on Windows
-        if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: bash
         run: mv /usr/bin/link /usr/bin/gnulink
 
@@ -114,7 +123,8 @@ jobs:
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
-          $MAKE install
+          # install_sw saves us ages processing man pages :-)
+          $MAKE install_sw
 
       - name: Run OpenSSL
         run: |
@@ -129,7 +139,7 @@ jobs:
           git checkout "${latest_stable}"
 
       - name: Mac/Linux Configure Python
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           ./configure --with-openssl="${OPENSSL_INSTALL_DIR}" \
@@ -140,7 +150,7 @@ jobs:
                       --with-lto
 
       - name: Windows Config/Build/Install Python
-        if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           cd $env:PS_PYTHON_SOURCE_DIR
@@ -160,14 +170,14 @@ jobs:
           echo "delete..."
           Get-ChildItem -Path externals\openssl-bin-1.1.1m\amd64\ -Include *.* -File -Recurse | foreach { $_.Delete()}
           echo "copy..."
-          cp "$PS_OPENSSL_INSTALL_DIR\lib\*" externals\openssl-bin-1.1.1m\amd64\
-          cp "$PS_OPENSSL_INSTALL_DIR\bin\*" externals\openssl-bin-1.1.1m\amd64\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" externals\openssl-bin-1.1.1m\amd64\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" externals\openssl-bin-1.1.1m\amd64\
           echo "ls afterwards..."
           ls externals\openssl-bin-1.1.1m\amd64
           echo "ssl/include"
-          gci -r -Path "$PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
-          cp "$PS_OPENSSL_INSTALL_DIR\include\openssl\*" externals\openssl-bin-1.1.1m\amd64\include\openssl\
-          cp "$PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" externals\openssl-bin-1.1.1m\amd64\include\
+          gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" externals\openssl-bin-1.1.1m\amd64\include\openssl\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" externals\openssl-bin-1.1.1m\amd64\include\
           echo "INCLUDE OPENSSL"
           gci -r -Path externals\openssl-bin-1.1.1m\amd64\include\openssl\ | select -exp FullName
           cp "$env:GITHUB_WORKSPACE/openssl.props" PCBuild\
@@ -181,16 +191,16 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
 
       - name: Mac/Linux Build Python
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           $MAKE -j$(nproc)
           
       - name: Mac/Linux Install Python
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
-          $MAKE install
+          $MAKE altinstall
 
       - name: Run Python
         run: |
