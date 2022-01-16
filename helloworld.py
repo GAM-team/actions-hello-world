@@ -1,6 +1,7 @@
 import os, sys
 import platform
 from ssl import OPENSSL_VERSION
+import struct
 
 if os.environ.get('STATICX_PROG_PATH', False):
     execution_type = 'staticx'
@@ -10,10 +11,13 @@ else:
     execution_type = 'pythonsource'
 
 proc = platform.processor()
-if not proc:
-    proc = platform.machine()
+machine = platform.machine()
+bitness = struct.calcsize("P") * 8
 
-print(f'Python {platform.python_version()} {OPENSSL_VERSION}')
+print(f'Python: {platform.python_version()}')
+print(f' OpenSSL: {OPENSSL_VERSION}')
 print(f'Execution type: {execution_type}')
 print(f'Platform: {platform.platform()}')
 print(f'Processor: {proc}')
+print(f'Machine: {machine}')
+print(f'Bits: {bitness}')
