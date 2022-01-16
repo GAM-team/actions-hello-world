@@ -76,6 +76,7 @@ jobs:
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
+          rm -rf openssl
           git clone https://github.com/openssl/openssl.git
           cd openssl
           export latest_stable=$(git tag --list openssl-* | grep -v alpha | grep -v beta | sort -Vr | head -n1)
@@ -134,6 +135,7 @@ jobs:
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${HOME}"
+          rm -rf cpython
           git clone https://github.com/python/cpython.git
           cd cpython
           PYTHON_SOURCE_DIR=$(pwd)
