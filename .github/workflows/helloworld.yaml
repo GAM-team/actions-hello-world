@@ -23,9 +23,9 @@ jobs:
           #  mid: 3
           #  buildbits: 32
           - os: [self-hosted, linux, arm64]
-            jid: 3
-          - os: [self-hosted, linux, arm]
             jid: 4
+          - os: [self-hosted, linux, arm]
+            jid: 5
 
     steps:
       - uses: actions/checkout@master
@@ -64,9 +64,8 @@ jobs:
           elif [[ "${BUILDOS}" == "Linux" ]]; then
             MAKEOPT="-j$(nproc)"
           else
+            BUILDOS="Windows"
             MAKEOPT=""
-            # Windos nmake has it's own way of using all CPU cores.
-            echo 'CL=/MP' >> $GITHUB_ENV
           fi
           echo "We'll run make with: ${MAKEOPT}"
           echo "BUILDOS=${BUILDOS}" >> $GITHUB_ENV
@@ -116,7 +115,7 @@ jobs:
           choco install nasm --no-progress
           $env:PATH="$ENV:PATH;c:\Program Files\NASM\"
           $env:VCVARSBAT="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars$env:buildbits.bat"
-          cmd /c 'call "%VCVARSBAT%" && set MAKE=nmake && set > %temp%\vcvars.txt'
+          cmd /c 'call "%VCVARSBAT%" && set MAKE=nmake && set CL=/MP && set > %temp%\vcvars.txt'
           Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
            if ($_ -match "^(.*?)=(.*)$") {
              Set-Content "env:\$($matches[1])" $matches[2]
