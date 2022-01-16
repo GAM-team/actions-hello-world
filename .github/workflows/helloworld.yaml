@@ -57,8 +57,15 @@ jobs:
           OPENSSL_SOURCE_DIR="${GITHUB_WORKSPACE}/openssl"
           PYTHON_INSTALL_DIR="${GITHUB_WORKSPACE}/python"
           PYTHON_SOURCE_DIR="${GITHUB_WORKSPACE}/cpython"
-          CPUCOUNT=$(nproc --all)
+          BUILDOS=$(uname)
+          echo "We are running on ${BUILDOS}"
+          if [[ "${BUILDOS}" == "Darwin" ]]; then
+            CPUCOUNT=$(sysctl -n hw.logicalcpu)
+          else
+            CPUCOUNT=$(nproc)
+          fi
           echo "We have ${CPUCOUNT} CPUs"
+          echo "BUILDOS=${BUILDOS}" >> $GITHUB_ENV
           echo "CPUCOUNT=${CPUCOUNT}" >> $GITHUB_ENV
           echo "buildbits=${buildbits}" >> $GITHUB_ENV
           echo "mid=${mid}" >> $GITHUB_ENV
