@@ -65,6 +65,8 @@ jobs:
             MAKEOPT="-j$(nproc)"
           else
             MAKEOPT=""
+            # Windos nmake has it's own way of using all CPU cores.
+            echo 'CL=/MP' >> $GITHUB_ENV
           fi
           echo "We'll run make with: ${MAKEOPT}"
           echo "BUILDOS=${BUILDOS}" >> $GITHUB_ENV
