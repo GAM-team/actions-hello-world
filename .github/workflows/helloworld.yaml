@@ -241,11 +241,8 @@ jobs:
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
-          date
           $MAKE altinstall
-          date
           $MAKE bininstall
-          date
 
       - name: Run Python
         run: |
@@ -259,7 +256,7 @@ jobs:
           "${PYTHON}" -m pip install --upgrade wheel
           "${PYTHON}" -m pip install --upgrade setuptools
 
-      - name: Install PyInstaller
+      - name: Build and Install PyInstaller
         run: |
              git clone https://github.com/pyinstaller/pyinstaller.git
              cd pyinstaller
@@ -269,9 +266,11 @@ jobs:
              rm -rf PyInstaller/bootloader/*-*/*
              cd bootloader
              export DefaultWindowsSDKVersion="10.0.20348.0"
-             export TARGETARCH="$(${PYTHON} -c 'import struct; print(struct.calcsize("P")*8)')bit"
-             echo "Using ${TARGETARCH} target arch..."
-             "${PYTHON}" ./waf all --target-arch="${TARGETARCH}"
+             if [[ "${buildbits}" = "32" ]] && [[ "${BUILDOS}" == "Windows" ]]; then
+               export PYINSTALLER_BUILD_ARGS="--target-arch=32bit"
+             fi
+             echo "Build arguments: ${PYINSTALLER_BUILD_ARGS}"
+             "${PYTHON}" ./waf all "${PYINSTALLER_BUILD_ARGS}"
              cd ..
              "${PYTHON}" -m pip install .
 
