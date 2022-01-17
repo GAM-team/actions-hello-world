@@ -15,7 +15,7 @@ machine = platform.machine()
 bitness = struct.calcsize("P") * 8
 
 print(f'Python: {platform.python_version()}')
-print(f' OpenSSL: {OPENSSL_VERSION}')
+print(f'OpenSSL: {OPENSSL_VERSION}')
 print(f'Execution type: {execution_type}')
 print(f'Platform: {platform.platform()}')
 print(f'Processor: {proc}')
