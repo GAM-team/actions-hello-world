@@ -200,7 +200,7 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
           #$env:DefaultWindowsSDKVersion = "10.0.20348.0"
           #echo "copy..."
-          #$env:OPENSSL_EXTERNAL_TARGET_DIR = "externals\openssl-bin-1.1.1m\${env:PYEXTERNALS_PATH}\"
+          $env:OPENSSL_EXTERNAL_TARGET_DIR = "externals\openssl-bin-1.1.1m\${env:PYEXTERNALS_PATH}\"
           mkdir "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\"
           Copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\lib\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}" -verbose -recurse
           copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\bin\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}" -verbose -recurse
