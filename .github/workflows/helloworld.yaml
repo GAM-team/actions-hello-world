@@ -209,26 +209,26 @@ jobs:
           $env:DefaultWindowsSDKVersion = "10.0.20348.0"
           PCBuild\get_externals.bat
           echo "delete..."
-          Get-ChildItem -Path externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\ -Include *.* -File -Recurse | foreach { $_.Delete()}
+          Get-ChildItem -Path externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\ -Include *.* -File -Recurse | foreach { $_.Delete()}
           echo "copy..."
-          cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\
-          cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\
           echo "ls afterwards..."
-          ls externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH
+          ls externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH
           echo "ssl/include"
           gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
-          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\include\openssl\
-          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\include\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\include\openssl\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\include\
           echo "INCLUDE OPENSSL"
-          gci -r -Path externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\include\openssl\ | select -exp FullName
+          gci -r -Path externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\include\openssl\ | select -exp FullName
           cp "$env:GITHUB_WORKSPACE/openssl.props" PCBuild\
           gci -r -Path PCBuild\ | select -exp FullName
-          Tools\msi\buildrelease.bat -$PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
+          Tools\msi\buildrelease.bat -$env:PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
           echo "In release:"
           dir release\
-          dir release\$PYEXTERNALS_PATH\
-          dir release\$PYEXTERNALS_PATH\binaries\
-          $env:PYTHON = Resolve-Path -Path release\$PYEXTERNALS_PATH\binaries\python.exe
+          dir release\$env:PYEXTERNALS_PATH\
+          dir release\$env:PYEXTERNALS_PATH\binaries\
+          $env:PYTHON = Resolve-Path -Path release\$env:PYEXTERNALS_PATH\binaries\python.exe
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
 
       - name: Mac/Linux Build Python
