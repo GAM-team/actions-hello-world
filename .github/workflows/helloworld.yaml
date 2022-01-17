@@ -122,7 +122,7 @@ jobs:
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
-          ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}" no-fips no-deprecated
+          ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}" no-fips
 
       - name: Windows Perl Install
         if: matrix.os == 'windows-2022' && steps.cache.outputs.cache-hit != 'true'
@@ -145,7 +145,7 @@ jobs:
         shell: powershell
         run: |
           cd $env:PS_OPENSSL_SOURCE_DIR
-          perl ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-makedepend no-fips no-deprecated
+          perl ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-makedepend no-fips
 
       - name: Rename GNU link on Windows
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
