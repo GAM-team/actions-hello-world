@@ -226,8 +226,9 @@ jobs:
           dir release\
           dir release\$env:PYEXTERNALS_PATH\
           dir release\$env:PYEXTERNALS_PATH\binaries\
+          mkdir $env:PS_PYTHON_INSTALL_DIR\
           cp release\$env:PYEXTERNALS_PATH\binaries\* $env:PS_PYTHON_INSTALL_DIR
-          $env:PYTHON = Resolve-Path -Path $env:PS_PYTHON_INSTALL_DIR\python.exe
+          $env:PYTHON = $env:PS_PYTHON_INSTALL_DIR\python.exe
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
 
       - name: Mac/Linux Build Python
