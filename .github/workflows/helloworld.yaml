@@ -77,7 +77,7 @@ jobs:
           else
             PYEXTERNALS_PATH="win32"
             PYBUILDRELEASE_ARCH="x86"
-            CHOCO_OPTS="--x86
+            CHOCO_OPTS="--x86"
             OPENSSL_CONFIG_TARGET="VC-WIN32"
           fi
           echo "We'll run make with: ${MAKEOPT}"
