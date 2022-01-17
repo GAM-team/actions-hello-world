@@ -19,7 +19,7 @@ jobs:
           - os: windows-2022
             jid: 2
             buildbits: 64
-            vc_arch: amd64
+            vc_arch: win64
           - os: windows-2022
             jid: 3
             buildbits: 32
