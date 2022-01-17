@@ -192,8 +192,8 @@ jobs:
           $env:BUILDERPYTHONPATH = Resolve-Path -Path $env:BUILDERPYTHON\..
           echo "BUILDERPYTHONPATH: $env:BUILDERPYTHONPATH"
           Invoke-Expression "$env:BUILDERPYTHON -V"
-          Invoke-Expression "$env:BUILDERPIP install --upgrade --user pip"
-          Invoke-Expression "$env:BUILDERPIP install --upgrade --user sphinx"
+          Invoke-Expression "$env:BUILDERPIP install --upgrade pip"
+          Invoke-Expression "$env:BUILDERPIP install --upgrade sphinx"
           $env:SPHINXBUILD = (gcm sphinx-build).Path
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
