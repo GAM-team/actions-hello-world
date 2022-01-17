@@ -199,19 +199,19 @@ jobs:
           Invoke-Expression "$env:SPHINXBUILD --version"
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
           #$env:DefaultWindowsSDKVersion = "10.0.20348.0"
-          echo "copy..."
-          $env:OPENSSL_EXTERNAL_TARGET_DIR = "externals\openssl-bin-1.1.1m\${env:PYEXTERNALS_PATH}\"
+          #echo "copy..."
+          #$env:OPENSSL_EXTERNAL_TARGET_DIR = "externals\openssl-bin-1.1.1m\${env:PYEXTERNALS_PATH}\"
           mkdir "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\"
           Copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\lib\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}" -verbose -recurse
-          copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\bin\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}" -verbose -recurse
+          #copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\bin\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}" -verbose -recurse
           echo "ls afterwards..."
-          ls "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
-          echo "ssl/include"
-          gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
+          gci -r -Path "${env:OPENSSL_EXTERNAL_TARGET_DIR}" | select -exp FullName
+          #echo "ssl/include"
+          #gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
           Copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\" -verbose -recurse
-          Copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\" -verbose
-          echo "INCLUDE OPENSSL"
-          gci -r -Path "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\" | select -exp FullName
+          Copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\" -verbose
+          echo "ALL OPENSSL"
+          gci -r -Path "${env:OPENSSL_EXTERNAL_TARGET_DIR}\" | select -exp FullName
           Copy-Item -Path "${env:GITHUB_WORKSPACE}/openssl.props" -Destination PCBuild\ -verbose
           gci -r -Path PCBuild\ | select -exp FullName
           #PCBuild\get_externals.bat # should skip above OpenSSL
