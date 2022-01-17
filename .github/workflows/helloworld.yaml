@@ -19,13 +19,13 @@ jobs:
           - os: windows-2022
             jid: 2
             buildbits: 64
-          #- os: windows-2022
-          #  jid: 3
-          #  buildbits: 32
+          - os: windows-2022
+            jid: 3
+            buildbits: 32
           - os: [self-hosted, linux, arm64]
             jid: 4
-          - os: [self-hosted, linux, arm]
-            jid: 5
+          #- os: [self-hosted, linux, arm]
+          #  jid: 5
 
     steps:
       - uses: actions/checkout@master
@@ -69,9 +69,18 @@ jobs:
             BUILDOS="Windows"
             MAKEOPT=""
           fi
+          if [[ "${buildbits}" == "64" ]]; then
+            PYEXTERNALS_PATH="amd64"
+            PYBUILDRELEASE_ARCH="x64"
+          else
+            PYEXTERNALS_PATH="win32"
+            PYBUILDRELEASE_ARCH="x86"
+          fi
           echo "We'll run make with: ${MAKEOPT}"
           echo "BUILDOS=${BUILDOS}" >> $GITHUB_ENV
           echo "MAKEOPT=${MAKEOPT}" >> $GITHUB_ENV
+          echo "PYEXTERNALS_PATH=${PYEXTERNALS_PATH}" >> $GITHUB_ENV
+          echo "PYBUILDRELEASE_ARCH=${PYBUILDRELEASE_ARCH}" >> $GITHUB_ENV
           echo "buildbits=${buildbits}" >> $GITHUB_ENV
           echo "jid=${jid}" >> $GITHUB_ENV
           echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
@@ -187,26 +196,26 @@ jobs:
           $env:DefaultWindowsSDKVersion = "10.0.20348.0"
           PCBuild\get_externals.bat
           echo "delete..."
-          Get-ChildItem -Path externals\openssl-bin-1.1.1m\amd64\ -Include *.* -File -Recurse | foreach { $_.Delete()}
+          Get-ChildItem -Path externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\ -Include *.* -File -Recurse | foreach { $_.Delete()}
           echo "copy..."
-          cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" externals\openssl-bin-1.1.1m\amd64\
-          cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" externals\openssl-bin-1.1.1m\amd64\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\
           echo "ls afterwards..."
-          ls externals\openssl-bin-1.1.1m\amd64
+          ls externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH
           echo "ssl/include"
           gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
-          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" externals\openssl-bin-1.1.1m\amd64\include\openssl\
-          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" externals\openssl-bin-1.1.1m\amd64\include\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\include\openssl\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\include\
           echo "INCLUDE OPENSSL"
-          gci -r -Path externals\openssl-bin-1.1.1m\amd64\include\openssl\ | select -exp FullName
+          gci -r -Path externals\openssl-bin-1.1.1m\$PYEXTERNALS_PATH\include\openssl\ | select -exp FullName
           cp "$env:GITHUB_WORKSPACE/openssl.props" PCBuild\
           gci -r -Path PCBuild\ | select -exp FullName
-          Tools\msi\buildrelease.bat -x64 --out release --skip-msi --skip-nuget
+          Tools\msi\buildrelease.bat -$PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
           echo "In release:"
           dir release\
-          dir release\amd64\
-          dir release\amd64\binaries\
-          $env:PYTHON = Resolve-Path -Path release\amd64\binaries\python.exe
+          dir release\$PYEXTERNALS_PATH\
+          dir release\$PYEXTERNALS_PATH\binaries\
+          $env:PYTHON = Resolve-Path -Path release\$PYEXTERNALS_PATH\binaries\python.exe
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
 
       - name: Mac/Linux Build Python
