@@ -64,11 +64,14 @@ jobs:
           BUILDOS=$(uname)
           echo "We are running on ${BUILDOS}"
           if [[ "${BUILDOS}" == "Darwin" ]]; then
+            MAKE=make
             MAKEOPT="-j$(sysctl -n hw.logicalcpu)"
           elif [[ "${BUILDOS}" == "Linux" ]]; then
+            MAKE=make
             MAKEOPT="-j$(nproc)"
           else
             BUILDOS="Windows"
+            MAKE=nmake
             MAKEOPT=""
           fi
           if [[ "${buildbits}" == "64" ]]; then
@@ -84,6 +87,7 @@ jobs:
           fi
           echo "We'll run make with: ${MAKEOPT}"
           echo "BUILDOS=${BUILDOS}" >> $GITHUB_ENV
+          echo "MAKE=${MAKE}" >> $GITHUB_ENV
           echo "MAKEOPT=${MAKEOPT}" >> $GITHUB_ENV
           echo "PYEXTERNALS_PATH=${PYEXTERNALS_PATH}" >> $GITHUB_ENV
           echo "PYBUILDRELEASE_ARCH=${PYBUILDRELEASE_ARCH}" >> $GITHUB_ENV
@@ -120,7 +124,6 @@ jobs:
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
-          echo "MAKE=make" >> $GITHUB_ENV
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}" no-fips
 
       - name: Windows Perl Install
@@ -133,7 +136,9 @@ jobs:
         with:
           arch: ${{ matrix.vc_arch }}
 
-      - uses: ilammy/setup-nasm@v1
+      - name: Windows NASM Install
+        uses: ilammy/setup-nasm@v1
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         with:
           platform: ${{ matrix.vc_arch }}
 
