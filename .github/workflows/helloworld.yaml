@@ -217,10 +217,10 @@ jobs:
           #PCBuild\get_externals.bat # should skip above OpenSSL
           PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILD_RELEASE_ARCH}"
           #Tools\msi\buildrelease.bat -$env:PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
-          echo "In release:"
-          dir release\
-          dir release\$env:PYEXTERNALS_PATH\
-          dir release\$env:PYEXTERNALS_PATH\binaries\
+          #echo "In release:"
+          #dir release\
+          #dir release\$env:PYEXTERNALS_PATH\
+          #dir release\$env:PYEXTERNALS_PATH\binaries\
           mkdir $env:PS_PYTHON_INSTALL_DIR\
           #cp release\$env:PYEXTERNALS_PATH\binaries\* $env:PS_PYTHON_INSTALL_DIR
           Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}" $env:PS_PYTHON_INSTALL_DIR -verbose -recurse
