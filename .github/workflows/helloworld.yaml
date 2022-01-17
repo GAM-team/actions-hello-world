@@ -119,7 +119,7 @@ jobs:
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           echo "MAKE=make" >> $GITHUB_ENV
-          ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}"
+          ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}" no-fips
 
       - name: Windows Perl Install
         if: matrix.os == 'windows-2022' && steps.cache.outputs.cache-hit != 'true'
