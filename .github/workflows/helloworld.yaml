@@ -47,9 +47,7 @@ jobs:
         with:
           path: |
             ./python
-            ./cpython
             ./ssl
-            ./openssl
           key: ${{ matrix.jid }}-20220116-01
 
       - name: Bash Env Variables
@@ -228,7 +226,8 @@ jobs:
           dir release\
           dir release\$env:PYEXTERNALS_PATH\
           dir release\$env:PYEXTERNALS_PATH\binaries\
-          $env:PYTHON = Resolve-Path -Path release\$env:PYEXTERNALS_PATH\binaries\python.exe
+          cp release\$env:PYEXTERNALS_PATH\binaries\* $env:PS_PYTHON_INSTALL_DIR
+          $env:PYTHON = Resolve-Path -Path $env:PS_PYTHON_INSTALL_DIR\python.exe
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
 
       - name: Mac/Linux Build Python
