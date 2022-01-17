@@ -26,8 +26,8 @@ jobs:
             vc_arch: win32
           - os: [self-hosted, linux, arm64]
             jid: 4
-          #- os: [self-hosted, linux, arm]
-          #  jid: 5
+          - os: [self-hosted, linux, arm]
+            jid: 5
 
     steps:
       - uses: actions/checkout@master
