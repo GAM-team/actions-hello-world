@@ -203,7 +203,7 @@ jobs:
           #$env:OPENSSL_EXTERNAL_TARGET_DIR = "externals\openssl-bin-1.1.1m\${env:PYEXTERNALS_PATH}\"
           mkdir "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\"
           Copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\lib\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}" -verbose -recurse
-          #copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\bin\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}" -verbose -recurse
+          copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\bin\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}" -verbose -recurse
           echo "ls afterwards..."
           gci -r -Path "${env:OPENSSL_EXTERNAL_TARGET_DIR}" | select -exp FullName
           #echo "ssl/include"
