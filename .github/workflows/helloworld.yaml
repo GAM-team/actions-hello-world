@@ -145,7 +145,7 @@ jobs:
         shell: powershell
         run: |
           cd $env:PS_OPENSSL_SOURCE_DIR
-          perl ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-makedepend --strict-warnings no-fips
+          perl ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-makedepend no-fips
 
       - name: Rename GNU link on Windows
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
