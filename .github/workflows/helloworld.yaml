@@ -133,12 +133,14 @@ jobs:
         with:
           arch: ${{ matrix.vc_arch }}
 
+      - uses: ilammy/setup-nasm@v1
+        with:
+          platform: ${{ matrix.vc_arch }}
+
       - name: Windows Config OpenSSL
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          choco install nasm --no-progress $env:CHOCO_OPTS
-          $env:PATH="$ENV:PATH;c:\Program Files\NASM\"
           cd $env:PS_OPENSSL_SOURCE_DIR
           perl ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-makedepend --strict-warnings no-fips
 
