@@ -35,12 +35,6 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Windows install newer Python (needed for building Python)
-        uses: actions/setup-python@v2
-        if: matrix.os == 'windows-2022'
-        with:
-          python-version: "3.10"
-          
       - name: Cache Python build
         id: cache-python
         uses: actions/cache@v2
@@ -48,7 +42,7 @@ jobs:
           path: |
             ./python
             ./ssl
-          key: ${{ matrix.jid }}-20220117-01
+          key: ${{ matrix.jid }}-20220117-02
 
       - name: Bash Env Variables
         env:
@@ -79,7 +73,7 @@ jobs:
             OPENSSL_CONFIG_TARGET="VC-WIN64A"
           else
             PYEXTERNALS_PATH="win32"
-            PYBUILDRELEASE_ARCH="x86"
+            PYBUILDRELEASE_ARCH="win32"
             CHOCO_OPTS="--x86"
             OPENSSL_CONFIG_TARGET="VC-WIN32"
           fi
@@ -123,6 +117,12 @@ jobs:
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}" no-fips
+
+      - name: Windows install newer Python (needed for Sphinx build req)
+        uses: actions/setup-python@v2
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
+        with:
+          python-version: "3.8"
 
       - name: Windows Perl Install
         if: matrix.os == 'windows-2022' && steps.cache.outputs.cache-hit != 'true'
@@ -193,35 +193,36 @@ jobs:
         shell: powershell
         run: |
           cd $env:PS_PYTHON_SOURCE_DIR
-          $env:PYTHON = (gcm python).Path
-          $env:PIP = (gcm pip).Path
-          $env:PYTHONPATH = Resolve-Path -Path $env:PYTHON\..
-          echo "PYTHONPATH: $env:PYTHONPATH"
-          Invoke-Expression "$env:PYTHON -V"
-          Invoke-Expression "$env:PIP install --upgrade --user pip"
-          Invoke-Expression "$env:PIP install --upgrade --user sphinx"
+          $env:BUILDERPYTHON = (gcm python).Path
+          $env:BUILDERPIP = (gcm pip).Path
+          $env:BUILDERPYTHONPATH = Resolve-Path -Path $env:BUILDERPYTHON\..
+          echo "BUILDERPYTHONPATH: $env:BUILDERPYTHONPATH"
+          Invoke-Expression "$env:BUILDERPYTHON -V"
+          Invoke-Expression "$env:BUILDERPIP install --upgrade --user pip"
+          Invoke-Expression "$env:BUILDERPIP install --upgrade --user sphinx"
           $env:SPHINXBUILD = (gcm sphinx-build).Path
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
           $env:DefaultWindowsSDKVersion = "10.0.20348.0"
-          PCBuild\get_externals.bat
-          echo "delete..."
-          Get-ChildItem -Path externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\ -Include *.* -File -Recurse | foreach { $_.Delete()}
           echo "copy..."
-          cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\
-          cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\
+          $env:OPENSSL_EXTERNAL_TARGET_DIR = "externals\openssl-bin-1.1.1m\${env:PYEXTERNALS_PATH}\"
+          mkdir "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
+          cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
+          cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
           echo "ls afterwards..."
-          ls externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH
+          ls "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
           echo "ssl/include"
           gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
-          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\include\openssl\
-          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\include\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\"
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\"
           echo "INCLUDE OPENSSL"
-          gci -r -Path externals\openssl-bin-1.1.1m\$env:PYEXTERNALS_PATH\include\openssl\ | select -exp FullName
-          cp "$env:GITHUB_WORKSPACE/openssl.props" PCBuild\
+          gci -r -Path "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\" | select -exp FullName
+          cp "${env:GITHUB_WORKSPACE}/openssl.props" PCBuild\
           gci -r -Path PCBuild\ | select -exp FullName
-          Tools\msi\buildrelease.bat -$env:PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
+          PCBuild\get_externals.bat # should skip above OpenSSL
+          PCBuild\build.bat -m -vv --pgo -c Release -p "${env:PYBUILD_RELEASE_ARCH}"
+          #Tools\msi\buildrelease.bat -$env:PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
           echo "In release:"
           dir release\
           dir release\$env:PYEXTERNALS_PATH\
