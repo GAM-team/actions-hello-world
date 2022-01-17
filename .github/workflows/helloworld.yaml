@@ -222,7 +222,8 @@ jobs:
           dir release\$env:PYEXTERNALS_PATH\
           dir release\$env:PYEXTERNALS_PATH\binaries\
           mkdir $env:PS_PYTHON_INSTALL_DIR\
-          cp release\$env:PYEXTERNALS_PATH\binaries\* $env:PS_PYTHON_INSTALL_DIR
+          #cp release\$env:PYEXTERNALS_PATH\binaries\* $env:PS_PYTHON_INSTALL_DIR
+          Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}" $env:PS_PYTHON_INSTALL_DIR -verbose -recurse
           $env:PYTHON = "${env:PS_PYTHON_INSTALL_DIR}\python.exe"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
 
