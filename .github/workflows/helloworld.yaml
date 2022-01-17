@@ -118,12 +118,6 @@ jobs:
           cd "${OPENSSL_SOURCE_DIR}"
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}" no-fips
 
-      - name: Windows install newer Python (needed for Sphinx build req)
-        uses: actions/setup-python@v2
-        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
-        with:
-          python-version: "3.8"
-
       - name: Windows Perl Install
         if: matrix.os == 'windows-2022' && steps.cache.outputs.cache-hit != 'true'
         uses: shogo82148/actions-setup-perl@v1
@@ -204,25 +198,24 @@ jobs:
           echo "Sphinx Build location: $env:SPHINXBUILD"
           Invoke-Expression "$env:SPHINXBUILD --version"
           Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
-          $env:DefaultWindowsSDKVersion = "10.0.20348.0"
+          #$env:DefaultWindowsSDKVersion = "10.0.20348.0"
           echo "copy..."
           $env:OPENSSL_EXTERNAL_TARGET_DIR = "externals\openssl-bin-1.1.1m\${env:PYEXTERNALS_PATH}\"
-          mkdir "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
           mkdir "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\"
           cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
           cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
-          echo "ls afterwards..."
-          ls "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
-          echo "ssl/include"
-          gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
+          #echo "ls afterwards..."
+          #ls "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
+          #echo "ssl/include"
+          #gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
           cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\"
           cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\"
-          echo "INCLUDE OPENSSL"
-          gci -r -Path "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\" | select -exp FullName
+          #echo "INCLUDE OPENSSL"
+          #gci -r -Path "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\" | select -exp FullName
           cp "${env:GITHUB_WORKSPACE}/openssl.props" PCBuild\
-          gci -r -Path PCBuild\ | select -exp FullName
-          PCBuild\get_externals.bat # should skip above OpenSSL
-          PCBuild\build.bat -m -vv --pgo -c Release -p "${env:PYBUILD_RELEASE_ARCH}"
+          #gci -r -Path PCBuild\ | select -exp FullName
+          #PCBuild\get_externals.bat # should skip above OpenSSL
+          PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILD_RELEASE_ARCH}"
           #Tools\msi\buildrelease.bat -$env:PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
           echo "In release:"
           dir release\
