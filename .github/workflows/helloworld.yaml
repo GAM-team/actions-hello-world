@@ -208,6 +208,7 @@ jobs:
           echo "copy..."
           $env:OPENSSL_EXTERNAL_TARGET_DIR = "externals\openssl-bin-1.1.1m\${env:PYEXTERNALS_PATH}\"
           mkdir "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
+          mkdir "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\"
           cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
           cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" "${env:OPENSSL_EXTERNAL_TARGET_DIR}"
           echo "ls afterwards..."
