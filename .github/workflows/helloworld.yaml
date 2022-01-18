@@ -128,9 +128,9 @@ jobs:
           cd "${OPENSSL_SOURCE_DIR}"
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}" no-fips
 
-      - name: Windows Perl Install
-        if: matrix.os == 'windows-latest' && steps.cache.outputs.cache-hit != 'true'
-        uses: shogo82148/actions-setup-perl@v1
+      #- name: Windows Perl Install
+      #  if: matrix.os == 'windows-latest' && steps.cache.outputs.cache-hit != 'true'
+      #  uses: shogo82148/actions-setup-perl@v1
 
       - name: Windows Configure VCode
         uses: ilammy/msvc-dev-cmd@v1
@@ -149,7 +149,7 @@ jobs:
         shell: powershell
         run: |
           cd $env:PS_OPENSSL_SOURCE_DIR
-          perl ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-asm
+          c:\straweberry\bin\perl.exe ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-asm
 
       - name: Rename GNU link on Windows
         if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
@@ -228,12 +228,6 @@ jobs:
           Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\ms\applink.c" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\" -verbose
           Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\include\openssl\*.h" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\" -verbose
           gci -r -Path "${env:OPENSSL_EXT_TARGET_DIR}" | select -exp FullName
-          # Put Our OpenSSL in PATH
-          $env:Path += ";${env:OPENSSL_EXT_TARGET_DIR}"
-          echo "path is:"
-          echo $env:Path
-          openssl version
-          (Get-Command openssl).Path
 
       - name: Windows Install sphinx-build
         if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
@@ -247,6 +241,12 @@ jobs:
         if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
+          # Put Our OpenSSL in PATH
+          $env:Path += ";${env:OPENSSL_EXT_TARGET_DIR}"
+          echo "path is:"
+          echo $env:Path
+          openssl version
+          (Get-Command openssl).Path
           cd $env:PS_PYTHON_SOURCE_DIR
           Copy-Item -Path "${env:GITHUB_WORKSPACE}/openssl.props" -Destination PCBuild\ -verbose
           echo "Building for ${env:PYBUILDRELEASE_ARCH}..."
