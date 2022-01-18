@@ -16,10 +16,10 @@ jobs:
             jid: 0
           - os: macos-10.15
             jid: 1
-        #  - os: windows-2022
-        #    jid: 2
-        #    buildbits: 64
-        #    vc_arch: win64
+          - os: windows-2022
+            jid: 2
+            buildbits: 64
+            vc_arch: win64
           - os: windows-2022
             jid: 3
             buildbits: 32
@@ -233,7 +233,8 @@ jobs:
         run: |
           cd $env:PS_PYTHON_SOURCE_DIR
           Copy-Item -Path "${env:GITHUB_WORKSPACE}/openssl.props" -Destination PCBuild\ -verbose
-          PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILD_RELEASE_ARCH}"
+          echo "Building for ${env:PYBUILDRELEASE_ARCH}..."
+          PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILDRELEASE_ARCH}"
           mkdir $env:PS_PYTHON_INSTALL_DIR\
           Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" $env:PS_PYTHON_INSTALL_DIR -verbose -recurse
           $env:PYTHON = "${env:PS_PYTHON_INSTALL_DIR}\python.exe"
