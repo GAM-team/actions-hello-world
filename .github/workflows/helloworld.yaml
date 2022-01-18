@@ -241,7 +241,7 @@ jobs:
           # Put Our OpenSSL as priority in PATH
           $env:Path = '${env:OPENSSL_EXT_TARGET_DIR};${env:Path}'
           echo "path is:"
-          echo $env:Path
+          echo "${env:Path}"
           openssl version
           (Get-Command openssl).Path
           cd $env:PS_PYTHON_SOURCE_DIR
