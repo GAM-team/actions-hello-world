@@ -103,6 +103,8 @@ jobs:
           choco uninstall OpenSSL.Light
           openssl version
           (Get-Command openssl).Path
+          rm C:\Strawberry\c\bin\openssl.exe
+          (Get-Command openssl).Path
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$env:GITHUB_WORKSPACE\ssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$env:GITHUB_WORKSPACE\openssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$env:GITHUB_WORKSPACE\python"
