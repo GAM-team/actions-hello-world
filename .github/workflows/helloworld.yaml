@@ -108,6 +108,7 @@ jobs:
           openssl version
           (Get-Command openssl).Path
           rm "C:\Program Files\Git\mingw64\bin\openssl.exe"
+          rm "C:\Program Files\Git\usr\bin\openssl.exe"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$env:GITHUB_WORKSPACE\ssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$env:GITHUB_WORKSPACE\openssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$env:GITHUB_WORKSPACE\python"
@@ -237,8 +238,8 @@ jobs:
         if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          # Put Our OpenSSL in PATH
-          $env:Path += ";${env:OPENSSL_EXT_TARGET_DIR}"
+          # Put Our OpenSSL as priority in PATH
+          $env:Path = '${env:OPENSSL_EXT_TARGET_DIR};${env:Path}'
           echo "path is:"
           echo $env:Path
           openssl version
