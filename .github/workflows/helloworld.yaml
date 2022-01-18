@@ -42,7 +42,7 @@ jobs:
           path: |
             ./python
             ./ssl
-          key: ${{ matrix.jid }}-20220118-02
+          key: ${{ matrix.jid }}-20220118-03
 
       - name: Bash Env Variables
         env:
@@ -98,7 +98,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          choco list --local-only
+          choco uninstall OpenSSL.Light
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$env:GITHUB_WORKSPACE\ssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$env:GITHUB_WORKSPACE\openssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$env:GITHUB_WORKSPACE\python"
