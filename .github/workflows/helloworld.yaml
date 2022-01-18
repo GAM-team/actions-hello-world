@@ -239,7 +239,7 @@ jobs:
         shell: powershell
         run: |
           # Put Our OpenSSL as priority in PATH
-          $env:Path = '${env:OPENSSL_EXT_TARGET_DIR};${env:Path}'
+          $env:Path = "${env:OPENSSL_EXT_TARGET_DIR};${env:Path}"
           echo "path is:"
           echo "${env:Path}"
           openssl version
