@@ -150,7 +150,7 @@ jobs:
         run: |
           cd $env:PS_OPENSSL_SOURCE_DIR
           # gci -r -Path c:\strawberry | select -exp FullName
-          c:\straweberry\perl\bin\perl.exe ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-asm
+          c:\strawberry\perl\bin\perl.exe ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-asm
 
       - name: Rename GNU link on Windows
         if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
