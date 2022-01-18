@@ -292,9 +292,16 @@ jobs:
         if: matrix.os == 'ubuntu-20.04'
         run: dist/helloworld-staticx
 
-      - name: Archive artifacts
+      - name: Archive helloworld binary
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: helloworld-binaries ${{ matrix.jid }}
+          name: helloworld-binaries-${{ matrix.jid }}
           path: dist/helloworld*
+  
+  - name: Archive compiled python
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: python-${{ matrix.jid }}
+          path: python/*
