@@ -128,10 +128,6 @@ jobs:
           cd "${OPENSSL_SOURCE_DIR}"
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}" no-fips
 
-      #- name: Windows Perl Install
-      #  if: matrix.os == 'windows-latest' && steps.cache.outputs.cache-hit != 'true'
-      #  uses: shogo82148/actions-setup-perl@v1
-
       - name: Windows Configure VCode
         uses: ilammy/msvc-dev-cmd@v1
         if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
@@ -149,7 +145,6 @@ jobs:
         shell: powershell
         run: |
           cd $env:PS_OPENSSL_SOURCE_DIR
-          # gci -r -Path c:\strawberry | select -exp FullName
           c:\strawberry\perl\bin\perl.exe ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-asm
 
       - name: Rename GNU link on Windows
