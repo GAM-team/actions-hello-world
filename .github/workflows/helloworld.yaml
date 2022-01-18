@@ -16,18 +16,18 @@ jobs:
             jid: 0
           - os: macos-10.15
             jid: 1
-          #- os: windows-2022
-          #  jid: 2
-          #  buildbits: 64
-          #  vc_arch: win64
+          - os: windows-2022
+            jid: 2
+            buildbits: 64
+            vc_arch: win64
           - os: windows-2022
             jid: 3
             buildbits: 32
             vc_arch: win32
-          - os: [self-hosted, linux, arm64]
-            jid: 4
-          - os: [self-hosted, linux, arm]
-            jid: 5
+          #- os: [self-hosted, linux, arm64]
+          #  jid: 4
+          #- os: [self-hosted, linux, arm]
+          #  jid: 5
 
     steps:
       - uses: actions/checkout@master
@@ -152,16 +152,22 @@ jobs:
           cd "${OPENSSL_SOURCE_DIR}"
           $MAKE "${MAKEOPT}"
 
-      - name: Install OpenSSL
-        if: steps.cache-python.outputs.cache-hit != 'true'
+      - name: Mac/Linux Install OpenSSL
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           # install_sw saves us ages processing man pages :-)
           $MAKE install
 
-      - name: Run OpenSSL
+      - name: Mac/Linux Run OpenSSL
+        if: matrix.os != 'windows-2022'
         run: |
           "${OPENSSL_INSTALL_DIR}/bin/openssl" version
+
+      - name: Windows Run OpenSSL
+        if: matrix.os == 'windows-2022'
+        run: |
+          "${OPENSSL_SOURCE_DIR}/apps/openssl.exe" version
 
       - name: Get latest stable Python source
         if: steps.cache-python.outputs.cache-hit != 'true'
@@ -182,47 +188,55 @@ jobs:
                       --enable-optimizations \
                       --with-lto
 
+      - name: Windows Get External Python deps
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          cd "${env:PS_PYTHON_SOURCE_DIR}"
+          PCBuild\get_externals.bat
+
+      - name: Windows overwrite external OpenSSL with local
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          cd "${env:PS_PYTHON_SOURCE_DIR}"
+          $env:OPENSSL_EXT_DIR = "$(Get-Item externals\openssl-bin-* | Select -exp FullName)\"
+          echo "External OpenSSL was downloaded to ${env:OPENSSL_EXT_DIR}"
+          Remove-Item -recurse -force -verbose "${env:OPENSSL_EXT_DIR}*"
+          # Emulate what this script does:
+          # https://github.com/python/cpython/blob/main/PCbuild/openssl.vcxproj
+          $env:OPENSSL_EXT_TARGET_DIR = "${env:OPENSSL_EXT_DIR}\${env:PYEXTERNALS_PATH}"
+          echo "Copying our OpenSSL to ${env:OPENSSL_EXT_TARGET_DIR}"
+          mkdir "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\"
+          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\LICENSE.txt" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\LICENSE" -verbose
+          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto.lib" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto-*.dll" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto-*.pdb" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl.lib" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl-*.dll" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl-*.pdb" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\ms\applink.c" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\" -verbose
+          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\include\openssl\*.h" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\" -verbose
+          gci -r -Path "${env:OPENSS_EXT_TARGET_DIR}" | select -exp FullName
+
+      - name: Windows Install sphinx-build
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
+        run: |
+          $env:BUILDERPYTHON = (gcm python).Path
+          $env:BUILDERPIP = (gcm pip).Path
+          Invoke-Expression "$env:BUILDERPYTHON -V"
+          Invoke-Expression "$env:BUILDERPIP install --upgrade pip"
+          Invoke-Expression "$env:BUILDERPIP install --upgrade sphinx"
+          Invoke-Expression "sphinx-build --version"
+
       - name: Windows Config/Build/Install Python
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           cd $env:PS_PYTHON_SOURCE_DIR
-          $env:BUILDERPYTHON = (gcm python).Path
-          $env:BUILDERPIP = (gcm pip).Path
-          $env:BUILDERPYTHONPATH = Resolve-Path -Path $env:BUILDERPYTHON\..
-          echo "BUILDERPYTHONPATH: $env:BUILDERPYTHONPATH"
-          Invoke-Expression "$env:BUILDERPYTHON -V"
-          Invoke-Expression "$env:BUILDERPIP install --upgrade pip"
-          Invoke-Expression "$env:BUILDERPIP install --upgrade sphinx"
-          $env:SPHINXBUILD = (gcm sphinx-build).Path
-          echo "Sphinx Build location: $env:SPHINXBUILD"
-          Invoke-Expression "$env:SPHINXBUILD --version"
-          Add-Content -Path $env:GITHUB_ENV -Value "SPHINXBUILD=${env:SPHINXBUILD}"
-          #$env:DefaultWindowsSDKVersion = "10.0.20348.0"
-          #echo "copy..."
-          $env:OPENSSL_EXTERNAL_TARGET_DIR = "externals\openssl-bin-1.1.1m\${env:PYEXTERNALS_PATH}\"
-          mkdir "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\"
-          Copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\lib\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}" -verbose -recurse
-          copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\bin\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}" -verbose -recurse
-          echo "ls afterwards..."
-          gci -r -Path "${env:OPENSSL_EXTERNAL_TARGET_DIR}" | select -exp FullName
-          #echo "ssl/include"
-          #gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
-          Copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\openssl\" -verbose -recurse
-          Copy-Item -Path "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" -Destination "${env:OPENSSL_EXTERNAL_TARGET_DIR}\include\" -verbose
-          echo "ALL OPENSSL"
-          gci -r -Path "${env:OPENSSL_EXTERNAL_TARGET_DIR}\" | select -exp FullName
           Copy-Item -Path "${env:GITHUB_WORKSPACE}/openssl.props" -Destination PCBuild\ -verbose
-          gci -r -Path PCBuild\ | select -exp FullName
-          #PCBuild\get_externals.bat # should skip above OpenSSL
           PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILD_RELEASE_ARCH}"
-          #Tools\msi\buildrelease.bat -$env:PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
-          #echo "In release:"
-          #dir release\
-          #dir release\$env:PYEXTERNALS_PATH\
-          #dir release\$env:PYEXTERNALS_PATH\binaries\
           mkdir $env:PS_PYTHON_INSTALL_DIR\
-          #cp release\$env:PYEXTERNALS_PATH\binaries\* $env:PS_PYTHON_INSTALL_DIR
           Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" $env:PS_PYTHON_INSTALL_DIR -verbose -recurse
           $env:PYTHON = "${env:PS_PYTHON_INSTALL_DIR}\python.exe"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
