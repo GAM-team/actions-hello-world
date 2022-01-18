@@ -2,7 +2,6 @@ import os, sys
 import platform
 from ssl import OPENSSL_VERSION
 import struct
-import time
 
 if os.environ.get('STATICX_PROG_PATH', False):
     execution_type = 'staticx'
@@ -21,5 +20,4 @@ print(f'Execution type: {execution_type}')
 print(f'Platform: {platform.platform()}')
 print(f'Processor: {proc}')
 print(f'Machine: {machine}')
-print(f'Bits: {bitness}')
-time.sleep(120)
+print(f'Python Bits: {bitness}')
