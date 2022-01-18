@@ -16,10 +16,10 @@ jobs:
             jid: 0
           - os: macos-10.15
             jid: 1
-          - os: windows-2022
-            jid: 2
-            buildbits: 64
-            vc_arch: win64
+        #  - os: windows-2022
+        #    jid: 2
+        #    buildbits: 64
+        #    vc_arch: win64
           - os: windows-2022
             jid: 3
             buildbits: 32
@@ -205,7 +205,7 @@ jobs:
           Remove-Item -recurse -force -verbose "${env:OPENSSL_EXT_DIR}*"
           # Emulate what this script does:
           # https://github.com/python/cpython/blob/main/PCbuild/openssl.vcxproj
-          $env:OPENSSL_EXT_TARGET_DIR = "${env:OPENSSL_EXT_DIR}\${env:PYEXTERNALS_PATH}"
+          $env:OPENSSL_EXT_TARGET_DIR = "${env:OPENSSL_EXT_DIR}${env:PYEXTERNALS_PATH}"
           echo "Copying our OpenSSL to ${env:OPENSSL_EXT_TARGET_DIR}"
           mkdir "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\"
           Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\LICENSE.txt" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\LICENSE" -verbose
@@ -217,7 +217,7 @@ jobs:
           Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl-*.pdb" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
           Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\ms\applink.c" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\" -verbose
           Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\include\openssl\*.h" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\" -verbose
-          gci -r -Path "${env:OPENSS_EXT_TARGET_DIR}" | select -exp FullName
+          gci -r -Path "${env:OPENSSL_EXT_TARGET_DIR}" | select -exp FullName
 
       - name: Windows Install sphinx-build
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
