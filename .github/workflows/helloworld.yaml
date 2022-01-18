@@ -104,6 +104,10 @@ jobs:
           openssl version
           (Get-Command openssl).Path
           rm C:\Strawberry\c\bin\openssl.exe
+          openssl version
+          (Get-Command openssl).Path
+          rm C:\Program Files\Git\mingw64\bin\openssl.exe
+          openssl version
           (Get-Command openssl).Path
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$env:GITHUB_WORKSPACE\ssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$env:GITHUB_WORKSPACE\openssl"
