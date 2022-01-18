@@ -223,11 +223,8 @@ jobs:
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          $env:BUILDERPYTHON = $(gcm python).Path
-          $env:BUILDERPIP = $(gcm pip).Path
-          $env:BUILDERPYTHON -V
-          $env:BUILDERPIP install --upgrade pip
-          $env:BUILDERPIP install --upgrade sphinx
+          pip install --upgrade pip
+          pip install --upgrade sphinx
           sphinx-build --version
 
       - name: Windows Config/Build/Install Python
