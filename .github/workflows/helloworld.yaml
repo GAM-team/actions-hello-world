@@ -298,8 +298,8 @@ jobs:
         with:
           name: helloworld-binaries-${{ matrix.jid }}
           path: dist/helloworld*
-  
-  - name: Archive compiled python
+
+      - name: Archive compiled python
         if: always()
         uses: actions/upload-artifact@v2
         with:
