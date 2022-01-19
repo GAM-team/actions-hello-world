@@ -42,7 +42,7 @@ jobs:
           path: |
             ./python
             ./ssl
-          key: ${{ matrix.jid }}-20220118-07
+          key: ${{ matrix.jid }}-20220119
 
       - name: Bash Env Variables
         env:
@@ -149,6 +149,7 @@ jobs:
           $MAKE "${MAKEOPT}"
 
       - name: Install OpenSSL
+        if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           # install_sw saves us ages processing man pages :-)
