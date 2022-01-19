@@ -44,6 +44,12 @@ jobs:
             ./ssl
           key: ${{ matrix.jid }}-20220118-06
 
+      - name: Windows install newer Python (needed for building Python)
+        uses: actions/setup-python@v2
+        if: matrix.os == 'windows-latest'
+        with:
+          python-version: "3.10"
+
       - name: Bash Env Variables
         env:
           buildbits: ${{ matrix.buildbits }}
