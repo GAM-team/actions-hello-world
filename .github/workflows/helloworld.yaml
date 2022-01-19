@@ -133,8 +133,6 @@ jobs:
       - name: Windows NASM Install
         uses: ilammy/setup-nasm@v1
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
-        with:
-          platform: ${{ matrix.vc_arch }}
 
       - name: Windows Config OpenSSL
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
