@@ -21,7 +21,7 @@ jobs:
           - os: windows-2022
             jid: 2
             buildbits: 64
-            vc_arch: win64
+            vc_arch: x64
             default-shell: powershell
           - os: windows-2022
             jid: 3
@@ -245,7 +245,7 @@ jobs:
         shell: powershell
         run: |
           mkdir "${env:PS_PYTHON_INSTALL_DIR}\lib" -verbose
-          Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" "${env:PS_PYTHON_INSTALL_DIR}" -verbose
+          Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" "${env:PS_PYTHON_INSTALL_DIR}\" -verbose
           Copy-Item -Path "${env:PS_PYTHON_SOURCE_DIR}\Lib\*" "${env:PS_PYTHON_INSTALL_DIR}\lib\" -verbose
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PS_PYTHON_INSTALL_DIR}\python.exe"
 
