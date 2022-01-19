@@ -104,23 +104,6 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
-          echo "SET SET SET"
-          dir env:
-          echo "SET SET SET"
-          # Kill existing OpenSSLs...
-          openssl version
-          (Get-Command openssl).Path
-          choco uninstall OpenSSL.Light
-          openssl version
-          (Get-Command openssl).Path
-          rm C:\Strawberry\c\bin\openssl.exe
-          rm C:\Strawberry\c\bin\lib*-1_1*.dll
-          openssl version
-          (Get-Command openssl).Path
-          rm "C:\Program Files\Git\mingw64\bin\openssl.exe"
-          rm "C:\Program Files\Git\mingw64\bin\lib*-1_1*.dll"
-          rm "C:\Program Files\Git\usr\bin\openssl.exe"
-          rm "C:\Program Files\Git\mingw64\bin\lib*-1_1*.dll"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$env:GITHUB_WORKSPACE\ssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$env:GITHUB_WORKSPACE\openssl"
           Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$env:GITHUB_WORKSPACE\python"
@@ -171,22 +154,15 @@ jobs:
           cd "${OPENSSL_SOURCE_DIR}"
           $MAKE "${MAKEOPT}"
 
-      - name: Mac/Linux Install OpenSSL
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+      - name: Install OpenSSL
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           # install_sw saves us ages processing man pages :-)
-          $MAKE install
+          $MAKE install_sw
 
-      - name: Mac/Linux Run OpenSSL
-        if: matrix.os != 'windows-latest'
+      - name: Run OpenSSL
         run: |
           "${OPENSSL_INSTALL_DIR}/bin/openssl" version
-
-      - name: Windows Run OpenSSL
-        if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
-        run: |
-          "${OPENSSL_SOURCE_DIR}/apps/openssl.exe" version
 
       - name: Get latest stable Python source
         if: steps.cache-python.outputs.cache-hit != 'true'
@@ -227,15 +203,22 @@ jobs:
           $env:OPENSSL_EXT_TARGET_DIR = "${env:OPENSSL_EXT_DIR}${env:PYEXTERNALS_PATH}"
           echo "Copying our OpenSSL to ${env:OPENSSL_EXT_TARGET_DIR}"
           mkdir "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\"
-          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\LICENSE.txt" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\LICENSE" -verbose
-          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto.lib" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
-          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto-*.dll" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
-          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto-*.pdb" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
-          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl.lib" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
-          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl-*.dll" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
-          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl-*.pdb" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
-          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\ms\applink.c" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\" -verbose
-          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\include\openssl\*.h" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\" -verbose
+          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\LICENSE.txt" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\LICENSE" -verbose
+          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto.lib" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto-*.dll" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto-*.pdb" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl.lib" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl-*.dll" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl-*.pdb" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
+          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\ms\applink.c" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\" -verbose
+          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\include\openssl\*.h" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\" -verbose
+          cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" externals\openssl-bin-1.1.1m\amd64\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" externals\openssl-bin-1.1.1m\amd64\
+          echo "ssl/include"
+          gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" externals\openssl-bin-1.1.1m\amd64\include\openssl\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" externals\openssl-bin-1.1.1m\amd64\include\
+          echo "INCLUDE OPENSSL"
           gci -r -Path "${env:OPENSSL_EXT_TARGET_DIR}" | select -exp FullName
 
       - name: Windows Install sphinx-build
@@ -250,26 +233,13 @@ jobs:
         if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          echo "SET SET SET"
-          dir env:
-          echo "SET SET SET"
-          # Put Our OpenSSL as priority in PATH
-          $env:Path = "${env:PS_OPENSSL_SOURCE_DIR}\apps;${env:Path}"
-          echo "path is:"
-          echo "${env:Path}"
-          openssl version
-          (Get-Command openssl).Path
           cd $env:PS_PYTHON_SOURCE_DIR
           Copy-Item -Path "${env:GITHUB_WORKSPACE}\openssl.props" -Destination PCBuild\ -verbose
-          echo "OPENSSL_PROP OPENSSL_PROP OPENSSL_PROP OPENSSL_PROP"
-          type "${env:GITHUB_WORKSPACE}\openssl.props"
-          echo "OPENSSL_PROP OPENSSL_PROP OPENSSL_PROP OPENSSL_PROP"
           echo "Building for ${env:PYBUILDRELEASE_ARCH}..."
           PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILDRELEASE_ARCH}"
           mkdir $env:PS_PYTHON_INSTALL_DIR\
           Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" $env:PS_PYTHON_INSTALL_DIR -verbose -recurse
-          $env:PYTHON = "${env:PS_PYTHON_INSTALL_DIR}\python.exe"
-          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON}"
+          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PS_PYTHON_INSTALL_DIR}\python.exe"
 
       - name: Mac/Linux Build Python
         if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
@@ -315,7 +285,8 @@ jobs:
 
       - name: Compile helloworld with PyInstaller
         run: |
-          "${PYTHON}" -OO -m PyInstaller -F helloworld.py
+          "${PYTHON}" -OO -m PyInstaller -D helloworld.py
+          ls -l dist/
           
       - name: Run PyInstaller-compiled helloworld
         run: dist/helloworld
