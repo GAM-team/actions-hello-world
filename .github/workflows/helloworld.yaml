@@ -73,7 +73,7 @@ jobs:
             OPENSSL_CONFIG_TARGET="VC-WIN64A"
           else
             PYEXTERNALS_PATH="win32"
-            PYBUILDRELEASE_ARCH="win32"
+            PYBUILDRELEASE_ARCH="x86"
             CHOCO_OPTS="--x86"
             OPENSSL_CONFIG_TARGET="VC-WIN32"
           fi
