@@ -16,11 +16,11 @@ jobs:
             jid: 0
           - os: macos-10.15
             jid: 1
-          - os: windows-latest
+          - os: windows-2022
             jid: 2
             buildbits: 64
             vc_arch: win64
-          - os: windows-latest
+          - os: windows-2022
             jid: 3
             buildbits: 32
             vc_arch: win32
@@ -95,7 +95,7 @@ jobs:
           echo "PYTHON=${PYTHON_INSTALL_DIR}/bin/python3" >> $GITHUB_ENV
 
       - name: PowerShell Env Variables
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2022'
         shell: powershell
         run: |
           Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$env:GITHUB_WORKSPACE\ssl"
@@ -113,28 +113,28 @@ jobs:
           git checkout "${latest_stable}"
 
       - name: Unix Config OpenSSL
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${OPENSSL_SOURCE_DIR}"
           ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}" no-fips
 
      # - name: Windows Configure VCode
       #  uses: ilammy/msvc-dev-cmd@v1
-     #   if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+     #   if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
      #   with:
      #     arch: ${{ matrix.vc_arch }}
 
       - name: Windows NASM Install
         uses: ilammy/setup-nasm@v1
-        if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         with:
           platform: ${{ matrix.vc_arch }}
 
       - name: Windows Config OpenSSL
-        if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          $env:VCVARSBAT="C:\Program Files\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars${env:buildbits}.bat"
+          $env:VCVARSBAT="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars${env:buildbits}.bat"
           cmd /c 'call "%VCVARSBAT%" && set MAKE=nmake && set > %temp%\vcvars.txt'
           Get-Content "$env:temp\vcvars.txt" | Foreach-Object {
            if ($_ -match "^(.*?)=(.*)$") {
@@ -146,7 +146,7 @@ jobs:
           c:\strawberry\perl\bin\perl.exe ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-asm
 
       - name: Rename GNU link on Windows
-        if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: bash
         run: mv /usr/bin/link /usr/bin/gnulink
 
@@ -175,7 +175,7 @@ jobs:
           git checkout "${latest_stable}"
 
       - name: Mac/Linux Configure Python
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           ./configure --with-openssl="${OPENSSL_INSTALL_DIR}" \
@@ -186,14 +186,14 @@ jobs:
                       --with-lto
 
       - name: Windows Get External Python deps
-        if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           cd "${env:PS_PYTHON_SOURCE_DIR}"
           PCBuild\get_externals.bat
 
       - name: Windows overwrite external OpenSSL with local
-        if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           cd "${env:PS_PYTHON_SOURCE_DIR}"
@@ -224,7 +224,7 @@ jobs:
           gci -r -Path "${env:OPENSSL_EXT_TARGET_DIR}" | select -exp FullName
 
       - name: Windows Install sphinx-build
-        if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           pip install --upgrade pip
@@ -232,7 +232,7 @@ jobs:
           sphinx-build --version
 
       - name: Windows Config/Build/Install Python
-        if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           cd $env:PS_PYTHON_SOURCE_DIR
@@ -245,13 +245,13 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PS_PYTHON_INSTALL_DIR}\python.exe"
 
       - name: Mac/Linux Build Python
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           $MAKE "${MAKEOPT}"
           
       - name: Mac/Linux Install Python
-        if: matrix.os != 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
+        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
           cd "${PYTHON_SOURCE_DIR}"
           $MAKE altinstall
