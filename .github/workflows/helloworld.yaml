@@ -289,7 +289,7 @@ jobs:
           ls -l dist/
           
       - name: Run PyInstaller-compiled helloworld
-        run: dist/helloworld
+        run: dist/helloworld/helloworld
 
       - name: Linux install patchelf/staticx
         if: matrix.os == 'ubuntu-20.04'
