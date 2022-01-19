@@ -35,14 +35,14 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Cache Python build
-        id: cache-python
-        uses: actions/cache@v2
-        with:
-          path: |
-            ./python
-            ./ssl
-          key: ${{ matrix.jid }}-20220118-07
+    #  - name: Cache Python build
+    #    id: cache-python
+    #    uses: actions/cache@v2
+    #    with:
+    #      path: |
+    #        ./python
+    #        ./ssl
+    #      key: ${{ matrix.jid }}-20220118-07
 
       - name: Windows install newer Python (needed for building Python)
         uses: actions/setup-python@v2
