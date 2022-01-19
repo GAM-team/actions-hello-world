@@ -21,7 +21,7 @@ jobs:
           - os: windows-2022
             jid: 2
             buildbits: 64
-            vc_arch: x64
+            vc_arch: Win64
             default-shell: powershell
           - os: windows-2022
             jid: 3
@@ -79,7 +79,7 @@ jobs:
             OPENSSL_CONFIG_TARGET="VC-WIN64A"
           else
             PYEXTERNALS_PATH="win32"
-            PYBUILDRELEASE_ARCH="x86"
+            PYBUILDRELEASE_ARCH="Win32"
             CHOCO_OPTS="--x86"
             OPENSSL_CONFIG_TARGET="VC-WIN32"
           fi
