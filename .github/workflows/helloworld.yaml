@@ -42,7 +42,7 @@ jobs:
           path: |
             ./python
             ./ssl
-          key: ${{ matrix.jid }}-20220118-06
+          key: ${{ matrix.jid }}-20220118-07
 
       - name: Windows install newer Python (needed for building Python)
         uses: actions/setup-python@v2
