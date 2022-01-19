@@ -245,7 +245,7 @@ jobs:
           cd "${env:PS_PYTHON_SOURCE_DIR}"
           mkdir "${env:PS_PYTHON_INSTALL_DIR}\lib" -verbose
           Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" "${env:PS_PYTHON_INSTALL_DIR}\" -verbose
-          Copy-Item -Path "${env:PS_PYTHON_SOURCE_DIR}\Lib\*" "${env:PS_PYTHON_INSTALL_DIR}\lib\" -verbose
+          Copy-Item -Path "${env:PS_PYTHON_SOURCE_DIR}\Lib\*" "${env:PS_PYTHON_INSTALL_DIR}\lib\" -verbose -recurse
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PS_PYTHON_INSTALL_DIR}\python.exe"
 
       - name: Mac/Linux Build Python
