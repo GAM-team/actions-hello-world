@@ -300,18 +300,18 @@ jobs:
       - name: Linux Make Static helloworld
         if: matrix.os == 'ubuntu-20.04'
         run: |
-          "${PYTHON}" -m staticx dist/helloworld dist/helloworld-staticx
+          "${PYTHON}" -m staticx dist/helloworld/helloworld dist/helloworld/helloworld-staticx
           
       - name: Linux Run StaticX-ed helloworld
         if: matrix.os == 'ubuntu-20.04'
-        run: dist/helloworld-staticx
+        run: dist/helloworld/helloworld-staticx
 
       - name: Archive helloworld binary
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: helloworld-binaries-${{ matrix.jid }}
-          path: dist/helloworld*
+          path: dist/helloworld/*
 
       - name: Archive compiled python
         if: always()
