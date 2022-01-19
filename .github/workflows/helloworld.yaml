@@ -212,12 +212,12 @@ jobs:
           #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl-*.pdb" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\" -verbose
           #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\ms\applink.c" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\" -verbose
           #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\include\openssl\*.h" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\" -verbose
-          cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" externals\openssl-bin-1.1.1m\amd64\
-          cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" externals\openssl-bin-1.1.1m\amd64\
-          echo "ssl/include"
-          gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
-          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" externals\openssl-bin-1.1.1m\amd64\include\openssl\
-          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" externals\openssl-bin-1.1.1m\amd64\include\
+          cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" "${env:OPENSSL_EXT_TARGET_DIR}"
+          cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" "${env:OPENSSL_EXT_TARGET_DIR}"
+          #echo "ssl/include"
+          #gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\"
+          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" "${env:OPENSSL_EXT_TARGET_DIR}\include\"
           echo "INCLUDE OPENSSL"
           gci -r -Path "${env:OPENSSL_EXT_TARGET_DIR}" | select -exp FullName
 
