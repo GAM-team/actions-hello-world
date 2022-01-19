@@ -233,7 +233,7 @@ jobs:
           Tools\msi\buildrelease.bat -$env:PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
           # PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILDRELEASE_ARCH}"
           mkdir $env:PS_PYTHON_INSTALL_DIR\
-          Copy-Item -Path "release\${env:PYEXTERNALS_PATH}\*" $env:PS_PYTHON_INSTALL_DIR -verbose -recurse
+          Copy-Item -Path "release\${env:PYEXTERNALS_PATH}\binaries\*" $env:PS_PYTHON_INSTALL_DIR -verbose -recurse
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PS_PYTHON_INSTALL_DIR}\python.exe"
 
       - name: Mac/Linux Build Python
