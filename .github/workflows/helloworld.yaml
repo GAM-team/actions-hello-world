@@ -237,9 +237,11 @@ jobs:
         run: |
           cd $env:PS_PYTHON_SOURCE_DIR
           Copy-Item -Path "${env:GITHUB_WORKSPACE}\openssl.props" -Destination PCBuild\ -verbose
+          $env:DefaultWindowsSDKVersion = "10.0.20348.0"
           echo "Building for ${env:PYBUILDRELEASE_ARCH}..."
           Tools\msi\buildrelease.bat -$env:PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
           # PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILDRELEASE_ARCH}"
+          type PCBuild\openssl.props
           mkdir $env:PS_PYTHON_INSTALL_DIR\
           Copy-Item -Path "release\${env:PYEXTERNALS_PATH}\binaries\*" $env:PS_PYTHON_INSTALL_DIR -verbose -recurse
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PS_PYTHON_INSTALL_DIR}\python.exe"
