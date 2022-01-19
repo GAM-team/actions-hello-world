@@ -251,7 +251,10 @@ jobs:
           openssl version
           (Get-Command openssl).Path
           cd $env:PS_PYTHON_SOURCE_DIR
-          Copy-Item -Path "${env:GITHUB_WORKSPACE}/openssl.props" -Destination PCBuild\ -verbose
+          Copy-Item -Path "${env:GITHUB_WORKSPACE}\openssl.props" -Destination PCBuild\ -verbose
+          echo "OPENSSL_PROP OPENSSL_PROP OPENSSL_PROP OPENSSL_PROP"
+          type "${env:GITHUB_WORKSPACE}\openssl.props"
+          echo "OPENSSL_PROP OPENSSL_PROP OPENSSL_PROP OPENSSL_PROP"
           echo "Building for ${env:PYBUILDRELEASE_ARCH}..."
           PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILDRELEASE_ARCH}"
           mkdir $env:PS_PYTHON_INSTALL_DIR\
