@@ -258,7 +258,7 @@ jobs:
         if: matrix.os == 'windows-2022'
         shell: powershell
         run: |
-          "${PYTHON}" helloworld.py
+          "${PYTHON}" .\helloworld.py
           
       - name: Upgrade pip, wheel, etc
         run: |
@@ -277,7 +277,7 @@ jobs:
              # remove pre-compiled bootloaders so we fail if bootloader compile fails
              rm -rf PyInstaller/bootloader/*-*/*
              cd bootloader
-             if [[ "${buildbits}" = "32" ]] && [[ "${BUILDOS}" == "Windows" ]]; then
+             if [[ "${buildbits}" == "32" ]] && [[ "${BUILDOS}" == "Windows" ]]; then
                export PYINSTALLER_BUILD_ARGS="--target-arch=32bit"
              fi
              echo "Build arguments: ${PYINSTALLER_BUILD_ARGS}"
