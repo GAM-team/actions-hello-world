@@ -98,6 +98,9 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: powershell
         run: |
+          echo "SET SET SET"
+          dir env:
+          echo "SET SET SET"
           # Kill existing OpenSSLs...
           openssl version
           (Get-Command openssl).Path
@@ -238,6 +241,9 @@ jobs:
         if: matrix.os == 'windows-latest' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
+          echo "SET SET SET"
+          dir env:
+          echo "SET SET SET"
           # Put Our OpenSSL as priority in PATH
           $env:Path = "${env:PS_OPENSSL_SOURCE_DIR}\apps;${env:Path}"
           echo "path is:"
