@@ -304,7 +304,9 @@ jobs:
           
       - name: Linux Run StaticX-ed helloworld
         if: matrix.os == 'ubuntu-20.04'
-        run: dist/helloworld/helloworld-staticx
+        run: |
+          # dist/helloworld/helloworld-staticx
+          ls -alRF dist/
 
       - name: Archive helloworld binary
         if: always()
