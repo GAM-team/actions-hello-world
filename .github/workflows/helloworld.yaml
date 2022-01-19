@@ -14,20 +14,26 @@ jobs:
         include:
           - os: ubuntu-20.04
             jid: 0
+            default-shell: bash
           - os: macos-10.15
             jid: 1
+            default-shell: bash
           - os: windows-2022
             jid: 2
             buildbits: 64
             vc_arch: win64
+            default-shell: powershell
           - os: windows-2022
             jid: 3
             buildbits: 32
             vc_arch: win32
+            default-shell: powershell
           #- os: [self-hosted, linux, arm64]
           #  jid: 4
+          #  default-shell: bash
           #- os: [self-hosted, linux, arm]
           #  jid: 5
+          #  default-shell: bash
 
     steps:
       - uses: actions/checkout@master
@@ -224,17 +230,23 @@ jobs:
           pip install --upgrade sphinx
           sphinx-build --version
 
-      - name: Windows Config/Build/Install Python
+      - name: Windows Config/Build Python
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          cd $env:PS_PYTHON_SOURCE_DIR
+          cd "${env:PS_PYTHON_SOURCE_DIR}"
           Copy-Item -Path "${env:GITHUB_WORKSPACE}\openssl.props" -Destination PCBuild\
           echo "Building for ${env:PYBUILDRELEASE_ARCH}..."
           # Tools\msi\buildrelease.bat -$env:PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
           PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILDRELEASE_ARCH}"
-          mkdir $env:PS_PYTHON_INSTALL_DIR\
-          Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" $env:PS_PYTHON_INSTALL_DIR -recurse
+          
+      - name: Windows Install Python
+        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          mkdir "${env:PS_PYTHON_INSTALL_DIR}\lib" -verbose
+          Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" "${env:PS_PYTHON_INSTALL_DIR}" -verbose
+          Copy-Item -Path "${env:PS_PYTHON_SOURCE_DIR}\Lib\*" "${env:PS_PYTHON_INSTALL_DIR}\lib\" -verbose
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PS_PYTHON_INSTALL_DIR}\python.exe"
 
       - name: Mac/Linux Build Python
@@ -258,8 +270,10 @@ jobs:
         if: matrix.os == 'windows-2022'
         shell: powershell
         run: |
-          "${PYTHON}" .\helloworld.py
-          
+          echo "${PYTHON}"
+          Invoke-Item "${PYTHON}" -V
+          Invoke-Item "${PYTHON}" .\helloworld.py
+
       - name: Upgrade pip, wheel, etc
         run: |
           curl -O https://bootstrap.pypa.io/get-pip.py
