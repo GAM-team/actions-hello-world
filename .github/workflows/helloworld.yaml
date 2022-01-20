@@ -90,8 +90,8 @@ jobs:
           echo "PYEXTERNALS_PATH=${PYEXTERNALS_PATH}" >> $GITHUB_ENV
           echo "PYBUILDRELEASE_ARCH=${PYBUILDRELEASE_ARCH}" >> $GITHUB_ENV
           echo "OPENSSL_CONFIG_TARGET=${OPENSSL_CONFIG_TARGET}" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:${PYTHON_INSTALL_DIR}/lib" >> $GITHUB_ENV
-          echo "PYTHON=${PYTHON_INSTALL_DIR}/bin/python3" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_PATH}/lib:${PYTHON_INSTALL_PATH}/lib" >> $GITHUB_ENV
+          echo "PYTHON=${PYTHON_INSTALL_PATH}/bin/python3" >> $GITHUB_ENV
 
       - name: Get latest stable OpenSSL source
         if: steps.cache-python.outputs.cache-hit != 'true'
@@ -119,13 +119,6 @@ jobs:
           cd "${OPENSSL_SOURCE_PATH}"
           # --libdir=lib is needed so Python can find OpenSSL libraries
           "${PERL}" ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_PATH}" $OPENSSL_CONFIG_OPTS
-
-     # - name: Windows Config OpenSSL
-     #   if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
-     #   shell: powershell
-     #   run: |
-     #     cd $env:OPENSSL_SOURCE_PATH
-     #     c:\strawberry\perl\bin\perl.exe ./Configure "${env:OPENSSL_CONFIG_TARGET}" --prefix="$env:OPENSSL_INSTALL_PATH" $env:OPENSSL_CONFIG_OPTS
 
       - name: Rename GNU link on Windows
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
@@ -187,7 +180,7 @@ jobs:
           # Emulate what this script does:
           # https://github.com/python/cpython/blob/main/PCbuild/openssl.vcxproj
           $env:OPENSSL_EXT_TARGET_PATH = "${env:OPENSSL_EXT_PATH}${env:PYEXTERNALS_PATH}"
-          echo "Copying our OpenSSL to ${env:OPENSSL_EXT_TARGET_DIR}"
+          echo "Copying our OpenSSL to ${env:OPENSSL_EXT_TARGET_PATH}"
           mkdir "${env:OPENSSL_EXT_TARGET_PATH}\include\openssl\"
           Copy-Item -Path "${env:PS_OPENSSL_SOURCE_PATH}\LICENSE.txt" -Destination "${env:OPENSSL_EXT_TARGET_PATH}\LICENSE"
           cp "$env:PS_OPENSSL_INSTALL_PATH\lib\*" "${env:OPENSSL_EXT_TARGET_PATH}"
@@ -217,11 +210,10 @@ jobs:
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          cd "${env:PYTHON_SOURCE_DIR}"
-          mkdir "${env:PYTHON_INSTALL_DIR}\lib"
+          cd "${env:PYTHON_SOURCE_PATH}"
+          mkdir "${env:PYTHON_INSTALL_PATH}\lib"
           Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" "${env:PS_PYTHON_INSTALL_PATH}\"
           Copy-Item -Path "${env:PS_PYTHON_SOURCE_PATH}\Lib\*" "${env:PS_PYTHON_INSTALL_PATH}\lib\" -recurse
-          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON_INSTALL_DIR}\python.exe"
 
       - name: Mac/Linux Build Python
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
