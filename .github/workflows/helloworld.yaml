@@ -76,7 +76,7 @@ jobs:
             PYEXTERNALS_PATH="amd64"
             PYBUILDRELEASE_ARCH="x64"
             OPENSSL_CONFIG_TARGET="VC-WIN64A"
-          elif [[ "${arch}" == "win32" ]]; then
+          elif [[ "${arch}" == "Win32" ]]; then
             PYEXTERNALS_PATH="win32"
             PYBUILDRELEASE_ARCH="Win32"
             OPENSSL_CONFIG_TARGET="VC-WIN32"
