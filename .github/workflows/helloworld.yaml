@@ -267,7 +267,7 @@ jobs:
 
       - name: Compile helloworld with PyInstaller
         run: |
-          "${PYTHON}" -OO -m PyInstaller -D --noupx helloworld.py
+          "${PYTHON}" -OO -m PyInstaller -D --noupx --clean helloworld.py
           
       - name: Run PyInstaller-compiled helloworld
         run: dist/helloworld/helloworld
@@ -301,7 +301,7 @@ jobs:
       - name: Linux Make Static helloworld
         if: matrix.os == 'ubuntu-20.04'
         run: |
-          "${PYTHON}" -OO -m PyInstaller -F --distpath staticx --noupx helloworld.py
+          "${PYTHON}" -OO -m PyInstaller -F --distpath ./staticx --noupx --clean helloworld.py
           "${PYTHON}" -m staticx staticx/helloworld staticx/helloworld-staticx
           
       - name: Linux Run StaticX-ed helloworld
