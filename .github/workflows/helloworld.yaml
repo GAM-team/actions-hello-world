@@ -66,14 +66,17 @@ jobs:
             # We only care about non-deprecated OSes
             MACOSX_DEPLOYMENT_TARGET="10.15"
             echo "MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}" >> $GITHUB_ENV
+            echo "PYTHON=${PYTHON_INSTALL_PATH}/bin/python3" >> $GITHUB_ENV
           elif [[ "${RUNNER_OS}" == "Linux" ]]; then
             MAKE=make
             MAKEOPT="-j$(nproc)"
             PERL=perl
+            echo "PYTHON=${PYTHON_INSTALL_PATH}/bin/python3" >> $GITHUB_ENV
           elif [[ "${RUNNER_OS}" == "Windows" ]]; then
             MAKE=nmake
             MAKEOPT=""
             PERL="c:\strawberry\perl\bin\perl.exe"
+            echo "PYTHON=${PYTHON_INSTALL_PATH}\python.exe" >> $GITHUB_ENV
           fi
           if [[ "${arch}" == "Win64" ]]; then
             PYEXTERNALS_PATH="amd64"
@@ -218,7 +221,6 @@ jobs:
           mkdir "${env:PYTHON_INSTALL_PATH}\lib"
           Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" "${env:PYTHON_INSTALL_PATH}\"
           Copy-Item -Path "${env:PYTHON_SOURCE_PATH}\Lib\*" "${env:PYTHON_INSTALL_PATH}\lib\" -recurse
-          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON_INSTALL_DIR}\python.exe"
 
       - name: Mac/Linux Build Python
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
@@ -233,7 +235,6 @@ jobs:
           cd "${PYTHON_SOURCE_PATH}"
           $MAKE altinstall
           $MAKE bininstall
-          echo "PYTHON=${PYTHON_INSTALL_PATH}/bin/python3" >> $GITHUB_ENV
 
       - name: Run Python
         run: |
