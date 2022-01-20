@@ -274,14 +274,14 @@ jobs:
       - name: Check Python / OpenSSL version matches
         run: |
           export voutput=$(dist/helloworld/helloworld)
-          export python_line=$(echo $voutput | grep "Python: ")
+          export python_line=$(echo -e "${voutput}" | grep "Python: ")
           export python_arr=($python_line)
           export this_python=${python_arr[1]}
           if [[ "${this_python}" != "${COMPILED_PYTHON_VERSION}" ]]; then
             echo "ERROR: Tried to compile Python ${COMPILED_PYTHON_VERSION} but ended up with ${this_python}"
             exit 1
           fi
-          export openssl_line=$(echo $voutput | grep "OpenSSL: ")
+          export openssl_line=$(echo -e "${voutput}" | grep "OpenSSL: ")
           export openssl_arr=($openssl_line)
           export this_openssl=${openssl_arr[2]}
           if [[ "${this_openssl}" != "${COMPILED_OPENSSL_VERSION}" ]]; then
