@@ -63,6 +63,9 @@ jobs:
             MAKE=make
             MAKEOPT="-j$(sysctl -n hw.logicalcpu)"
             PERL=perl
+            # We only care about non-deprecated OSes
+            MACOSX_DEPLOYMENT_TARGET="10.15"
+            echo "MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}" >> $GITHUB_ENV
           elif [[ "${RUNNER_OS}" == "Linux" ]]; then
             MAKE=make
             MAKEOPT="-j$(nproc)"
@@ -235,25 +238,6 @@ jobs:
         run: |
           "${PYTHON}" helloworld.py
 
-      - name: Check Python / OpenSSL version matches
-        run: |
-          export voutput=$("${PYTHON}" helloworld.py)
-          export python_line=$(echo $voutput | grep "Python: ")
-          export python_arr=($python_line)
-          export this_python=${python_arr[1]}
-          if [[ "${this_python}" != "${COMPILED_PYTHON_VERSION}" ]]; then
-            echo "ERROR: Tried to compile Python ${COMPILED_PYTHON_VERSION} but ended up with ${this_python}"
-            exit 1
-          fi
-          export openssl_line=$(echo $voutput | grep "OpenSSL: ")
-          export openssl_arr=($openssl_line)
-          export this_openssl=${openssl_arr[2]}
-          if [[ "${this_openssl}" != "${COMPILED_OPENSSL_VERSION" ]]; then
-            echo "ERROR: Tried to compile OpenSSL ${COMPILED_OPENSSL_VERSION} but ended up with ${this_openssl}"
-            exit 1
-          fi
-          echo "We successfully compiled Python ${this_python} and OpenSSL ${this_openssl}"
-
       - name: Upgrade pip, wheel, etc
         run: |
           curl -O https://bootstrap.pypa.io/get-pip.py
@@ -286,6 +270,25 @@ jobs:
           
       - name: Run PyInstaller-compiled helloworld
         run: dist/helloworld/helloworld
+
+      - name: Check Python / OpenSSL version matches
+        run: |
+          export voutput=$(dist/helloworld/helloworld)
+          export python_line=$(echo $voutput | grep "Python: ")
+          export python_arr=($python_line)
+          export this_python=${python_arr[1]}
+          if [[ "${this_python}" != "${COMPILED_PYTHON_VERSION}" ]]; then
+            echo "ERROR: Tried to compile Python ${COMPILED_PYTHON_VERSION} but ended up with ${this_python}"
+            exit 1
+          fi
+          export openssl_line=$(echo $voutput | grep "OpenSSL: ")
+          export openssl_arr=($openssl_line)
+          export this_openssl=${openssl_arr[2]}
+          if [[ "${this_openssl}" != "${COMPILED_OPENSSL_VERSION}" ]]; then
+            echo "ERROR: Tried to compile OpenSSL ${COMPILED_OPENSSL_VERSION} but ended up with ${this_openssl}"
+            exit 1
+          fi
+          echo "We successfully compiled Python ${this_python} and OpenSSL ${this_openssl}"
 
       - name: Linux install patchelf/staticx
         if: matrix.os == 'ubuntu-20.04'
