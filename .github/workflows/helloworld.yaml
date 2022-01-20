@@ -171,7 +171,7 @@ jobs:
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          cd "${env:PS_PYTHON_SOURCE_PATH}"
+          cd "${env:PYTHON_SOURCE_PATH}"
           PCBuild\get_externals.bat
 
       - name: Windows overwrite external OpenSSL with local
@@ -187,11 +187,11 @@ jobs:
           $env:OPENSSL_EXT_TARGET_PATH = "${env:OPENSSL_EXT_PATH}${env:PYEXTERNALS_PATH}"
           echo "Copying our OpenSSL to ${env:OPENSSL_EXT_TARGET_PATH}"
           mkdir "${env:OPENSSL_EXT_TARGET_PATH}\include\openssl\"
-          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_PATH}\LICENSE.txt" -Destination "${env:OPENSSL_EXT_TARGET_PATH}\LICENSE"
-          cp "$env:PS_OPENSSL_INSTALL_PATH\lib\*" "${env:OPENSSL_EXT_TARGET_PATH}"
-          cp "$env:PS_OPENSSL_INSTALL_PATH\bin\*" "${env:OPENSSL_EXT_TARGET_PATH}"
-          cp "$env:PS_OPENSSL_INSTALL_PATH\include\openssl\*" "${env:OPENSSL_EXT_TARGET_PATH}\include\openssl\"
-          cp "$env:PS_OPENSSL_INSTALL_PATH\include\openssl\applink.c" "${env:OPENSSL_EXT_TARGET_PATH}\include\"
+          Copy-Item -Path "${env:OPENSSL_SOURCE_PATH}\LICENSE.txt" -Destination "${env:OPENSSL_EXT_TARGET_PATH}\LICENSE"
+          cp "$env:OPENSSL_INSTALL_PATH\lib\*" "${env:OPENSSL_EXT_TARGET_PATH}"
+          cp "$env:OPENSSL_INSTALL_PATH\bin\*" "${env:OPENSSL_EXT_TARGET_PATH}"
+          cp "$env:OPENSSL_INSTALL_PATH\include\openssl\*" "${env:OPENSSL_EXT_TARGET_PATH}\include\openssl\"
+          cp "$env:OPENSSL_INSTALL_PATH\include\openssl\applink.c" "${env:OPENSSL_EXT_TARGET_PATH}\include\"
 
       - name: Windows Install sphinx-build
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
@@ -217,8 +217,8 @@ jobs:
         run: |
           cd "${env:PYTHON_SOURCE_PATH}"
           mkdir "${env:PYTHON_INSTALL_PATH}\lib"
-          Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" "${env:PS_PYTHON_INSTALL_PATH}\"
-          Copy-Item -Path "${env:PS_PYTHON_SOURCE_PATH}\Lib\*" "${env:PS_PYTHON_INSTALL_PATH}\lib\" -recurse
+          Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" "${env:PYTHON_INSTALL_PATH}\"
+          Copy-Item -Path "${env:PYTHON_SOURCE_PATH}\Lib\*" "${env:PYTHON_INSTALL_PATH}\lib\" -recurse
 
       - name: Mac/Linux Build Python
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
