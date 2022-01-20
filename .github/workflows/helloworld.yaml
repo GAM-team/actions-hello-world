@@ -273,6 +273,7 @@ jobs:
         run: dist/helloworld/helloworld
 
       - name: Check Python / OpenSSL version matches
+        if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           export voutput=$(dist/helloworld/helloworld)
           export python_line=$(echo -e "${voutput}" | grep "Python: ")
