@@ -6,6 +6,15 @@ defaults:
   run:
     shell: bash
 
+env:
+  OPENSSL_CONFIG_OPTS: no-asm no-fips
+  OPENSSL_INSTALL_PATH: ${{ github.workspace }}/ssl
+  OPENSSL_SOURCE_PATH: ${{ github.workspace }}/openssl
+  PYTHON_INSTALL_PATH: ${{ github.workspace }}/python
+  PYTHON_SOURCE_PATH: ${{ github.workspace }}/cpython
+  jid: ${{ matrix.jid }}
+  arch: ${{ matrix.arch }}
+  
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -14,26 +23,22 @@ jobs:
         include:
           - os: ubuntu-20.04
             jid: 0
-            default-shell: bash
+            arch: x86_64
           - os: macos-11
             jid: 1
-            default-shell: bash
+            arch: x86_64
           - os: windows-2022
             jid: 2
-            buildbits: 64
-            vc_arch: Win64
-            default-shell: powershell
+            arch: Win64
           - os: windows-2022
             jid: 3
-            buildbits: 32
-            vc_arch: win32
-            default-shell: powershell
+            arch: Win32
           - os: [self-hosted, linux, arm64]
             jid: 4
-            default-shell: bash
+            arch: aarch64
           - os: [self-hosted, linux, arm]
             jid: 5
-            default-shell: bash
+            arch: armv7l
 
     steps:
       - uses: actions/checkout@master
@@ -50,96 +55,77 @@ jobs:
             ./ssl
           key: ${{ matrix.jid }}-20220119
 
-      - name: Bash Env Variables
+      - name: Set Env Variables
         env:
-          buildbits: ${{ matrix.buildbits }}
+          arch: ${{ matrix.arch }}
           jid: ${{ matrix.jid }}
         run: |
-          OPENSSL_INSTALL_DIR="${GITHUB_WORKSPACE}/ssl"
-          OPENSSL_SOURCE_DIR="${GITHUB_WORKSPACE}/openssl"
-          PYTHON_INSTALL_DIR="${GITHUB_WORKSPACE}/python"
-          PYTHON_SOURCE_DIR="${GITHUB_WORKSPACE}/cpython"
-          BUILDOS=$(uname)
-          echo "We are running on ${BUILDOS}"
-          if [[ "${BUILDOS}" == "Darwin" ]]; then
+          echo "We are running on ${RUNNER_OS}"
+          if [[ "${RUNNER_OS}" == "macOS" ]]; then
             MAKE=make
             MAKEOPT="-j$(sysctl -n hw.logicalcpu)"
-          elif [[ "${BUILDOS}" == "Linux" ]]; then
+            PERL=perl
+          elif [[ "${RUNNER_OS}" == "Linux" ]]; then
             MAKE=make
             MAKEOPT="-j$(nproc)"
-          else
-            BUILDOS="Windows"
+            PERL=perl
+          elif [[ "${RUNNER_OS}" == "Windows" ]]; then
             MAKE=nmake
             MAKEOPT=""
+            PERL="c:\strawberry\perl\bin\perl.exe"
           fi
-          if [[ "${buildbits}" == "64" ]]; then
+          if [[ "${arch}" == "Win64" ]]; then
             PYEXTERNALS_PATH="amd64"
             PYBUILDRELEASE_ARCH="x64"
-            CHOCO_OPTS=""
             OPENSSL_CONFIG_TARGET="VC-WIN64A"
-          else
+          elif [[ "${arch}" == "win32" ]]; then
             PYEXTERNALS_PATH="win32"
             PYBUILDRELEASE_ARCH="Win32"
-            CHOCO_OPTS="--x86"
             OPENSSL_CONFIG_TARGET="VC-WIN32"
           fi
           echo "We'll run make with: ${MAKEOPT}"
-          echo "BUILDOS=${BUILDOS}" >> $GITHUB_ENV
           echo "MAKE=${MAKE}" >> $GITHUB_ENV
           echo "MAKEOPT=${MAKEOPT}" >> $GITHUB_ENV
+          echo "PERL=${PERL}" >> $GITHUB_ENV
           echo "PYEXTERNALS_PATH=${PYEXTERNALS_PATH}" >> $GITHUB_ENV
           echo "PYBUILDRELEASE_ARCH=${PYBUILDRELEASE_ARCH}" >> $GITHUB_ENV
-          echo "CHOCO_OPTS=${CHOCO_OPTS}" >> $GITHUB_ENV
           echo "OPENSSL_CONFIG_TARGET=${OPENSSL_CONFIG_TARGET}" >> $GITHUB_ENV
-          echo "buildbits=${buildbits}" >> $GITHUB_ENV
-          echo "jid=${jid}" >> $GITHUB_ENV
-          echo "OPENSSL_SOURCE_DIR=${OPENSSL_SOURCE_DIR}" >> $GITHUB_ENV
-          echo "OPENSSL_INSTALL_DIR=${OPENSSL_INSTALL_DIR}" >> $GITHUB_ENV
-          echo "PYTHON_SOURCE_DIR=${PYTHON_SOURCE_DIR}" >> $GITHUB_ENV
-          echo "PYTHON_INSTALL_DIR=${PYTHON_INSTALL_DIR}" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=${OPENSSL_INSTALL_DIR}/lib:${PYTHON_INSTALL_DIR}/lib" >> $GITHUB_ENV
           echo "PYTHON=${PYTHON_INSTALL_DIR}/bin/python3" >> $GITHUB_ENV
-
-      - name: PowerShell Env Variables
-        if: matrix.os == 'windows-2022'
-        shell: powershell
-        run: |
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_INSTALL_DIR=$env:GITHUB_WORKSPACE\ssl"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_OPENSSL_SOURCE_DIR=$env:GITHUB_WORKSPACE\openssl"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_INSTALL_DIR=$env:GITHUB_WORKSPACE\python"
-          Add-Content -Path $env:GITHUB_ENV -Value "PS_PYTHON_SOURCE_DIR=$env:GITHUB_WORKSPACE\cpython"
-          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=$env:PYTHON_INSTALL_DIR/python.exe"
 
       - name: Get latest stable OpenSSL source
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           git clone https://github.com/openssl/openssl.git
-          cd openssl
-          export latest_stable=$(git tag --list openssl-* | grep -v alpha | grep -v beta | sort -Vr | head -n1)
-          git checkout "${latest_stable}"
-
-      - name: Unix Config OpenSSL
-        if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
-        run: |
-          cd "${OPENSSL_SOURCE_DIR}"
-          ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_DIR}" no-fips
+          cd "${OPENSSL_SOURCE_PATH}"
+          export COMPILED_OPENSSL_VERSION=$(git tag --list openssl-* | grep -v alpha | grep -v beta | sort -Vr | head -n1)
+          echo "Checking out version ${COMPILED_OPENSSL_VERSION}"
+          git checkout "${COMPILED_OPENSSL_VERSION}"
+          echo "COMPILED_OPENSSL_VERSION=${COMPILED_OPENSSL_VERSION}" >> $GITHUB_ENV
 
       - name: Windows Configure VCode
         uses: ilammy/msvc-dev-cmd@v1
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         with:
-          arch: ${{ matrix.vc_arch }}
+          arch: ${{ matrix.arch }}
 
       - name: Windows NASM Install
         uses: ilammy/setup-nasm@v1
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
 
-      - name: Windows Config OpenSSL
-        if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
-        shell: powershell
+      - name: Config OpenSSL
+        if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          cd $env:PS_OPENSSL_SOURCE_DIR
-          c:\strawberry\perl\bin\perl.exe ./Configure $env:OPENSSL_CONFIG_TARGET --prefix="$env:PS_OPENSSL_INSTALL_DIR" no-asm
+          cd "${OPENSSL_SOURCE_PATH}"
+          # --libdir=lib is needed so Python can find OpenSSL libraries
+          "${PERL}" ./Configure --libdir=lib --prefix="${OPENSSL_INSTALL_PATH}" $OPENSSL_CONFIG_OPTS
+
+     # - name: Windows Config OpenSSL
+     #   if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
+     #   shell: powershell
+     #   run: |
+     #     cd $env:OPENSSL_SOURCE_PATH
+     #     c:\strawberry\perl\bin\perl.exe ./Configure "${env:OPENSSL_CONFIG_TARGET}" --prefix="$env:OPENSSL_INSTALL_PATH" $env:OPENSSL_CONFIG_OPTS
 
       - name: Rename GNU link on Windows
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
@@ -149,34 +135,35 @@ jobs:
       - name: Make OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          cd "${OPENSSL_SOURCE_DIR}"
+          cd "${OPENSSL_SOURCE_PATH}"
           $MAKE "${MAKEOPT}"
 
       - name: Install OpenSSL
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          cd "${OPENSSL_SOURCE_DIR}"
+          cd "${OPENSSL_SOURCE_PATH}"
           # install_sw saves us ages processing man pages :-)
           $MAKE install_sw
 
       - name: Run OpenSSL
         run: |
-          "${OPENSSL_INSTALL_DIR}/bin/openssl" version
+          "${OPENSSL_INSTALL_PATH}/bin/openssl" version
 
       - name: Get latest stable Python source
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
           git clone https://github.com/python/cpython.git
-          cd cpython
-          export latest_stable=$(git tag --list | grep -v a | grep -v rc | grep -v b | sort -Vr | head -n1)
-          git checkout "${latest_stable}"
+          cd "${PYTHON_SOURCE_PATH}"
+          export COMPILED_PYTHON_VERSION=$(git tag --list | grep -v a | grep -v rc | grep -v b | sort -Vr | head -n1)
+          git checkout "${COMPILED_PYTHON_VERSION}"
+          echo "COMPILED_PYTHON_VERSION=${COMPILED_PYTHON_VERSION}" >> $GITHUB_ENV
 
       - name: Mac/Linux Configure Python
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          cd "${PYTHON_SOURCE_DIR}"
-          ./configure --with-openssl="${OPENSSL_INSTALL_DIR}" \
-                      --prefix="${PYTHON_INSTALL_DIR}" \
+          cd "${PYTHON_SOURCE_PATH}"
+          ./configure --with-openssl="${OPENSSL_INSTALL_PATH}" \
+                      --prefix="${PYTHON_INSTALL_PATH}" \
                       --enable-shared \
                       --with-ensurepip=upgrade \
                       --enable-optimizations \
@@ -186,39 +173,27 @@ jobs:
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          cd "${env:PS_PYTHON_SOURCE_DIR}"
+          cd "${env:PS_PYTHON_SOURCE_PATH}"
           PCBuild\get_externals.bat
 
       - name: Windows overwrite external OpenSSL with local
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          cd "${env:PS_PYTHON_SOURCE_DIR}"
-          $env:OPENSSL_EXT_DIR = "$(Get-Item externals\openssl-bin-* | Select -exp FullName)\"
-          echo "External OpenSSL was downloaded to ${env:OPENSSL_EXT_DIR}"
-          Remove-Item -recurse -force "${env:OPENSSL_EXT_DIR}*"
+          cd "${env:PYTHON_SOURCE_PATH}"
+          $env:OPENSSL_EXT_PATH = "$(Get-Item externals\openssl-bin-* | Select -exp FullName)\"
+          echo "External OpenSSL was downloaded to ${env:OPENSSL_EXT_PATH}"
+          Remove-Item -recurse -force "${env:OPENSSL_EXT_PATH}*"
           # Emulate what this script does:
           # https://github.com/python/cpython/blob/main/PCbuild/openssl.vcxproj
-          $env:OPENSSL_EXT_TARGET_DIR = "${env:OPENSSL_EXT_DIR}${env:PYEXTERNALS_PATH}"
+          $env:OPENSSL_EXT_TARGET_PATH = "${env:OPENSSL_EXT_PATH}${env:PYEXTERNALS_PATH}"
           echo "Copying our OpenSSL to ${env:OPENSSL_EXT_TARGET_DIR}"
-          mkdir "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\"
-          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\LICENSE.txt" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\LICENSE"
-          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto.lib" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\"
-          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto-*.dll" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\"
-          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libcrypto-*.pdb" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\"
-          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl.lib" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\"
-          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl-*.dll" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\"
-          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\libssl-*.pdb" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\"
-          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\ms\applink.c" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\"
-          #Copy-Item -Path "${env:PS_OPENSSL_SOURCE_DIR}\include\openssl\*.h" -Destination "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\"
-          cp "$env:PS_OPENSSL_INSTALL_DIR\lib\*" "${env:OPENSSL_EXT_TARGET_DIR}"
-          cp "$env:PS_OPENSSL_INSTALL_DIR\bin\*" "${env:OPENSSL_EXT_TARGET_DIR}"
-          #echo "ssl/include"
-          #gci -r -Path "$env:PS_OPENSSL_INSTALL_DIR/include" | select -exp FullName
-          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\*" "${env:OPENSSL_EXT_TARGET_DIR}\include\openssl\"
-          cp "$env:PS_OPENSSL_INSTALL_DIR\include\openssl\applink.c" "${env:OPENSSL_EXT_TARGET_DIR}\include\"
-          echo "INCLUDE OPENSSL"
-          gci -r -Path "${env:OPENSSL_EXT_TARGET_DIR}" | select -exp FullName
+          mkdir "${env:OPENSSL_EXT_TARGET_PATH}\include\openssl\"
+          Copy-Item -Path "${env:PS_OPENSSL_SOURCE_PATH}\LICENSE.txt" -Destination "${env:OPENSSL_EXT_TARGET_PATH}\LICENSE"
+          cp "$env:PS_OPENSSL_INSTALL_PATH\lib\*" "${env:OPENSSL_EXT_TARGET_PATH}"
+          cp "$env:PS_OPENSSL_INSTALL_PATH\bin\*" "${env:OPENSSL_EXT_TARGET_PATH}"
+          cp "$env:PS_OPENSSL_INSTALL_PATH\include\openssl\*" "${env:OPENSSL_EXT_TARGET_PATH}\include\openssl\"
+          cp "$env:PS_OPENSSL_INSTALL_PATH\include\openssl\applink.c" "${env:OPENSSL_EXT_TARGET_PATH}\include\"
 
       - name: Windows Install sphinx-build
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
@@ -232,32 +207,33 @@ jobs:
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          cd "${env:PS_PYTHON_SOURCE_DIR}"
+          cd "${env:PYTHON_SOURCE_PATH}"
+          # We need out custom openssl.props which uses OpenSSL 3 DLL names
           Copy-Item -Path "${env:GITHUB_WORKSPACE}\openssl.props" -Destination PCBuild\
           echo "Building for ${env:PYBUILDRELEASE_ARCH}..."
-          # Tools\msi\buildrelease.bat -$env:PYBUILDRELEASE_ARCH --out release --skip-msi --skip-nuget
           PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILDRELEASE_ARCH}"
           
       - name: Windows Install Python
         if: matrix.os == 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         shell: powershell
         run: |
-          cd "${env:PS_PYTHON_SOURCE_DIR}"
-          mkdir "${env:PS_PYTHON_INSTALL_DIR}\lib" -verbose
-          Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" "${env:PS_PYTHON_INSTALL_DIR}\" -verbose
-          Copy-Item -Path "${env:PS_PYTHON_SOURCE_DIR}\Lib\*" "${env:PS_PYTHON_INSTALL_DIR}\lib\" -verbose -recurse
-          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PS_PYTHON_INSTALL_DIR}\python.exe"
+          cd "${env:PYTHON_SOURCE_DIR}"
+          mkdir "${env:PYTHON_INSTALL_DIR}\lib"
+          Copy-Item -Path "PCBuild\${env:PYEXTERNALS_PATH}\*" "${env:PS_PYTHON_INSTALL_PATH}\"
+          Copy-Item -Path "${env:PS_PYTHON_SOURCE_PATH}\Lib\*" "${env:PS_PYTHON_INSTALL_PATH}\lib\" -recurse
+          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON=${env:PYTHON_INSTALL_DIR}\python.exe"
 
       - name: Mac/Linux Build Python
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          cd "${PYTHON_SOURCE_DIR}"
-          $MAKE "${MAKEOPT}"
+          cd "${PYTHON_SOURCE_PATH}"
+          echo "Running: ${MAKE} ${MAKEOPT}"
+          $MAKE $MAKEOPT
           
       - name: Mac/Linux Install Python
         if: matrix.os != 'windows-2022' && steps.cache-python.outputs.cache-hit != 'true'
         run: |
-          cd "${PYTHON_SOURCE_DIR}"
+          cd "${PYTHON_SOURCE_PATH}"
           $MAKE altinstall
           $MAKE bininstall
 
@@ -265,11 +241,24 @@ jobs:
         run: |
           "${PYTHON}" helloworld.py
 
-      - name: Windows Run Python
-        if: matrix.os == 'windows-2022'
-        shell: powershell
+      - name: Check Python / OpenSSL version matches
         run: |
-          python\python.exe helloworld.py
+          export voutput=$("${PYTHON}" helloword.py)
+          export python_line=$(echo $voutput | grep "Python: ")
+          export python_arr=($python_line)
+          export this_python=${python_arr[1]}
+          if [[ "${this_python}" != "${COMPILED_PYTHON_VERSION}" ]]; then
+            echo "ERROR: Tried to compile Python ${COMPILED_PYTHON_VERSION} but ended up with ${this_python}"
+            exit 1
+          fi
+          export openssl_line=$(echo $voutput | grep "OpenSSL: ")
+          export openssl_arr=($openssl_line)
+          export this_openssl=${openssl_arr[2]}
+          if [[ "${this_openssl}" != "${COMPILED_OPENSSL_VERSION" ]]; then
+            echo "ERROR: Tried to compile OpenSSL ${COMPILED_OPENSSL_VERSION} but ended up with ${this_openssl}"
+            exit 1
+          fi
+          echo "We successfully compiled Python ${this_python} and OpenSSL ${this_openssl}"
 
       - name: Upgrade pip, wheel, etc
         run: |
@@ -288,10 +277,10 @@ jobs:
              # remove pre-compiled bootloaders so we fail if bootloader compile fails
              rm -rf PyInstaller/bootloader/*-*/*
              cd bootloader
-             if [[ "${buildbits}" == "32" ]] && [[ "${BUILDOS}" == "Windows" ]]; then
+             if [[ "${arch}" == "win32"; then
                export PYINSTALLER_BUILD_ARGS="--target-arch=32bit"
              fi
-             echo "Build arguments: ${PYINSTALLER_BUILD_ARGS}"
+             echo "PyInstaller build arguments: ${PYINSTALLER_BUILD_ARGS}"
              "${PYTHON}" ./waf all "${PYINSTALLER_BUILD_ARGS}"
              cd ..
              "${PYTHON}" -m pip install .
@@ -318,8 +307,7 @@ jobs:
       - name: Linux Run StaticX-ed helloworld
         if: matrix.os == 'ubuntu-20.04'
         run: |
-          # dist/helloworld/helloworld-staticx
-          ls -alRF dist/
+          dist/helloworld/helloworld-staticx
 
       - name: Archive helloworld binary
         if: always()
