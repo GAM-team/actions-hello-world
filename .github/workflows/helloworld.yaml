@@ -329,7 +329,7 @@ jobs:
           path: dist/helloworld/*
 
       - name: Archive compiled python
-        if: always()
+        if: steps.cache-python.outputs.cache-hit != 'true'
         uses: actions/upload-artifact@v2
         with:
           name: python-${{ matrix.jid }}
