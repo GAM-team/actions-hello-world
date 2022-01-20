@@ -269,9 +269,9 @@ jobs:
         if: matrix.os == 'windows-2022'
         shell: powershell
         run: |
-          echo "${PYTHON}"
-          Invoke-Item "${PYTHON}" -V
-          Invoke-Item "${PYTHON}" .\helloworld.py
+          echo "${env:PYTHON}"
+          Invoke-Item "${env:PYTHON}" -V
+          Invoke-Item "${env:PYTHON}" .\helloworld.py
 
       - name: Upgrade pip, wheel, etc
         run: |
