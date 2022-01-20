@@ -28,12 +28,12 @@ jobs:
             buildbits: 32
             vc_arch: win32
             default-shell: powershell
-          #- os: [self-hosted, linux, arm64]
-          #  jid: 4
-          #  default-shell: bash
-          #- os: [self-hosted, linux, arm]
-          #  jid: 5
-          #  default-shell: bash
+          - os: [self-hosted, linux, arm64]
+            jid: 4
+            default-shell: bash
+          - os: [self-hosted, linux, arm]
+            jid: 5
+            default-shell: bash
 
     steps:
       - uses: actions/checkout@master
