@@ -269,8 +269,7 @@ jobs:
         if: matrix.os == 'windows-2022'
         shell: powershell
         run: |
-          $env:runhw = "${env:PYTHON} helloworld.py"
-          Invoke-Item $env:runhw
+          python\python.exe helloworld.py
 
       - name: Upgrade pip, wheel, etc
         run: |
