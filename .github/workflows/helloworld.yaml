@@ -257,7 +257,7 @@ jobs:
              # remove pre-compiled bootloaders so we fail if bootloader compile fails
              rm -rf PyInstaller/bootloader/*-*/*
              cd bootloader
-             if [[ "${arch}" == "win32" ]]; then
+             if [[ "${arch}" == "Win32" ]]; then
                export PYINSTALLER_BUILD_ARGS="--target-arch=32bit"
              fi
              echo "PyInstaller build arguments: ${PYINSTALLER_BUILD_ARGS}"
