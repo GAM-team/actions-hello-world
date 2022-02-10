@@ -31,7 +31,7 @@ jobs:
           - os: windows-2022
             jid: 3
             arch: Win32
-          - os: [self-hosted, linux, arm64]
+          - os: [self-hosted, linux, arm64, crostini]
             jid: 4
             arch: aarch64
           - os: [self-hosted, linux, arm]
@@ -51,7 +51,7 @@ jobs:
           path: |
             ./python
             ./ssl
-          key: ${{ matrix.jid }}-20220120
+          key: ${{ matrix.jid }}-20220209
 
       - name: Set Env Variables
         env:
