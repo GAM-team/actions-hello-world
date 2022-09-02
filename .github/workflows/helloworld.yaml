@@ -24,7 +24,7 @@ jobs:
 
       - name: Cache builds
         id: cache-builds
-        uses: actions/cache@latest
+        uses: actions/cache@v3
         with:
           path: |
             zeros-*
