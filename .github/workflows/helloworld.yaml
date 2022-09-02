@@ -28,7 +28,7 @@ jobs:
         with:
           path: |
             zeros-*
-          key: ${{ matrix.jid }}-20220902
+          key: ${{ matrix.os }}-20220902
 
       - name: Generate zeros
         if: steps.cache-builds.outputs.cache-hit != 'true'
