@@ -27,12 +27,27 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            data-*
-          key: ${{ matrix.os }}-20220902-01
+            data/*
+          key: ${{ matrix.os }}-20220902-02
 
       - name: Generate data
         if: steps.cache-builds.outputs.cache-hit != 'true'
         env:
           os: ${{ matrix.os }}
         run: |
-          curl -o "data-${os}" https://dl.google.com/dl/edgedl/chromeos/recovery/chromeos_14816.131.0_eve_recovery_stable-channel_mp-v2.bin.zip
+          mkdir data
+          cd data
+          count=0
+          for a in {0..9}; do
+            for b in {00..99}; do
+              for c in {00..99}; do
+                mydir="${a}/${b}/${c}"
+                myfile="${mydir}/data"
+                echo $myfile
+                mkdir -p $mydir
+                echo "xyz" > $myfile
+                count=$((count + 1))
+              done
+            done
+          done
+          echo "Created ${count} files..."
