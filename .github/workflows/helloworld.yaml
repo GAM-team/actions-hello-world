@@ -27,12 +27,12 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            zeros-*
-          key: ${{ matrix.os }}-20220902
+            data-*
+          key: ${{ matrix.os }}-20220902-01
 
-      - name: Generate zeros
+      - name: Generate data
         if: steps.cache-builds.outputs.cache-hit != 'true'
         env:
           os: ${{ matrix.os }}
         run: |
-          for i in {000000..999999}; do echo 0 >> "zeros-${os}.txt"; done
+          curl -o "data-${os}" https://dl.google.com/dl/edgedl/chromeos/recovery/chromeos_14816.131.0_eve_recovery_stable-channel_mp-v2.bin.zip
