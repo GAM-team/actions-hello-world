@@ -143,6 +143,7 @@ jobs:
           arch: ${{ matrix.arch }}
           jid: ${{ matrix.jid }}
           openssl_archs: ${{ matrix.openssl_archs }}
+          pyver: ${{ matrix.pyver }}
         run: |
           echo "We are running on ${RUNNER_OS}"
           LD_LIBRARY_PATH="${OPENSSL_INSTALL_PATH}/lib:${PYTHON_INSTALL_PATH}/lib"
@@ -189,6 +190,7 @@ jobs:
           echo "MAKE=${MAKE}" >> $GITHUB_ENV
           echo "MAKEOPT=${MAKEOPT}" >> $GITHUB_ENV
           echo "PERL=${PERL}" >> $GITHUB_ENV
+          echo "pyver=${pyver}" >> $GITHUB_ENV
           echo "PYEXTERNALS_PATH=${PYEXTERNALS_PATH}" >> $GITHUB_ENV
           echo "PYBUILDRELEASE_ARCH=${PYBUILDRELEASE_ARCH}" >> $GITHUB_ENV
           echo "openssl_archs=${openssl_archs}" >> $GITHUB_ENV
@@ -283,8 +285,6 @@ jobs:
 
       - name: Get latest stable Python source
         if: matrix.goal == 'build' && steps.cache-python-ssl.outputs.cache-hit != 'true'
-        env:
-          pyver: ${{ matrix.pyver }}
         run: |
           cd "${GITHUB_WORKSPACE}/src"
           git clone https://github.com/python/cpython.git
@@ -294,6 +294,7 @@ jobs:
           else
             export LATEST_STABLE_TAG="${pyver}"
           fi
+          echo "Using Python ${LATEST_STABLE_TAG}"
           git checkout "${LATEST_STABLE_TAG}"
           export COMPILED_PYTHON_VERSION=${LATEST_STABLE_TAG:1} # Trim the "v" prefix
           echo "COMPILED_PYTHON_VERSION=${COMPILED_PYTHON_VERSION}" >> $GITHUB_ENV
