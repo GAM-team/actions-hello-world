@@ -384,9 +384,9 @@ jobs:
                done
                #find $PYTHON_INSTALL_PATH/lib/python3.10/site-packages -type f -name "*.so" -exec du -sh "{}" \;
              else
-               export LIB="${LIB}:${OPENSSL_INSTALL_PATH}/lib:${PYTHON_SOURCE_PATH}/PCbuild/${PYEXTERNALS_PATH}"
+               export LIB="${OPENSSL_INSTALL_PATH}/lib;${PYTHON_SOURCE_PATH}/PCbuild/${PYEXTERNALS_PATH}"
                echo "LIB: ${LIB}"
-               export INCLUDE="${INCLUDE}:${OPENSSL_INSTALL_PATH}/include:${PYTHON_SOURCE_PATH}/include"
+               export INCLUDE="${OPENSSL_INSTALL_PATH}/include:${PYTHON_SOURCE_PATH}/include"
                echo "INCLUDE: ${INCLUDE}"
                "${PYTHON}" -m pip install --upgrade --force --no-binary=:all: cffi
                "${PYTHON}" -m pip install --upgrade --force --no-binary=:all: cryptography
