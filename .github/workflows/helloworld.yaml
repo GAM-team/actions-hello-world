@@ -60,7 +60,7 @@ jobs:
           path: |
             bin.tar.xz
             src.tar.xz
-          key: gam-${{ matrix.jid }}-20221026
+          key: gam-${{ matrix.jid }}-20221026-01
 
       - name: Untar Cache archives
         if: matrix.goal == 'build' && steps.cache-python-ssl.outputs.cache-hit == 'true'
@@ -440,4 +440,4 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           tar cJvvf bin.tar.xz bin/
-          tar cJvvf src.tar.xz src/
+          tar cJvvf src.tar.xz src/cpython
