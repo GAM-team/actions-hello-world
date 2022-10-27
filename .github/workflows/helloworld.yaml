@@ -385,7 +385,7 @@ jobs:
                #find $PYTHON_INSTALL_PATH/lib/python3.10/site-packages -type f -name "*.so" -exec du -sh "{}" \;
              else
                "${PYTHON}" -m pip install --upgrade --force --no-binary=:all: cffi
-               "${PYTHON}" -m pip install --upgrade --force cryptography
+               "${PYTHON}" -m pip install --upgrade --force --no-binary=:all: cryptography
              fi
              "${PYTHON}" -m pip install --upgrade --force -r requirements.txt ${PIP_ARGS}
              "${PYTHON}" -m pip list
