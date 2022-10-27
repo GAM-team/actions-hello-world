@@ -19,16 +19,16 @@ env:
   PYTHON_SOURCE_PATH: ${{ github.workspace }}/src/cpython
 
 jobs:
-  build:
+  testpyinstaller:
     runs-on: windows-2022
     strategy:
+      fail-fast: false
       matrix:
         goal: [build, pyorg, gha]
-        pyver: 3.10.8
+        pyver: [3.10.8]
         pyi_ver: [5.3, 5.4, 5.6.1]
-        goal: build
-        arch: Win64
-        openssl_archs: VC-WIN64A
+        arch: [Win64]
+        openssl_archs: [VC-WIN64A]
         
     steps:
 
