@@ -31,19 +31,19 @@ jobs:
             arch: x86_64
             openssl_archs: linux-x86_64
           - os: macos-12
-            jid: 4
+            jid: 2
             goal: build
             arch: universal2
             openssl_archs: darwin64-x86_64 darwin64-arm64
           - os: windows-2022
             pyver: v3.10.8
-            jid: 5
+            jid: 3
             goal: build
             arch: Win64
             openssl_archs: VC-WIN64A
           - os: windows-2022
             pyver: v3.9.15
-            jid: 5
+            jid: 4
             goal: build
             arch: Win64
             openssl_archs: VC-WIN64A
@@ -73,7 +73,7 @@ jobs:
           path: |
             bin.tar.xz
             src.tar.xz
-          key: gam-${{ matrix.jid }}-20221027
+          key: gam-${{ matrix.jid }}-20221027-01
 
       - name: Untar Cache archives
         if: matrix.goal == 'build' && steps.cache-python-ssl.outputs.cache-hit == 'true'
