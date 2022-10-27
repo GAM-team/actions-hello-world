@@ -60,27 +60,6 @@ jobs:
         with:
           python-version: ${{ matrix.pyver }}
 
-      - name: Set env variables for gha
-        if: matrix.goal == 'gha'
-        env:
-          ACTIONS_CACHE: ${{ steps.cache-python-ssl.outputs.cache-hit }}
-          ACTIONS_GOAL: ${{ matrix.goal }}
-          pyi_ver: ${{ matrix.pyi_ver }}
-        run: |
-             export PYTHON=$(which python3)
-             export PIP=$(which pip3)
-             export gam="${PYTHON} -m gam"
-             export gampath="$(readlink -e .)"
-             echo -e "PYTHON: ${PYTHON}\nPIP: ${PIP}\gam: ${gam}\ngampath: ${gampath}"
-             echo "PYTHON=${PYTHON}" >> $GITHUB_ENV
-             echo "PIP=${PIP}" >> $GITHUB_ENV
-             echo "pyi_ver=${pyi_ver}" >> $GITHUB_ENV
-             echo "gam=${gam}" >> $GITHUB_ENV
-             echo "gampath=${gampath}" >> $GITHUB_ENV
-             echo "JID=${JID}" >> $GITHUB_ENV
-             echo "ACTIONS_CACHE=${ACTIONS_CACHE}" >> $GITHUB_ENV
-             echo "ACTIONS_GOAL=${ACTIONS_GOAL}" >> $GITHUB_ENV
-
       - name: Install Python.org
         if: matrix.goal == 'pyorg'
         shell: powershell
@@ -94,6 +73,28 @@ jobs:
           Write-Output "python_url: $python_url"
           Invoke-WebRequest -Uri $python_url -OutFile $python_file
           Start-Process -wait -FilePath $python_file -ArgumentList "/quiet","InstallAllUsers=0","TargetDir=c:\\python","AssociateFiles=1","PrependPath=1"
+
+
+      - name: Set env variables for gha/pyorg
+        if: matrix.goal != 'build'
+        env:
+          ACTIONS_CACHE: ${{ steps.cache-python-ssl.outputs.cache-hit }}
+          ACTIONS_GOAL: ${{ matrix.goal }}
+          pyi_ver: ${{ matrix.pyi_ver }}
+        run: |
+             export PYTHON=$(which python3)
+             export PIP=$(which pip3)
+             export gam="${PYTHON} helloworld.py"
+             export gampath="$(readlink -e .)"
+             echo -e "PYTHON: ${PYTHON}\nPIP: ${PIP}\gam: ${gam}\ngampath: ${gampath}"
+             echo "PYTHON=${PYTHON}" >> $GITHUB_ENV
+             echo "PIP=${PIP}" >> $GITHUB_ENV
+             echo "pyi_ver=${pyi_ver}" >> $GITHUB_ENV
+             echo "gam=${gam}" >> $GITHUB_ENV
+             echo "gampath=${gampath}" >> $GITHUB_ENV
+             echo "JID=${JID}" >> $GITHUB_ENV
+             echo "ACTIONS_CACHE=${ACTIONS_CACHE}" >> $GITHUB_ENV
+             echo "ACTIONS_GOAL=${ACTIONS_GOAL}" >> $GITHUB_ENV
 
       - name: MacOS install tools
         if: runner.os == 'macOS'
