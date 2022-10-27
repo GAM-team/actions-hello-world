@@ -83,6 +83,7 @@ jobs:
 
       - name: Install Python.org
         if: matrix.goal == 'pyorg'
+        shell: powershell
         env:
           pyver: ${{ matrix.pyver }}
         run: |
