@@ -293,6 +293,7 @@ jobs:
             export LATEST_STABLE_TAG=$(git tag --list | grep -v a | grep -v rc | grep -v b | sort -Vr | head -n1)
           else
             export LATEST_STABLE_TAG="${pyver}"
+          fi
           git checkout "${LATEST_STABLE_TAG}"
           export COMPILED_PYTHON_VERSION=${LATEST_STABLE_TAG:1} # Trim the "v" prefix
           echo "COMPILED_PYTHON_VERSION=${COMPILED_PYTHON_VERSION}" >> $GITHUB_ENV
