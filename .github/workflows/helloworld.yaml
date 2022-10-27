@@ -434,6 +434,8 @@ jobs:
              echo "gam=${gam}" >> $GITHUB_ENV
              echo -e "GAM: ${gam}\nGAMPATH: ${gampath}"
              "${PYTHON}" -m PyInstaller --clean --distpath="${gampath}" -y --log-level=DEBUG --debug=all helloworld.py
+             echo "FILES"
+             ls -alRF dist/
 
       - name: Basic Tests all jobs
         run: |
