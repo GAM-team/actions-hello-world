@@ -65,6 +65,7 @@ jobs:
         env:
           ACTIONS_CACHE: ${{ steps.cache-python-ssl.outputs.cache-hit }}
           ACTIONS_GOAL: ${{ matrix.goal }}
+          pyi_ver: ${{ matrix.pyi_ver }}
         run: |
              export PYTHON=$(which python3)
              export PIP=$(which pip3)
@@ -73,6 +74,7 @@ jobs:
              echo -e "PYTHON: ${PYTHON}\nPIP: ${PIP}\gam: ${gam}\ngampath: ${gampath}"
              echo "PYTHON=${PYTHON}" >> $GITHUB_ENV
              echo "PIP=${PIP}" >> $GITHUB_ENV
+             echo "pyi_ver=${pyi_ver}" >> $GITHUB_ENV
              echo "gam=${gam}" >> $GITHUB_ENV
              echo "gampath=${gampath}" >> $GITHUB_ENV
              echo "JID=${JID}" >> $GITHUB_ENV
