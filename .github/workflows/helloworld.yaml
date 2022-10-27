@@ -29,36 +29,56 @@ jobs:
             jid: 1
             goal: build
             arch: x86_64
-            pyver: "v3.11.0"
+            pyver: v3.11.0
+            pyi_ver: 3.6.1
             openssl_archs: linux-x86_64
           - os: macos-12
             jid: 2
             goal: build
-            pyver: "v3.11.0"
+            pyver: v3.11.0
+            pyi_ver: 3.6.1
             arch: universal2
             openssl_archs: darwin64-x86_64 darwin64-arm64
           - os: windows-2022
-            pyver: v3.10.4
+            pyver: v3.10.8
+            pyi_ver: 5.3
             jid: 3
             goal: build
             arch: Win64
             openssl_archs: VC-WIN64A
           - os: windows-2022
-            pyver: v3.9.15
+            pyver: v3.10.8
+            pyi_ver: 5.4
+            jid: 3
+            goal: build
+            arch: Win64
+            openssl_archs: VC-WIN64A
+          - os: windows-2022
+            pyver: v3.10.8
+            pyi_ver: 5.5
             jid: 4
             goal: build
             arch: Win64
             openssl_archs: VC-WIN64A
           - os: windows-2022
+            pyver: v3.10.8
+            pyi_ver: 5.6
+            jid: 3
+            goal: build
+            arch: Win64
+            openssl_archs: VC-WIN64A
+          - os: windows-2022
             jid: 5
-            pyver: "v3.11.0"
+            pyver: v3.10.8
+            pyi_ver: 5.6.1
             goal: build
             arch: Win64
             openssl_archs: VC-WIN64A
           - os: windows-2022
             jid: 6
             goal: build
-            pyver: "v3.11.0"
+            pyver: v3.10.8
+            pyi_ver: 5.6.1
             arch: Win32
             openssl_archs: VC-WIN32
 
@@ -77,7 +97,7 @@ jobs:
           path: |
             bin.tar.xz
             src.tar.xz
-          key: gam-${{ matrix.jid }}-20221027-01
+          key: gam-${{ matrix.jid }}-20221027-02
 
       - name: Untar Cache archives
         if: matrix.goal == 'build' && steps.cache-python-ssl.outputs.cache-hit == 'true'
@@ -148,6 +168,7 @@ jobs:
           jid: ${{ matrix.jid }}
           openssl_archs: ${{ matrix.openssl_archs }}
           pyver: ${{ matrix.pyver }}
+          pyi_ver: ${{ matrix.pyi_ver }}
         run: |
           echo "We are running on ${RUNNER_OS}"
           LD_LIBRARY_PATH="${OPENSSL_INSTALL_PATH}/lib:${PYTHON_INSTALL_PATH}/lib"
@@ -195,6 +216,7 @@ jobs:
           echo "MAKEOPT=${MAKEOPT}" >> $GITHUB_ENV
           echo "PERL=${PERL}" >> $GITHUB_ENV
           echo "pyver=${pyver}" >> $GITHUB_ENV
+          echo "pyi_ver=${pyi_ver}" >> $GITHUB_ENV
           echo "PYEXTERNALS_PATH=${PYEXTERNALS_PATH}" >> $GITHUB_ENV
           echo "PYBUILDRELEASE_ARCH=${PYBUILDRELEASE_ARCH}" >> $GITHUB_ENV
           echo "openssl_archs=${openssl_archs}" >> $GITHUB_ENV
@@ -398,7 +420,7 @@ jobs:
       - name: Install PyInstaller
         if: matrix.goal == 'build'
         run: |
-          "${PYTHON}" -m pip install --upgrade --force pyinstaller==5.3
+          "${PYTHON}" -m pip install --upgrade --force "pyinstaller==${pyi_ver}"
 
       - name: Build GAM with PyInstaller
         if: matrix.goal != 'test'
