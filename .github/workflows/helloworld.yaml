@@ -283,6 +283,8 @@ jobs:
 
       - name: Get latest stable Python source
         if: matrix.goal == 'build' && steps.cache-python-ssl.outputs.cache-hit != 'true'
+        env:
+          pyver: ${{ matrix.pyver }}
         run: |
           cd "${GITHUB_WORKSPACE}/src"
           git clone https://github.com/python/cpython.git
