@@ -29,10 +29,12 @@ jobs:
             jid: 1
             goal: build
             arch: x86_64
+            pyver: "v3.11.0"
             openssl_archs: linux-x86_64
           - os: macos-12
             jid: 2
             goal: build
+            pyver: "v3.11.0"
             arch: universal2
             openssl_archs: darwin64-x86_64 darwin64-arm64
           - os: windows-2022
@@ -49,12 +51,14 @@ jobs:
             openssl_archs: VC-WIN64A
           - os: windows-2022
             jid: 5
+            pyver: "v3.11.0"
             goal: build
             arch: Win64
             openssl_archs: VC-WIN64A
           - os: windows-2022
             jid: 6
             goal: build
+            pyver: "v3.11.0"
             arch: Win32
             openssl_archs: VC-WIN32
 
@@ -289,11 +293,7 @@ jobs:
           cd "${GITHUB_WORKSPACE}/src"
           git clone https://github.com/python/cpython.git
           cd "${PYTHON_SOURCE_PATH}"
-          if [ ${pyver+x} ]; then
-            export LATEST_STABLE_TAG=$(git tag --list | grep -v a | grep -v rc | grep -v b | sort -Vr | head -n1)
-          else
-            export LATEST_STABLE_TAG="${pyver}"
-          fi
+          export LATEST_STABLE_TAG="${pyver}"
           echo "Using Python ${LATEST_STABLE_TAG}"
           git checkout "${LATEST_STABLE_TAG}"
           export COMPILED_PYTHON_VERSION=${LATEST_STABLE_TAG:1} # Trim the "v" prefix
