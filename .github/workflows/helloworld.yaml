@@ -398,7 +398,7 @@ jobs:
       - name: Install PyInstaller
         if: matrix.goal == 'build'
         run: |
-          "${PYTHON}" -m pip install --upgrade --force pyinstaller
+          "${PYTHON}" -m pip install --upgrade --force pyinstaller==5.3
 
       - name: Build GAM with PyInstaller
         if: matrix.goal != 'test'
