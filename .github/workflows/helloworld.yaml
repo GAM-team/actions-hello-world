@@ -429,7 +429,7 @@ jobs:
              echo "gampath=${gampath}" >> $GITHUB_ENV
              echo "gam=${gam}" >> $GITHUB_ENV
              echo -e "GAM: ${gam}\nGAMPATH: ${gampath}"
-             "${PYTHON}" -m PyInstaller --clean --distpath="${gampath}" helloworld.py
+             "${PYTHON}" -m PyInstaller --clean --distpath="${gampath}" -y helloworld.py
 
       - name: Basic Tests all jobs
         run: |
