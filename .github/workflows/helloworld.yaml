@@ -250,7 +250,6 @@ jobs:
              "${PYTHON}" -m pip list
 
       - name: Install PyInstaller
-        if: matrix.goal == 'build'
         run: |
           "${PYTHON}" -m pip install --upgrade --force "pyinstaller==${pyi_ver}"
 
