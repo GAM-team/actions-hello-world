@@ -3,7 +3,7 @@ import platform
 from ssl import OPENSSL_VERSION
 import struct
 
-#from cryptography.hazmat.backends.openssl import backend
+from cryptography.hazmat.backends.openssl import backend
 
 if os.environ.get('STATICX_PROG_PATH', False):
     execution_type = 'staticx'
@@ -23,4 +23,4 @@ print(f'Platform: {platform.platform()}')
 print(f'Processor: {proc}')
 print(f'Machine: {machine}')
 print(f'Python Bits: {bitness}')
-#print(f'Cryptography Backend: {backend.openssl_version_text()}')
+print(f'Cryptography Backend: {backend.openssl_version_text()}')
