@@ -371,53 +371,55 @@ jobs:
 
       - name: Install pip requirements
         run: |
-             if [[ "${RUNNER_OS}" == "macOS" ]]; then
-               for package in cryptography; do
-                 "${PYTHON}" -m pip install --force --upgrade cffi ${PIP_ARGS}
-                 "${PYTHON}" -m pip download --only-binary :all: \
-                                             --dest . \
-                                             --no-cache \
-                                             --no-deps \
-                                             --platform macosx_10_15_universal2 \
-                                             $package
-               "${PYTHON}" -m pip install --force-reinstall --no-deps $package*.whl
-               done
-               #find $PYTHON_INSTALL_PATH/lib/python3.10/site-packages -type f -name "*.so" -exec du -sh "{}" \;
-             else
-               export LIB="${OPENSSL_INSTALL_PATH}/lib;${PYTHON_SOURCE_PATH}/PCbuild/${PYEXTERNALS_PATH}"
-               echo "LIB: ${LIB}"
-               export INCLUDE="${OPENSSL_INSTALL_PATH}/include;${PYTHON_SOURCE_PATH}/include"
-               echo "INCLUDE: ${INCLUDE}"
-               "${PYTHON}" -m pip install --upgrade --force --no-binary=:all: cffi
-               "${PYTHON}" -m pip install --upgrade --force --no-binary=:all: cryptography
-             fi
+             #if [[ "${RUNNER_OS}" == "macOS" ]]; then
+             #  for package in cryptography; do
+             #    "${PYTHON}" -m pip install --force --upgrade cffi ${PIP_ARGS}
+             #    "${PYTHON}" -m pip download --only-binary :all: \
+             #                                --dest . \
+             #                                --no-cache \
+             #                                --no-deps \
+             #                                --platform macosx_10_15_universal2 \
+             #                                $package
+             #  "${PYTHON}" -m pip install --force-reinstall --no-deps $package*.whl
+             #  done
+             #  #find $PYTHON_INSTALL_PATH/lib/python3.10/site-packages -type f -name "*.so" -exec du -sh "{}" \;
+             #else
+             #  export LIB="${OPENSSL_INSTALL_PATH}/lib;${PYTHON_SOURCE_PATH}/PCbuild/${PYEXTERNALS_PATH}"
+             #  echo "LIB: ${LIB}"
+             #  export INCLUDE="${OPENSSL_INSTALL_PATH}/include;${PYTHON_SOURCE_PATH}/include"
+             #  echo "INCLUDE: ${INCLUDE}"
+             #  "${PYTHON}" -m pip install --upgrade --force --no-binary=:all: cffi
+             #  "${PYTHON}" -m pip install --upgrade --force --no-binary=:all: cryptography
+             #fi
+             "${PYTHON}" -m pip install --upgrade --force cryptography
              "${PYTHON}" -m pip install --upgrade --force -r requirements.txt ${PIP_ARGS}
              "${PYTHON}" -m pip list
 
       - name: Install PyInstaller
         if: matrix.goal == 'build'
         run: |
-          if [ -d pyinstaller ]; then
-            cd pyinstaller
-            git checkout develop
-            git pull
-          else
-            git clone https://github.com/pyinstaller/pyinstaller.git
-            cd pyinstaller
-          fi
-          export latest_release=$(git tag --list | grep -v dev | grep -v rc | sort -Vr | head -n1)
-          git checkout "${latest_release}"
+          #if [ -d pyinstaller ]; then
+          #  cd pyinstaller
+          #  git checkout develop
+          #  git pull
+          #else
+          #  git clone https://github.com/pyinstaller/pyinstaller.git
+          #  cd pyinstaller
+          #fi
+          #export latest_release=$(git tag --list | grep -v dev | grep -v rc | sort -Vr | head -n1)
+          #git checkout "${latest_release}"
           # remove pre-compiled bootloaders so we fail if bootloader compile fails
-          rm -rvf PyInstaller/bootloader/*-*/*
-          cd bootloader
-          if [[ "${arch}" == "Win32" ]]; then
-            export PYINSTALLER_BUILD_ARGS="--target-arch=32bit"
-          fi
-          echo "PyInstaller build arguments: ${PYINSTALLER_BUILD_ARGS}"
-          "${PYTHON}" ./waf all $PYINSTALLER_BUILD_ARGS
-          cd ..
-          echo "---- Installing PyInstaller ----"
-          "${PYTHON}" -m pip install . --force
+          #rm -rvf PyInstaller/bootloader/*-*/*
+          #cd bootloader
+          #if [[ "${arch}" == "Win32" ]]; then
+          #  export PYINSTALLER_BUILD_ARGS="--target-arch=32bit"
+          #fi
+          #echo "PyInstaller build arguments: ${PYINSTALLER_BUILD_ARGS}"
+          #"${PYTHON}" ./waf all $PYINSTALLER_BUILD_ARGS
+          #cd ..
+          #echo "---- Installing PyInstaller ----"
+          #"${PYTHON}" -m pip install . --force
+         "${PYTHON}" -m pip install --upgrade --force pyinstaller
 
       - name: Build GAM with PyInstaller
         if: matrix.goal != 'test'
