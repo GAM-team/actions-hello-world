@@ -24,64 +24,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-22.04
-            jid: 1
-            goal: build
-            arch: x86_64
-            pyver: v3.11.0
-            pyi_ver: 5.6.1
-            openssl_archs: linux-x86_64
-          - os: macos-12
-            jid: 2
-            goal: build
-            pyver: v3.11.0
-            pyi_ver: 5.6.1
-            arch: universal2
-            openssl_archs: darwin64-x86_64 darwin64-arm64
-          - os: windows-2022
-            pyver: v3.10.8
-            pyi_ver: 5.3
-            jid: 3
-            goal: build
-            arch: Win64
-            openssl_archs: VC-WIN64A
-          - os: windows-2022
-            pyver: v3.10.8
-            pyi_ver: 5.4
-            jid: 3
-            goal: build
-            arch: Win64
-            openssl_archs: VC-WIN64A
-          - os: windows-2022
-            pyver: v3.10.8
-            pyi_ver: 5.5
-            jid: 4
-            goal: build
-            arch: Win64
-            openssl_archs: VC-WIN64A
-          - os: windows-2022
-            pyver: v3.10.8
-            pyi_ver: 5.6
-            jid: 3
-            goal: build
-            arch: Win64
-            openssl_archs: VC-WIN64A
-          - os: windows-2022
-            jid: 5
-            pyver: v3.10.8
-            pyi_ver: 5.6.1
-            goal: build
-            arch: Win64
-            openssl_archs: VC-WIN64A
-          - os: windows-2022
-            jid: 6
-            goal: build
-            pyver: v3.10.8
-            pyi_ver: 5.6.1
-            arch: Win32
-            openssl_archs: VC-WIN32
-
+        os: windows-2022
+        goal: [build, pyorg, gha]
+        pyver: 3.10.8
+        pyi_ver: [5.3, 5.4, 5.6.1]
+        goal: build
+        arch: Win64
+        openssl_archs: VC-WIN64A
+        
     steps:
 
       - uses: actions/checkout@v3
@@ -107,15 +57,14 @@ jobs:
           tar xvvf src.tar.xz
 
       - name: Use pre-compiled Python for testing
-        if: matrix.python != ''
+        if: matrix.goal == 'gha'
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python }}
+          python-version: ${{ matrix.pyver }}
 
       - name: Set env variables for test
-        if: matrix.goal == 'test'
+        if: matrix.goal == 'gha'
         env:
-          JID: ${{ matrix.jid }}
           ACTIONS_CACHE: ${{ steps.cache-python-ssl.outputs.cache-hit }}
           ACTIONS_GOAL: ${{ matrix.goal }}
         run: |
@@ -131,19 +80,6 @@ jobs:
              echo "JID=${JID}" >> $GITHUB_ENV
              echo "ACTIONS_CACHE=${ACTIONS_CACHE}" >> $GITHUB_ENV
              echo "ACTIONS_GOAL=${ACTIONS_GOAL}" >> $GITHUB_ENV
-
-      - name: Install necessary Github-hosted Linux packages
-        if: runner.os == 'Linux' && runner.arch == 'X64'
-        run: |
-          echo "RUNNING: apt update..."
-          sudo apt-get -qq --yes update
-          sudo apt-get -qq --yes install swig libpcsclite-dev
-
-     #- name: MacOS remove Homebrew
-     #  if: runner.os == 'macOS'
-     #  run: |
-     #    # remove everything except the libraries needed by yubikey-manager
-     #    brew uninstall $(brew list | grep -v 'pcre\|swig\|pcsc-lite')
 
       - name: MacOS install tools
         if: runner.os == 'macOS'
@@ -165,7 +101,6 @@ jobs:
         if: matrix.goal == 'build'
         env:
           arch: ${{ matrix.arch }}
-          jid: ${{ matrix.jid }}
           openssl_archs: ${{ matrix.openssl_archs }}
           pyver: ${{ matrix.pyver }}
           pyi_ver: ${{ matrix.pyi_ver }}
@@ -209,7 +144,6 @@ jobs:
             echo "WIX_ARCH=${WIX_ARCH}" >> $GITHUB_ENV
           fi
           echo "We'll run make with: ${MAKEOPT}"
-          echo "JID=${jid}" >> $GITHUB_ENV
           echo "arch=${arch}" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}" >> $GITHUB_ENV
           echo "MAKE=${MAKE}" >> $GITHUB_ENV
@@ -221,93 +155,14 @@ jobs:
           echo "PYBUILDRELEASE_ARCH=${PYBUILDRELEASE_ARCH}" >> $GITHUB_ENV
           echo "openssl_archs=${openssl_archs}" >> $GITHUB_ENV
 
-      - name: Get latest stable OpenSSL source
-        if: matrix.goal == 'build' && steps.cache-python-ssl.outputs.cache-hit != 'true'
-        run: |
-          mkdir -vp "${GITHUB_WORKSPACE}/src"
-          cd "${GITHUB_WORKSPACE}/src"
-          git clone https://github.com/openssl/openssl.git
-          cd "${OPENSSL_SOURCE_PATH}"
-          export LATEST_STABLE_TAG=$(git tag --list openssl-* | grep -v alpha | grep -v beta | sort -Vr | head -n1)
-          echo "Checking out version ${LATEST_STABLE_TAG}"
-          git checkout "${LATEST_STABLE_TAG}"
-          export COMPILED_OPENSSL_VERSION=${LATEST_STABLE_TAG:8} # Trim the openssl- prefix
-          echo "COMPILED_OPENSSL_VERSION=${COMPILED_OPENSSL_VERSION}" >> $GITHUB_ENV
-          if [[ "${RUNNER_OS}" == "macOS" ]]; then
-            for openssl_arch in $openssl_archs; do
-              ssldir="${OPENSSL_SOURCE_PATH}-${openssl_arch}"
-              mkdir -v "${ssldir}"
-              cp -vrf ${OPENSSL_SOURCE_PATH}/* "${ssldir}/"
-            done
-            rm -vrf "${OPENSSL_SOURCE_PATH}"
-          else
-            mv -v "${OPENSSL_SOURCE_PATH}" "${OPENSSL_SOURCE_PATH}-${openssl_archs}"
-          fi
-
       - name: Windows NASM Install
         uses: ilammy/setup-nasm@v1
         if: matrix.goal == 'build' && runner.os == 'Windows' && steps.cache-python-ssl.outputs.cache-hit != 'true'
-
-      - name: Config OpenSSL
-        if: matrix.goal == 'build' && steps.cache-python-ssl.outputs.cache-hit != 'true'
-        run: |
-          for openssl_arch in $openssl_archs; do
-            cd "${GITHUB_WORKSPACE}/src/openssl-${openssl_arch}"
-            # --libdir=lib is needed so Python can find OpenSSL libraries
-            "${PERL}" ./Configure "${openssl_arch}" --libdir=lib --prefix="${OPENSSL_INSTALL_PATH}" $OPENSSL_CONFIG_OPTS
-          done
 
       - name: Rename GNU link on Windows
         if: matrix.goal == 'build' && runner.os == 'Windows' && steps.cache-python-ssl.outputs.cache-hit != 'true'
         shell: bash
         run: mv /usr/bin/link /usr/bin/gnulink
-
-      - name: Make OpenSSL
-        if: matrix.goal == 'build' && steps.cache-python-ssl.outputs.cache-hit != 'true'
-        run: |
-          for openssl_arch in $openssl_archs; do
-            cd "${GITHUB_WORKSPACE}/src/openssl-${openssl_arch}"
-            $MAKE "${MAKEOPT}"
-          done
-
-      - name: Install OpenSSL
-        if: matrix.goal == 'build' && steps.cache-python-ssl.outputs.cache-hit != 'true'
-        run: |
-          if [[ "${RUNNER_OS}" == "macOS" ]]; then
-            for openssl_arch in $openssl_archs; do
-              cd "${GITHUB_WORKSPACE}/src/openssl-${openssl_arch}"
-              # install_sw saves us ages processing man pages :-)
-              $MAKE install_sw
-              mv "${OPENSSL_INSTALL_PATH}" "${GITHUB_WORKSPACE}/bin/ssl-${openssl_arch}"
-            done
-            mkdir -vp "${OPENSSL_INSTALL_PATH}/lib"
-            mkdir -vp "${OPENSSL_INSTALL_PATH}/bin"
-            for archlib in libcrypto.3.dylib libssl.3.dylib libcrypto.a libssl.a; do
-              lipo -create "${GITHUB_WORKSPACE}/bin/ssl-darwin64-x86_64/lib/${archlib}" \
-                           "${GITHUB_WORKSPACE}/bin/ssl-darwin64-arm64/lib/${archlib}" \
-                   -output "${GITHUB_WORKSPACE}/bin/ssl/lib/${archlib}"
-            done
-            mv ${GITHUB_WORKSPACE}/bin/ssl-darwin64-x86_64/include ${GITHUB_WORKSPACE}/bin/ssl/
-            lipo -create "${GITHUB_WORKSPACE}/bin/ssl-darwin64-x86_64/bin/openssl" \
-                         "${GITHUB_WORKSPACE}/bin/ssl-darwin64-arm64/bin/openssl" \
-                 -output "${GITHUB_WORKSPACE}/bin/ssl/bin/openssl"
-            rm -rf ${GITHUB_WORKSPACE}/bin/ssl-darwin64-x86_64
-            rm -rf ${GITHUB_WORKSPACE}/bin/ssl-darwin64-arm64
-            echo "LDFLAGS=-L${OPENSSL_INSTALL_PATH}/lib" >> $GITHUB_ENV
-            echo "CRYPTOGRAPHY_SUPPRESS_LINK_FLAGS=1" >> $GITHUB_ENV
-            echo "CFLAGS=-I${OPENSSL_INSTALL_PATH}/include -arch arm64 -arch x86_64" >> $GITHUB_ENV
-            echo "ARCHFLAGS=-arch x86_64 -arch arm64" >> $GITHUB_ENV
-          else
-            cd "${GITHUB_WORKSPACE}/src/openssl-${openssl_archs}"
-            # install_sw saves us ages processing man pages :-)
-            $MAKE install_sw
-          fi
-
-      - name: Run OpenSSL
-        if: matrix.goal == 'build'
-        run: |
-          "${OPENSSL_INSTALL_PATH}/bin/openssl" version
-          file "${OPENSSL_INSTALL_PATH}/bin/openssl"
 
       - name: Get latest stable Python source
         if: matrix.goal == 'build' && steps.cache-python-ssl.outputs.cache-hit != 'true'
@@ -345,25 +200,6 @@ jobs:
           cd "${env:PYTHON_SOURCE_PATH}"
           PCBuild\get_externals.bat
 
-      - name: Windows overwrite external OpenSSL with local
-        if: matrix.goal == 'build' && runner.os == 'Windows' && steps.cache-python-ssl.outputs.cache-hit != 'true'
-        shell: powershell
-        run: |
-          cd "${env:PYTHON_SOURCE_PATH}"
-          $env:OPENSSL_EXT_PATH = "$(Get-Item externals\openssl-bin-* | Select -exp FullName)\"
-          echo "External OpenSSL was downloaded to ${env:OPENSSL_EXT_PATH}"
-          Remove-Item -recurse -force "${env:OPENSSL_EXT_PATH}*"
-          # Emulate what this script does:
-          # https://github.com/python/cpython/blob/main/PCbuild/openssl.vcxproj
-          $env:OPENSSL_EXT_TARGET_PATH = "${env:OPENSSL_EXT_PATH}${env:PYEXTERNALS_PATH}"
-          echo "Copying our OpenSSL to ${env:OPENSSL_EXT_TARGET_PATH}"
-          mkdir "${env:OPENSSL_EXT_TARGET_PATH}\include\openssl\"
-          Copy-Item -Path "${env:GITHUB_WORKSPACE}/src/openssl-${env:openssl_archs}\LICENSE.txt" -Destination "${env:OPENSSL_EXT_TARGET_PATH}\LICENSE" -Verbose
-          cp -v "$env:OPENSSL_INSTALL_PATH\lib\*" "${env:OPENSSL_EXT_TARGET_PATH}"
-          cp -v "$env:OPENSSL_INSTALL_PATH\bin\*" "${env:OPENSSL_EXT_TARGET_PATH}"
-          cp -v "$env:OPENSSL_INSTALL_PATH\include\openssl\*" "${env:OPENSSL_EXT_TARGET_PATH}\include\openssl\"
-          cp -v "$env:OPENSSL_INSTALL_PATH\include\openssl\applink.c" "${env:OPENSSL_EXT_TARGET_PATH}\include\"
-
       - name: Windows Install sphinx-build
         if: matrix.goal == 'build' && runner.os == 'Windows' && steps.cache-python-ssl.outputs.cache-hit != 'true'
         shell: powershell
@@ -377,8 +213,6 @@ jobs:
         shell: powershell
         run: |
           cd "${env:PYTHON_SOURCE_PATH}"
-          # We need out custom openssl.props which uses OpenSSL 3 DLL names
-          Copy-Item -Path "${env:GITHUB_WORKSPACE}\openssl.props" -Destination PCBuild\ -Verbose
           echo "Building for ${env:PYBUILDRELEASE_ARCH}..."
           PCBuild\build.bat -m --pgo -c Release -p "${env:PYBUILDRELEASE_ARCH}"
 
