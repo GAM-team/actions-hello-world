@@ -38,7 +38,7 @@ jobs:
             arch: universal2
             openssl_archs: darwin64-x86_64 darwin64-arm64
           - os: windows-2022
-            pyver: v3.10.8
+            pyver: v3.10.4
             jid: 3
             goal: build
             arch: Win64
