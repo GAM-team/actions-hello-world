@@ -32,7 +32,7 @@ exe = EXE(
     [],
     exclude_binaries=True,
     name='helloworld',
-    debug=False,
+    debug='all',
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
