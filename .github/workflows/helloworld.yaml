@@ -289,7 +289,6 @@ jobs:
           "${PYTHON}" -m pip install --upgrade --force "pyinstaller==${pyi_ver}"
 
       - name: Build GAM with PyInstaller
-        if: matrix.goal != 'test'
         run: |
              export gampath="./dist/gam"
              mkdir -p -v "${gampath}"
@@ -299,12 +298,15 @@ jobs:
                export gampath=$(realpath "${gampath}")
              fi
              echo "WHICH PYTHON3.DLL BEFORE"
-             which python3.dll
-             if [[ "${RUNNER_OS}" == "Windows" ]]; then
-               mv "${RUNNER_TOOL_CACHE}/Python" "${RUNNER_TOOL_CACHE}/Python.old"
+             which --all python3.dll
+             if [[ "${RUNNER_OS}" == "Windows" ] && [ "${ACTIONS_GOAL}" != "gha"]]; then
+               for i in $(which --all python3.dll; do
+                 echo "MOVING ${i} to ${i}.old"
+                 mv "${i}" "${i}.old"
+               done
              fi
              echo "WHICH PYTHON3.DLL AFTER"
-             which python3.dll
+             which --all python3.dll
              export PATH="${PATH}:${PYTHON_INSTALL_PATH}/bin"
              export gam="${gampath}/helloworld/helloworld"
              echo "gampath=${gampath}" >> $GITHUB_ENV
