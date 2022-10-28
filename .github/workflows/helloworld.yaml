@@ -299,11 +299,8 @@ jobs:
              fi
              echo "WHICH PYTHON3.DLL BEFORE"
              which --all python3.dll
-             if ([ "${RUNNER_OS}" == "Windows" ] && [ "${ACTIONS_GOAL}" != "gha" ]); then
-               for i in $(which --all python3.dll); do
-                 echo "MOVING ${i} to ${i}.old"
-                 mv "${i}" "${i}.old"
-               done
+             if ([ "${RUNNER_OS}" == "Windows" ]); then
+               export PATH=""
              fi
              echo "WHICH PYTHON3.DLL AFTER"
              which --all python3.dll
