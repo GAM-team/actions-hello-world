@@ -298,6 +298,11 @@ jobs:
              else
                export gampath=$(realpath "${gampath}")
              fi
+             echo "WHICH PYTHON3.DLL"
+             which python3.dll
+             if [[ "${RUNNER_OS}" == "Windows" ]]; then
+               mv "${RUNNER_TOOL_CACHE}/Python" "${RUNNER_TOOL_CACHE}/Python.old"
+             fi
              export gam="${gampath}/helloworld/helloworld"
              echo "gampath=${gampath}" >> $GITHUB_ENV
              echo "gam=${gam}" >> $GITHUB_ENV
