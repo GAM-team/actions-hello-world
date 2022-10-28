@@ -298,12 +298,12 @@ jobs:
                export gampath=$(realpath "${gampath}")
              fi
              echo "WHICH PYTHON3.DLL BEFORE"
-             which --all python3.dll
+             which --all python3.dll || true
              if ([ "${RUNNER_OS}" == "Windows" ]); then
                export PATH="/usr/bin"
              fi
              echo "WHICH PYTHON3.DLL AFTER"
-             which --all python3.dll
+             which --all python3.dll || true
              export PATH="${PATH}:${PYTHON_INSTALL_PATH}/bin"
              export gam="${gampath}/helloworld/helloworld"
              echo "gampath=${gampath}" >> $GITHUB_ENV
