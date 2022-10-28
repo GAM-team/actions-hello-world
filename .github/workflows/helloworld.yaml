@@ -300,7 +300,7 @@ jobs:
              echo "WHICH PYTHON3.DLL BEFORE"
              which --all python3.dll
              if ([ "${RUNNER_OS}" == "Windows" ]); then
-               export PATH=""
+               export PATH="/usr/bin"
              fi
              echo "WHICH PYTHON3.DLL AFTER"
              which --all python3.dll
