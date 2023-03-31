@@ -12,15 +12,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-10.15, macos-11, macos-12]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         
     steps:
 
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-          fetch-depth: 0
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v0.4.0'
+      with:
+        token_format: 'access_token'
+        workload_identity_provider: 'projects/318417991012/locations/global/workloadIdentityPools/gha-pool/providers/gha-provider'
+        service_account: 'github-actions@gha-hello-world.iam.gserviceaccount.com'
 
-      - name: Install GAM
-        run: |
-          bash <(curl -s -S -L https://gam-shortn.appspot.com/gam-install)
+    - name: 'Access secret'
+      run: |
+        curl https://oauth2.googleapis.com/tokeninfo \
+          --header "Authorization: Bearer ${{ steps.auth.outputs.access_token }}"
