@@ -16,6 +16,9 @@ jobs:
         
     steps:
 
+    # actions/checkout MUST come before auth
+    - uses: 'actions/checkout@v3'
+    
     - id: 'auth'
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v0.4.0'
