@@ -11,7 +11,7 @@ on:
     - cron: '37 22 * * *'
 
 jobs:
-  py:
+  gha:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
