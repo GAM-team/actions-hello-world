@@ -33,5 +33,6 @@ jobs:
 
     - name: 'Access secret'
       run: |
+        cat /home/runner/work/actions-hello-world/actions-hello-world/gha-creds*.json
         curl https://oauth2.googleapis.com/tokeninfo \
           --header "Authorization: Bearer ${{ steps.auth.outputs.access_token }}"
