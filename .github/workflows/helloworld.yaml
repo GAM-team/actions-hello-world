@@ -4,11 +4,11 @@ permissions:
   contents: 'read'
   id-token: 'write'
 
+defaults:
+  run:
+    shell: bash
 on:
   push:
-  pull_request:
-  schedule:
-    - cron: '37 22 * * *'
 
 jobs:
   gha:
