@@ -1,8 +1,8 @@
 name: Build and test
 
 permissions:
-  contents: 'read'
-  id-token: 'write'
+  contents: read
+  id-token: write
 
 defaults:
   run:
@@ -21,17 +21,17 @@ jobs:
     steps:
 
     # actions/checkout MUST come before auth
-    - uses: 'actions/checkout@v3'
+    - uses: actions/checkout@v3
     
-    - id: 'auth'
-      name: 'Authenticate to Google Cloud'
-      uses: 'google-github-actions/auth@v1'
+    - id: auth
+      name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
       with:
-        workload_identity_provider: 'projects/318417991012/locations/global/workloadIdentityPools/gha-pool/providers/gha-provider'
-        service_account: 'github-actions@gha-hello-world.iam.gserviceaccount.com'
-      #  token_format: 'access_token'
+        workload_identity_provider: projects/318417991012/locations/global/workloadIdentityPools/gha-pool/providers/gha-provider
+        service_account: github-actions@gha-hello-world.iam.gserviceaccount.com
+        token_format: access_token
 
-    - name: 'Access secret'
+    - name: Access secret
       run: |
         cat /home/runner/work/actions-hello-world/actions-hello-world/gha-creds*.json
         curl https://oauth2.googleapis.com/tokeninfo \
