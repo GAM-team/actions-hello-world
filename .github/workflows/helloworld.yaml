@@ -31,8 +31,7 @@ jobs:
         service_account: github-actions@gha-hello-world.iam.gserviceaccount.com
         token_format: access_token
 
-    - name: Access secret
+    - name: Get info about Google service account access
       run: |
-        cat /home/runner/work/actions-hello-world/actions-hello-world/gha-creds*.json
         curl https://oauth2.googleapis.com/tokeninfo \
           --header "Authorization: Bearer ${{ steps.auth.outputs.access_token }}"
