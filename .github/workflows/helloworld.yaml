@@ -29,10 +29,9 @@ jobs:
       with:
         workload_identity_provider: projects/318417991012/locations/global/workloadIdentityPools/gha-pool/providers/gha-provider
         service_account: github-actions@gha-hello-world.iam.gserviceaccount.com
-        token_format: access_token
-        access_token_scopes: "openid https://www.googleapis.com/auth/cloud-platform"
-
+        
     - name: Get info about Google service account access
       run: |
-        curl https://oauth2.googleapis.com/tokeninfo \
-          --header "Authorization: Bearer ${{ steps.auth.outputs.access_token }}"
+        pip install google-auth
+        pip install requests
+        python3 test.py
