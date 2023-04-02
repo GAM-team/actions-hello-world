@@ -9,4 +9,4 @@ creds.refresh(request)
 authed_session = AuthorizedSession(creds)
 
 resp = authed_session.get('https://oauth2.googleapis.com/tokeninfo')
-print(resp)
+print(resp.json())
