@@ -24,6 +24,11 @@ jobs:
     # actions/checkout MUST come before auth
     - uses: actions/checkout@v3
     
+    - name: Debug OIDC Claims
+      uses: ./.github/actions/actions-oidc-debugger
+      with:
+        audience: projects/318417991012/locations/global/workloadIdentityPools/gha-pool/providers/gha-provider
+
     - id: auth
       name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
