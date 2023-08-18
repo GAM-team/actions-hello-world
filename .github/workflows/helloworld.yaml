@@ -7,11 +7,12 @@ permissions:
 defaults:
   run:
     shell: bash
+
 on:
   push:
   pull_request:
   schedule:
-    - cron: 0,5,10,15,20,25,30,35,40,45,50,55 * * * *
+    - cron: '37 22 * * *'
 
 jobs:
   gha:
@@ -25,7 +26,7 @@ jobs:
         
     steps:
 
-    # actions/checkout MUST come before auth
+      # actions/checkout MUST come before auth
     - uses: actions/checkout@v3
     
     - id: auth
