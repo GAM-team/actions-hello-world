@@ -37,8 +37,11 @@ jobs:
         service_account: github-actions@gha-hello-world.iam.gserviceaccount.com
         token_format: access_token
         
-    - name: Get info about Google service account access
+    - name: Python packages
       run: |
         python3 -m pip install google-auth
         python3 -m pip install requests
-        python3 src/test.py
+
+    - name: USE GOOGLE SERVICES
+        run: |
+          python3 src/test.py
