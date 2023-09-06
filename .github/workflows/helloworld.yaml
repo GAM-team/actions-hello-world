@@ -43,5 +43,5 @@ jobs:
         python3 -m pip install requests
 
     - name: USE GOOGLE SERVICES
-        run: |
-          python3 src/test.py
+      run: |
+        python3 src/test.py
