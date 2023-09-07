@@ -13,6 +13,6 @@ resp = authed_session.get('https://oauth2.googleapis.com/tokeninfo')
 print('About my Google access:')
 print(json.dumps(resp.json(), indent=2))
 
-resp2 = authed_session.get('https://cloudresourcemanager.googleapis.com/v3/projects')
+resp2 = authed_session.get('https://cloudresourcemanager.googleapis.com/v3/projects:search')
 print('Projects I can see:')
 print(json.dumps(resp2.json(), indent=2))
