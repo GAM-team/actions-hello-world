@@ -38,10 +38,9 @@ jobs:
         
     - name: Python packages
       run: |
-        python3 -m pip --break-system-packages install --upgrade pip
-        python3 -m pip --break-system-packages install google-auth
-        python3 -m pip --break-system-packages install requests
+        python3 -m venv myvenv
+        myvenv/bin/pip3 install google-auth requests
 
     - name: USE GOOGLE SERVICES
       run: |
-        python3 src/test.py
+        myvenv/bin/python3 src/test.py
