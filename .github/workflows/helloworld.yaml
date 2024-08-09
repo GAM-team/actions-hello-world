@@ -24,10 +24,16 @@ jobs:
           - macos-12
           - macos-13
           - macos-14
+          - macos-14-arm64
+          - macos-14-x64
+          - macos-14-x86-64
           - macos-latest
           - ubuntu-20.04
           - ubuntu-22.04
           - ubuntu-24.04
+          - ubuntu-24.04-arm64
+          - ubuntu-24.04-x64
+          - ubuntu-24.04-x86-64
           - ubuntu-latest
           - windows-2019
           - windows-2022
