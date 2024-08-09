@@ -20,8 +20,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04, windows-latest, macos-13]
-        python-version: ["3.12"]
+        os:
+          - macos-12
+          - macos-13
+          - macos-14
+          - macos-latest
+          - ubuntu-20.04
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - ubuntu-latest
+          - windows-2019
+          - windows-2022
+          - windows-latest
+        python-version:
+          - "3.12"
         
     steps:
 
