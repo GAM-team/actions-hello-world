@@ -32,13 +32,15 @@ jobs:
           - windows-2019
           - windows-2022
           - windows-latest
-        python-version:
-          - "3.12"
         
     steps:
 
       # actions/checkout MUST come before auth
     - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12' 
 
     - id: uname
       name: Run uname command
