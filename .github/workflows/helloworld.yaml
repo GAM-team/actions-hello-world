@@ -28,10 +28,10 @@ jobs:
       # actions/checkout MUST come before auth
     - uses: actions/checkout@v3
 
-    -id: uname
-     name: uname
-     run: |
-       uname -a
+    - id: uname
+      name: Run uname command
+      run: |
+        uname -a
 
     - id: auth
       name: Authenticate to Google Cloud
