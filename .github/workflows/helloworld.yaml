@@ -27,7 +27,12 @@ jobs:
 
       # actions/checkout MUST come before auth
     - uses: actions/checkout@v3
-    
+
+    -id: uname
+     name: uname
+     run: |
+       uname -a
+
     - id: auth
       name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
@@ -39,6 +44,7 @@ jobs:
     - name: Python packages
       run: |
         python3 -m venv myvenv
+        ls -alRF myvenv/
         myvenv/bin/pip3 install google-auth requests
 
     - name: USE GOOGLE SERVICES
