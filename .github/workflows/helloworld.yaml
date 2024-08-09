@@ -24,12 +24,10 @@ jobs:
           - macos-12
           - macos-13
           - macos-14
-          - macos-14-xl
           - macos-latest
           - ubuntu-20.04
           - ubuntu-22.04
           - ubuntu-24.04
-          - ubuntu-24.04-xl
           - ubuntu-latest
           - windows-2019
           - windows-2022
@@ -38,7 +36,7 @@ jobs:
     steps:
 
       # actions/checkout MUST come before auth
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: actions/setup-python@v5
       with:
