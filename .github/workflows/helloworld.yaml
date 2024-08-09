@@ -33,6 +33,11 @@ jobs:
       run: |
         uname -a
 
+    - id: set-cmd
+      name: Run set command
+      run: |
+        set
+
     - id: auth
       name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
@@ -41,10 +46,9 @@ jobs:
         service_account: github-actions@gha-hello-world.iam.gserviceaccount.com
         token_format: access_token
         
-    - name: Python packages
+    - name: Configure Python venv
       run: |
         python3 -m venv myvenv
-        ls -alRF myvenv/
         myvenv/bin/pip3 install google-auth requests
 
     - name: USE GOOGLE SERVICES
