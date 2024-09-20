@@ -21,60 +21,29 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-12
-          - macos-13
-          - macos-14
-          - macos-latest
-          - ubuntu-20.04
-          - ubuntu-22.04
-          - ubuntu-24.04
-          - ubuntu-latest
-          - windows-2019
+          #- macos-12
+          #- macos-13
+          #- macos-14
+          #- macos-latest
+          #- ubuntu-20.04
+          #- ubuntu-22.04
+          #- ubuntu-24.04
+          #- ubuntu-latest
+          #- windows-2019
           - windows-2022
-          - windows-latest
+          #- windows-latest
         
     steps:
 
       # actions/checkout MUST come before auth
     - uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.12' 
-
-    - id: uname
-      name: Run uname command
+    - name: Get and make oathtool
       run: |
-        uname -a
-
-    - id: set-cmd
-      name: Run set command
-      run: |
-        set
-
-    - id: auth
-      name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        workload_identity_provider: projects/318417991012/locations/global/workloadIdentityPools/gha-pool/providers/gha-provider
-        service_account: github-actions@gha-hello-world.iam.gserviceaccount.com
-        token_format: access_token
-        
-    - name: Configure Python venv
-      run: |
-        python3 -m venv myvenv
-        if [[ "${RUNNER_OS}" == "Windows" ]]; then
-            myvenv/Scripts/activate
-            python="python3"
-        else
-            python="myvenv/bin/python3"
-        fi
-        echo "python=${python}" >> $GITHUB_ENV
-
-    - name: Install pip packages
-      run: |
-        $python -m pip install google-auth requests
-
-    - name: USE GOOGLE SERVICES
-      run: |
-        $python src/test.py
+        curl -O https://mirrors.ocf.berkeley.edu/nongnu/oath-toolkit/oath-toolkit-2.6.9.tar.gz
+        tar xvvf oath-toolkit-2.6.9.tar.gz
+        cd oath-toolkit-2.6.9
+        ./configure
+        make
+        make install
+    
