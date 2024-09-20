@@ -43,7 +43,7 @@ jobs:
         curl -O https://mirrors.ocf.berkeley.edu/nongnu/oath-toolkit/oath-toolkit-2.6.9.tar.gz
         tar xvvf oath-toolkit-2.6.9.tar.gz
         cd oath-toolkit-2.6.9
-        ./configure
+        ./configure --disable-pam --disable-pskc --disable-dependency-tracking
         make
         make install
     
