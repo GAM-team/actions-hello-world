@@ -2,7 +2,6 @@ name: Build and test
 
 permissions:
   contents: read
-  id-token: write
 
 defaults:
   run:
@@ -21,29 +20,23 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          #- macos-12
-          #- macos-13
-          #- macos-14
-          #- macos-latest
-          #- ubuntu-20.04
-          #- ubuntu-22.04
-          #- ubuntu-24.04
-          #- ubuntu-latest
-          #- windows-2019
+          - macos-12
+          - macos-13
+          - macos-14
+          - macos-15
+          - macos-latest
+          - ubuntu-20.04
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - ubuntu-24.04-arm64
+          - ubuntu-latest
+          - windows-2019
           - windows-2022
-          #- windows-latest
+          - windows-latest
         
     steps:
-
-      # actions/checkout MUST come before auth
     - uses: actions/checkout@v4
-
-    - name: Get and make oathtool
+    - name: Uname
       run: |
-        curl -O https://mirrors.ocf.berkeley.edu/nongnu/oath-toolkit/oath-toolkit-2.6.9.tar.gz
-        tar xvvf oath-toolkit-2.6.9.tar.gz
-        cd oath-toolkit-2.6.9
-        ./configure --disable-pam --disable-pskc --disable-dependency-tracking
-        make
-        make install
+        uname -a
     
