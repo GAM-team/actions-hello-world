@@ -20,15 +20,15 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-11
+#          - macos-11
           - macos-12
-          - macos-12-xl
+#          - macos-12-xl
           - macos-13
-          - macos-13-xl
+#          - macos-13-xl
           - macos-14
           - macos-15
           - macos-latest
-          - macos-latest-xl
+#          - macos-latest-xl
           - ubuntu-20.04
           - ubuntu-22.04
           - ubuntu-24.04
