@@ -29,10 +29,18 @@ jobs:
           - ubuntu-24.04
           - ubuntu-24.04-aarch64
           - ubuntu-latest
+          - ubuntu-arm64-24.04
+          - ubuntu-aarch64-24.04
+          - ubuntu-24.04-arm64
+          - ubuntu-24.04-aarch64
           - windows-2019
           - windows-2022
           - windows-latest
           - windows-aarch64
+          - windows-arm64-latest
+          - windows-aarch64-latest
+          - windows-latest-arm64
+          - windows-latest-aarch64
         
     steps:
     - uses: actions/checkout@v4
