@@ -29,6 +29,7 @@ jobs:
           - ubuntu-24.04
           - ubuntu-24.04-aarch64
           - ubuntu-latest
+          - ubuntu-minimal
           - ubuntu-arm64-24.04
           - ubuntu-aarch64-24.04
           - ubuntu-24.04-arm64
