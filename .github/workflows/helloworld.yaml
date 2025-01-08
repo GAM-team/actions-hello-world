@@ -21,6 +21,9 @@ jobs:
       matrix:
         os:
           - macos-13
+          - macos-13-aarch64
+          - macos-13-arm
+          - macos-13-arm64
           - macos-14
           - macos-15
           - macos-latest
