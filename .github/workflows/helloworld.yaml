@@ -40,9 +40,4 @@ jobs:
     - name: Uname
       run: |
         uname -a
-
-    - name: Is scons installed
-      if: runner.os == 'Linux'
-      run: |
-        dpkg -l scons
     
