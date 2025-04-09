@@ -3,8 +3,8 @@ permissions:
   contents: read
 on:
   push:
-    paths:
-      - wiki
+#    paths:
+#      - wiki
 jobs:
   pushwiki:
     runs-on: ubuntu-latest
