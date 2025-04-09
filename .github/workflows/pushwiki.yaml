@@ -1,9 +1,10 @@
 name: Push wiki
+permissions:
+  contents: read
 on:
   push:
     paths:
       - wiki
-
 jobs:
   pushwiki:
     runs-on: ubuntu-latest
