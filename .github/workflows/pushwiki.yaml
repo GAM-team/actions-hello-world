@@ -1,12 +1,10 @@
 name: Push wiki
 on:
-
   push:
     branches:
     - main
     paths:
-    - wiki
-    
+      - 'wiki/*'
 
 jobs:
   pushwiki:
