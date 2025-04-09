@@ -9,6 +9,8 @@ defaults:
 
 on:
   push:
+    paths-ignore:
+      - 'wiki/**'
   pull_request:
   schedule:
     - cron: '37 22 * * *'
