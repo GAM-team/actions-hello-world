@@ -4,7 +4,7 @@ permissions:
 on:
   push:
     paths:
-      wiki
+      - 'wiki/**'
 jobs:
   pushwiki:
     runs-on: ubuntu-latest
