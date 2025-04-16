@@ -39,6 +39,8 @@ jobs:
         
     steps:
     - uses: actions/checkout@v4
+      with:
+        python-verion: '3.X'
 
     - name: existing Python
       run: |
