@@ -46,7 +46,8 @@ jobs:
         python -V
         python -c "import platform; print(platform.machine())"
         export runner_os=$(echo "$RUNNER_OS" | tr '[:upper:]' '[:lower:]')
-        ls -l "/c/hostedtoolcache/${runner_os}/"
+        ls -l "/c/hostedtoolcache"
+        ls -l "/c/hostedtoolcache/${runner_os}/Python/"
 
     - uses: actions/setup-python@v5
       with:
