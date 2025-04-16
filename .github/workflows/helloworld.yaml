@@ -42,6 +42,7 @@ jobs:
 
     - name: existing Python
       run: |
+        which python3
         python -V
         python -c "import platform; print(platform.machine())"
 
@@ -55,6 +56,7 @@ jobs:
 
     - name: new Python
       run: |
+        which python3
         python -V
         python -c "import platform; print(platform.machine())"
     
