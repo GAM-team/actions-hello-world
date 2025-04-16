@@ -39,7 +39,22 @@ jobs:
         
     steps:
     - uses: actions/checkout@v4
+
+    - name: existing Python
+      run: |
+        python -V
+        python -c "import platform; print(platform.machine())"
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13' 
+
     - name: Uname
       run: |
         uname -a
+
+    - name: new Python
+      run: |
+        python -V
+        python -c "import platform; print(platform.machine())"
     
