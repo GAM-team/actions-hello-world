@@ -40,7 +40,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        python-verion: '3.X'
+        python-verion: '3.x'
+        check-latest: true
 
     - name: existing Python
       run: |
