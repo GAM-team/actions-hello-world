@@ -75,6 +75,7 @@ jobs:
         export CIBW_ARCHS=native
         export CIBW_PLATFORM=auto
         export CIBW_BUILD=cp313-*
+        export CIBW_PLATFORM=windows
         python3 -m pip install cibuildwheel
         git clone https://github.com/lxml/lxml.git
         git clone https://github.com/pyca/cryptography.git
