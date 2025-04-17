@@ -58,6 +58,11 @@ jobs:
         python -V
         python -c "import platform; print(platform.machine())"
 
+    - name: Windows Install rust
+      if: runner.os == 'Windows'
+      run: |
+        choco install rust
+
     - name: Build wheels
       run: |
         export CIBW_ARCHS=native
