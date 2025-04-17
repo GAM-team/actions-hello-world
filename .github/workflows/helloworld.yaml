@@ -84,9 +84,9 @@ jobs:
 
     - name: show wheels
       run: |
-        ls -l */wheelhouse/*
         ls -l .
-        ls -l */
+        ls -l libxml/
+        ls -l cryptography/
 
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
@@ -96,4 +96,4 @@ jobs:
         draft: false
         title: "Wheel Build"
         files: |
-          */wheelhouse/*.whl
+          wheelhouse/*.whl
