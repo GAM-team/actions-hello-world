@@ -58,12 +58,16 @@ jobs:
         python -V
         python -c "import platform; print(platform.machine())"
 
-    - name: Build lxml wheel
+    - name: Build wheels
       run: |
-        git clone https://github.com/lxml/lxml.git
-        cd lxml
-        python3 -m pip install cibuildwheel
         export CIBW_ARCHS=native
         export CIBW_PLATFORM=auto
         export CIBW_BUILD=cp313-*
+        python3 -m pip install cibuildwheel
+        git clone https://github.com/lxml/lxml.git
+        git clone https://github.com/pyca/cryptography.git
+        cd cryptography
+        python3 -m cibouildwheel --output-dir wheelhouse
+        cd ../lxml
         python3 -m cibuildwheel --output-dir wheelhouse
+        
