@@ -63,6 +63,8 @@ jobs:
       run: |
         choco install rust
 
+    - uses: msys2/setup-msys2@v2
+
     - name: Build wheels
       run: |
         export CIBW_ARCHS=native
