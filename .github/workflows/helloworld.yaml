@@ -54,11 +54,11 @@ jobs:
       shell: powershell
       run: |
         echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" | Out-File -FilePath $env:GITHUB_ENV -Append
-        vcpkg install openssl:arm64-windows-static-md
+        vcpkg install openssl
 
     - name: git clone
       run: |
-        git clone https://github.com/jay0lee/lxml.git
+        git clone https://github.com/lxml/lxml.git
         git clone https://github.com/pyca/cryptography.git
 
     - name: Build lxml wheel
