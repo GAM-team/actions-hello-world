@@ -22,64 +22,36 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-13
-          - macos-14
-          - macos-15
-          - macos-latest
-          - ubuntu-22.04
-          - ubuntu-24.04
-          - ubuntu-latest
-          - ubuntu-24.04-arm
-          - ubuntu-22.04-arm
-          - windows-11-arm
+          #- macos-13
+          #- macos-14
+          #- macos-15
+          #- macos-latest
+          #- ubuntu-22.04
+          #- ubuntu-24.04
+          #- ubuntu-latest
+          #- ubuntu-24.04-arm
+          #- ubuntu-22.04-arm
+          #- windows-11-arm
           - windows-2019
-          - windows-2022
-          - windows-2025
-          - windows-latest
+          #- windows-2022
+          #- windows-2025
+          #- windows-latest
         
     steps:
     - uses: actions/checkout@v4
-
-    #- name: existing Python
-    #  run: |
-    #    which python3
-    #    python -V
-    #    python -c "import platform; print(platform.machine())"
-    #    export runner_os=$(echo "$RUNNER_OS" | tr '[:upper:]' '[:lower:]')
-
-    #- uses: actions/setup-python@v5
-    #  with:
-    #    python-version: '3.x'
-    #    check-latest: false
-
-    #- name: new Python
-    #  run: |
-    #    which python3
-    #    python -V
-    #    python -c "import platform; print(platform.machine())"
 
     - name: Windows Install rust
       if: runner.os == 'Windows'
       run: |
         choco install rust
 
-    - uses: msys2/setup-msys2@v2
-
     - name: Build wheels
-      shell: msys2 {0}
       run: |
-        pacman -S --noconfirm openssl-devel pkgconf python3 python3-pip git
-        which python3
-        which python
-        export CIBW_ARCHS=native
-        export CIBW_PLATFORM=auto
-        export CIBW_BUILD=cp313-*
-        export CIBW_PLATFORM=windows
-        python3 -m pip install cibuildwheel --break-system-packages
         git clone https://github.com/lxml/lxml.git
         git clone https://github.com/pyca/cryptography.git
-        cd cryptography
+        python3 -m pip install cibuildwheel
+        export CIBW_BUILD="cp313-win_arm64"
+        cd lxml
         python3 -m cibuildwheel --output-dir wheelhouse
-        cd ../lxml
+        cd ../cryptography
         python3 -m cibuildwheel --output-dir wheelhouse
-        
