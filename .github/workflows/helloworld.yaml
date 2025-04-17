@@ -59,6 +59,10 @@ jobs:
         python -c "import platform; print(platform.machine())"
 
     - name: Build lxml wheel
+      if: runner.os == 'Windows' && runner.arch == 'ARM64'
+      with:
+        only: cp313-win_arm64
+
       run: |
         git clone https://github.com/lxml/lxml.git
         cd lxml
