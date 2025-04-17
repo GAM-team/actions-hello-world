@@ -50,7 +50,7 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.x'
-        check-latest: true
+        check-latest: false
 
     - name: new Python
       run: |
@@ -59,14 +59,11 @@ jobs:
         python -c "import platform; print(platform.machine())"
 
     - name: Build lxml wheel
-      if: runner.os == 'Windows'
       run: |
         git clone https://github.com/lxml/lxml.git
         cd lxml
         python3 -m pip install cibuildwheel
-        if [ "$RUNNER_ARCH" == "X64" ]; then
-          export CIBW_BUILD="cp313-win_amd64"
-        else
-          export CIBW_BUILD="cp313-win_arm64"
-        fi
+        export CIBW_ARCHS=native
+        export CIBW_PLATFORM=auto
+        export CIBW_BUILD=cp313-*
         python3 -m cibuildwheel --output-dir wheelhouse
