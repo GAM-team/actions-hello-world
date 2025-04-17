@@ -52,14 +52,15 @@ jobs:
         python-version: '3.x'
         check-latest: true
 
-
-    - name: Uname
-      run: |
-        uname -a
-
     - name: new Python
       run: |
         which python3
         python -V
         python -c "import platform; print(platform.machine())"
-    
+
+    - name: Build lxml wheel
+      run: |
+        git clone https://github.com/lxml/lxml.git
+        cd lxml
+        python3 -m pip install cibuildwheel
+        python3 -m cibuildwheel --output-dir wheelhouse
