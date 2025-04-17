@@ -57,7 +57,7 @@ jobs:
         vcpkg install openssl
 
     - run: |
-        export OPENSSL_DIR="C:/vcpkg/packages/openssl_arm64-windows"
+        export OPENSSL_DIR="/c/vcpkg/packages/openssl_arm64-windows"
         echo "OPENSSL_DIR=${OPENSSL_DIR}"  >> $GITHUB_OUTPUT
         ls -al "$OPENSSL_DIR"
 
