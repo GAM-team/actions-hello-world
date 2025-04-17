@@ -55,5 +55,5 @@ jobs:
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.23.2
       with:
-        only: cp313_win-arm64
+        only: cp313-win_arm64
         package-dir: lxml
