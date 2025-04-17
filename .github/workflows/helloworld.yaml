@@ -68,7 +68,8 @@ jobs:
     - name: Build wheels
       shell: msys2 {0}
       run: |
-        pacman -S --noconfirm openssl-devel pkgconf python3
+        pacman -S --noconfirm openssl-devel pkgconf python3 python3-pip
+        python3 -m pip install --upgrade pip
         export CIBW_ARCHS=native
         export CIBW_PLATFORM=auto
         export CIBW_BUILD=cp313-*
