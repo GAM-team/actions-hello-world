@@ -48,6 +48,9 @@ jobs:
       run: |
         git clone https://github.com/jay0lee/lxml.git
         git clone https://github.com/pyca/cryptography.git
+        cd lxml
+        python3 -m pip install cibuildwheel
+        cibuildwheel --print-build-identifiers --platform windows
 
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.23.2
