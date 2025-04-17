@@ -67,7 +67,7 @@ jobs:
 
     - shell: msys2 {0}
       run: |
-        pacman -S openssl-devel pkgconf
+        pacman -S --noconfirm openssl-devel pkgconf
 
     - name: Build wheels
       run: |
