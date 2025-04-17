@@ -40,6 +40,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
     - name: Install rust
       if: runner.arch == 'ARM64'
       run: |
@@ -50,15 +54,12 @@ jobs:
       shell: powershell
       run: |
         echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" | Out-File -FilePath $env:GITHUB_ENV -Append
-        vcpkg install openssl:x64-windows-static-md
+        vcpkg install openssl:arm64-windows-static-md
 
     - name: git clone
       run: |
         git clone https://github.com/jay0lee/lxml.git
         git clone https://github.com/pyca/cryptography.git
-        cd lxml
-        python3 -m pip install cibuildwheel
-        cibuildwheel --print-build-identifiers --platform windows
 
     - name: Build lxml wheel
       if: runner.arch == 'X64'
