@@ -67,7 +67,7 @@ jobs:
 
     - name: Build wheels
       run: |
-        pacman -S openssl-devel pkgconf
+        msys2 -c 'pacman -S openssl-devel pkgconf'
         export CIBW_ARCHS=native
         export CIBW_PLATFORM=auto
         export CIBW_BUILD=cp313-*
