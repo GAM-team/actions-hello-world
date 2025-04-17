@@ -50,7 +50,7 @@ jobs:
         git clone https://github.com/pyca/cryptography.git
 
     - name: Build wheels
-      uses: pypa/cibuildwheel@latest
+      uses: pypa/cibuildwheel@v2.23.2
       with:
         only: cp313_win-arm64
         package-dir: lxml
