@@ -74,3 +74,12 @@ jobs:
       with:
         only: cp313-win_arm64
         package-dir: cryptography
+
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
+        draft: false
+        title: "Wheel Build"
+        files: |
+          */wheelhouse/*.whl
