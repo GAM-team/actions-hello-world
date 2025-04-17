@@ -40,8 +40,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Windows Install rust
-      if: runner.os == 'Windows'
+    - name: Install rust
       run: |
         choco install rust
 
@@ -51,7 +50,7 @@ jobs:
         git clone https://github.com/pyca/cryptography.git
 
     - name: Build wheels
-      uses: pypa/cibuildwheel
-      working-directory: lxml
+      uses: pypa/cibuildwheel@latest
       with:
         only: cp313_win-arm64
+        package-dir: lxml
