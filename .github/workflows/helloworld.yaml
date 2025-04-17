@@ -40,23 +40,23 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: existing Python
-      run: |
-        which python3
-        python -V
-        python -c "import platform; print(platform.machine())"
-        export runner_os=$(echo "$RUNNER_OS" | tr '[:upper:]' '[:lower:]')
+    #- name: existing Python
+    #  run: |
+    #    which python3
+    #    python -V
+    #    python -c "import platform; print(platform.machine())"
+    #    export runner_os=$(echo "$RUNNER_OS" | tr '[:upper:]' '[:lower:]')
 
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-        check-latest: false
+    #- uses: actions/setup-python@v5
+    #  with:
+    #    python-version: '3.x'
+    #    check-latest: false
 
-    - name: new Python
-      run: |
-        which python3
-        python -V
-        python -c "import platform; print(platform.machine())"
+    #- name: new Python
+    #  run: |
+    #    which python3
+    #    python -V
+    #    python -c "import platform; print(platform.machine())"
 
     - name: Windows Install rust
       if: runner.os == 'Windows'
@@ -68,7 +68,7 @@ jobs:
     - name: Build wheels
       shell: msys2 {0}
       run: |
-        pacman -S --noconfirm openssl-devel pkgconf
+        pacman -S --noconfirm openssl-devel pkgconf python3
         export CIBW_ARCHS=native
         export CIBW_PLATFORM=auto
         export CIBW_BUILD=cp313-*
