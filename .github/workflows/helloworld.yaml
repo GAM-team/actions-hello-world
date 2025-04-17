@@ -56,7 +56,9 @@ jobs:
         echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" | Out-File -FilePath $env:GITHUB_ENV -Append
         vcpkg install openssl
 
-    - run: |
+    - name: Set OpenSSL location
+      if: runner.arch == 'ARM64'
+      run: |
         export OPENSSL_DIR="/c/vcpkg/packages/openssl_arm64-windows"
         echo "OPENSSL_DIR=${OPENSSL_DIR}"  >> $GITHUB_OUTPUT
         ls -al "$OPENSSL_DIR"
