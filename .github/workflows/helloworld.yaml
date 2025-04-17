@@ -82,6 +82,12 @@ jobs:
         only: cp313-win_arm64
         package-dir: cryptography
 
+    - name: show wheels
+      run: |
+        ls -l */wheelhouse/*
+        ls -l .
+        ls -l */
+
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         automatic_release_tag: "latest"
