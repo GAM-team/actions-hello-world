@@ -31,7 +31,7 @@ jobs:
           #- ubuntu-latest
           #- ubuntu-24.04-arm
           #- ubuntu-22.04-arm
-          #- windows-11-arm
+          - windows-11-arm
           - windows-2019
           #- windows-2022
           #- windows-2025
@@ -52,8 +52,14 @@ jobs:
         python3 -m pip install cibuildwheel
         cibuildwheel --print-build-identifiers --platform windows
 
-    - name: Build wheels
+    - name: Build lxml wheel
       uses: pypa/cibuildwheel@v2.23.2
       with:
         only: cp313-win_arm64
         package-dir: lxml
+
+    - name: Build cryptography wheel
+      uses: pypa/cibuildwheel@v2.23.2
+      with:
+        only: cp313-win_arm64
+        package-dir: cryptography
