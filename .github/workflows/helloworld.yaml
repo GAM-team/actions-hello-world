@@ -65,12 +65,10 @@ jobs:
 
     - uses: msys2/setup-msys2@v2
 
-    - shell: msys2 {0}
+    - name: Build wheels
+      shell: msys2 {0}
       run: |
         pacman -S --noconfirm openssl-devel pkgconf
-
-    - name: Build wheels
-      run: |
         export CIBW_ARCHS=native
         export CIBW_PLATFORM=auto
         export CIBW_BUILD=cp313-*
