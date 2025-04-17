@@ -45,13 +45,13 @@ jobs:
       run: |
         choco install rust
 
-    - name: Build wheels
+    - name: git clone
       run: |
         git clone https://github.com/lxml/lxml.git
         git clone https://github.com/pyca/cryptography.git
-        python3 -m pip install cibuildwheel
-        export CIBW_BUILD="cp313-win_arm64"
-        cd lxml
-        python3 -m cibuildwheel --output-dir wheelhouse
-        cd ../cryptography
-        python3 -m cibuildwheel --output-dir wheelhouse
+
+    - name: Build wheels
+      uses: pypa/cibuildwheel
+      working-directory: lxml
+      with:
+        only: cp313_win-arm64
