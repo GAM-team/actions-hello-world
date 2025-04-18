@@ -40,6 +40,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - run: |
+        echo "HOME: ${HOME}"
+        set
+        uname -a
+        whoami
+
     - uses: actions/setup-python@v5
       with:
         python-version: '3.x'
