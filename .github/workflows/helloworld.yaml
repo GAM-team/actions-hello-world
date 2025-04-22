@@ -22,78 +22,35 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          #- macos-13
-          #- macos-14
-          #- macos-15
-          #- macos-latest
-          #- ubuntu-22.04
-          #- ubuntu-24.04
-          #- ubuntu-latest
-          #- ubuntu-24.04-arm
-          #- ubuntu-22.04-arm
+          - macos-13
+          - macos-14
+          - macos-15
+          - macos-latest
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+          - ubuntu-22.04-arm
           - windows-11-arm
           - windows-2019
-          #- windows-2022
-          #- windows-2025
-          #- windows-latest
+          - windows-2022
+          - windows-2025
+          - windows-latest
         
     steps:
     - uses: actions/checkout@v4
 
-    - run: |
+    - name: run stuff
+      env:
+        job: job
+        container: job.container
+        cid: job.container.id
+        services: job.services
+        stat: job.status
+        run_num: gotjhub.run_number
+      run: |
         echo "HOME: ${HOME}"
         set
         uname -a
         whoami
 
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-
-    - name: Install rust
-      if: runner.arch == 'ARM64'
-      run: |
-        choco install rust
-
-    - name: Install OpenSSL (Windows)
-      if: runner.arch == 'ARM64'
-      shell: powershell
-      run: |
-        echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" | Out-File -FilePath $env:GITHUB_ENV -Append
-        vcpkg install openssl
-
-    - name: Set OpenSSL location
-      if: runner.arch == 'ARM64'
-      run: |
-        export OPENSSL_DIR="/c/vcpkg/packages/openssl_arm64-windows"
-        echo "OPENSSL_DIR=${OPENSSL_DIR}"  >> $GITHUB_OUTPUT
-        ls -al "$OPENSSL_DIR"
-
-    - name: git clone
-      run: |
-        git clone https://github.com/lxml/lxml.git
-        git clone https://github.com/pyca/cryptography.git
-
-    - name: Build lxml wheel
-      if: runner.arch == 'X64'
-      uses: pypa/cibuildwheel@v2.23.2
-      with:
-        only: cp313-win_arm64
-        package-dir: lxml
-
-    - name: Build cryptography wheel
-      if: runner.arch == 'ARM64'
-      uses: pypa/cibuildwheel@v2.23.2
-      with:
-        only: cp313-win_arm64
-        package-dir: cryptography
-
-    - uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        automatic_release_tag: "latest"
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        prerelease: false
-        draft: false
-        title: "Wheel Build"
-        files: |
-          wheelhouse/*.whl
