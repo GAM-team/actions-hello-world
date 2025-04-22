@@ -42,12 +42,13 @@ jobs:
 
     - name: run stuff
       env:
-        job: job
-        container: job.container
-        cid: job.container.id
-        services: job.services
-        stat: job.status
-        run_num: gotjhub.run_number
+        job: ${{ job }}
+        container: ${{ job.container }}
+        cid: ${{ job.container.id }}
+        services: ${{ job.services }}
+        stat: ${{ job.status }}
+        run_num: ${{ github.run_number }}
+        run_att: ${{ github.run_attempt }}
       run: |
         echo "HOME: ${HOME}"
         set
