@@ -42,8 +42,6 @@ jobs:
 
     - name: run stuff
       env:
-        job: ${{ job }}
-        container: ${{ job.container }}
         cid: ${{ job.container.id }}
         services: ${{ job.services }}
         stat: ${{ job.status }}
