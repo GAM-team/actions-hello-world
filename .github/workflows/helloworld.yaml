@@ -52,18 +52,13 @@ jobs:
         set
         uname -a
         whoami
-
-    - name: Download Certum MSI
-      if: runner.os == 'Windows'
-      run: |
-        curl -O https://files.certum.eu/software/SimplySignDesktop/Windows/9.2.14.61/SimplySignDesktop-9.2.14.61-64-bit-en.msi
         
     - name: Install certum MSI
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
-        $url = "https://files.certum.eu/software/SimplySignDesktop/Windows/9.2.14.61/SimplySignDesktop-9.2.14.61-64-bit-en.msi"
-        $file = "SimplySignDesktop-9.2.14.61-64-bit-en.msi" 
+        $url = "https://files.certum.eu/software/SimplySignDesktop/Windows/9.3.1.66/SimplySignDesktop-9.3.1.66-64-bit-pl.msi"
+        $file = "SimplySignDesktop-9.3.1.66-64-bit-pl.msi" 
         Invoke-WebRequest $url -OutFile $file
         $log = "install.log" 
         $procMain = Start-Process "msiexec" "/i `"$file`" /qn /l*! `"$log`"" -NoNewWindow -PassThru
