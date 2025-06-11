@@ -62,7 +62,9 @@ jobs:
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
+        $url = "https://files.certum.eu/software/SimplySignDesktop/Windows/9.2.14.61/SimplySignDesktop-9.2.14.61-64-bit-en.msi"
         $file = "SimplySignDesktop-9.2.14.61-64-bit-en.msi" 
+        Invoke-WebRequest $url -OutFile $file
         $log = "install.log" 
         $procMain = Start-Process "msiexec" "/i `"$file`" /qn /l*! `"$log`"" -NoNewWindow -PassThru
         $procLog = Start-Process "powershell" "Get-Content -Path `"$log`" -Wait" -NoNewWindow -PassThru 
