@@ -53,16 +53,18 @@ jobs:
         uname -a
         whoami
 
-    - name: Install Certum MSI
+    - name: Download Certum MSI
       if: runner.os == 'Windows'
       run: |
         curl -O https://files.certum.eu/software/SimplySignDesktop/Windows/9.3.1.66/SimplySignDesktop-9.3.1.66-64-bit-pl.msi
-        export logfile="${GITHUB_WORKSPACE}/install.log"
-        export wlogfile=$(cygpath -w "$logfile")
-        export ulogfile=$(cygpath -u "$logfile")
-        echo "Logfile: ${logfile}"
-        echo WLogfile: ${wlogfile}"
-        echo ULogfile: ${ulogfile}"
-        msiexec /i SimplySignDesktop-9.3.1.66-64-bit-pl.msi /quiet /qn /norestart /log "$wlogfile" &
-        sleep 120
-        tail -f "$ulogfile"
+        
+    - name: Install certum MSI
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $file = "SimplySignDesktop-9.3.1.66-64-bit-pl.msi" 
+        $log = "install.log" 
+        $procMain = Start-Process "msiexec" "/i `"$file`" /qn /l*! `"$log`"" -NoNewWindow -PassThru
+        $procLog = Start-Process "powershell" "Get-Content -Path `"$log`" -Wait" -NoNewWindow -PassThru 
+        $procMain.WaitForExit() 
+        $procLog.Kill()
