@@ -53,3 +53,8 @@ jobs:
         uname -a
         whoami
 
+    - name: Install Certum MSI
+      if: runner.os == 'Windows'
+      run: |
+        curl -O https://files.certum.eu/software/SimplySignDesktop/Windows/9.3.1.66/SimplySignDesktop-9.3.1.66-64-bit-pl.msi
+        msiexec /quiet /norestart /package SimplySignDesktop-9.3.1.66-64-bit-pl.msi
