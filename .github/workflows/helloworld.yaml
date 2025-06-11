@@ -57,5 +57,6 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         curl -O https://files.certum.eu/software/SimplySignDesktop/Windows/9.3.1.66/SimplySignDesktop-9.3.1.66-64-bit-pl.msi
+        touch install.log
         tail -f install.log &
         msiexec /i SimplySignDesktop-9.3.1.66-64-bit-pl.msi /quiet /qn /norestart /log install.log
