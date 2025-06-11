@@ -58,7 +58,11 @@ jobs:
       run: |
         curl -O https://files.certum.eu/software/SimplySignDesktop/Windows/9.3.1.66/SimplySignDesktop-9.3.1.66-64-bit-pl.msi
         export logfile="${GITHUB_WORKSPACE}/install.log"
+        export wlogfile=$(cygpath -w "$logfile")
+        export ulogfile=$(cygpath -u "$logfile")
         echo "Logfile: ${logfile}"
-        msiexec /i SimplySignDesktop-9.3.1.66-64-bit-pl.msi /quiet /qn /norestart /log "$logfile" &
+        echo WLogfile: ${wlogfile}"
+        echo ULogfile: ${ulogfile}"
+        msiexec /i SimplySignDesktop-9.3.1.66-64-bit-pl.msi /quiet /qn /norestart /log "$wlogfile" &
         sleep 120
-        tail -f "$logfile"
+        tail -f "$ulogfile"
