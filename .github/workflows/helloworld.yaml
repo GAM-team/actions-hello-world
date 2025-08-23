@@ -39,6 +39,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Windows Configure VCode
+      uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # 1.13.0
+      if: runner.os == 'Windows'
+      with:
+        arch: ${{ runner.arch }}
+
     - name: run stuff
       env:
         cid: ${{ job.container.id }}
