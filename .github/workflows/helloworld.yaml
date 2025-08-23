@@ -48,8 +48,8 @@ jobs:
         run_att: ${{ github.run_attempt }}
       run: |
         python3 -m venv venv
-        dir venv
-        dir venv/bin
+        ls -l venv
+        ls -l venv/bin
         venv/bin/pip install --upgrade pyinstaller
         echo "print('Hello World.')" > helloworld.py
         venv/bin/pyinstaller --onefile helloworld.py
