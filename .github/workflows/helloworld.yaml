@@ -50,7 +50,7 @@ jobs:
         python3 -m venv venv
         if [[ "${RUNNER_OS}" == "Windows" ]]; then
           source venv/scripts/activate
-          python=python
+          python=venv/scripts/python.exe
           pyinstaller=venv/scripts/pyinstaller.exe
         else
           python=venv/bin/python
