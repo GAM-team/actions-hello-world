@@ -88,6 +88,22 @@ jobs:
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
+        Start-Process -Filepath "C:\Program Files\Certum\SimplySign Desktop\Certum SmartSign\SimplySignDesktop.exe"
+        Sleep 5
+        $wshell = New-Object -ComObject wscript.shell
+        $isOpen = $wshell.AppActivate('SimplySign Desktop')
+        if ( $isOpen ) {
+          $myotp = venv\scripts\python.exe totp.py
+          $wshell.SendKeys("jay0lee@gmail.com")
+          $wshell.SendKeys('{TAB}')
+          $wshell.SendKeys($mypsk)
+          $wshell.SendKeys('{ENTER}')
+        } else {
+          Write-Output "SimplySign Desktop not open"
+        }
+
+
+
         signtool sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe
         
          
