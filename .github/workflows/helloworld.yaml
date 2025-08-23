@@ -51,10 +51,10 @@ jobs:
         if [[ "${RUNNER_OS}" == "Windows" ]]; then
           source venv/scripts/activate
           python=python
-          pyinstaller=venv/bin/pyinstaller
+          pyinstaller=venv/scripts/pyinstaller.exe
         else
           python=venv/bin/python
-          pyinstaller=venv/scripts/pyinstaller.exe
+          pyinstaller=venv/bin/pyinstaller
         fi
         "$python" -m pip install --upgrade pyinstaller
         echo "print('Hello World.')" > helloworld.py
