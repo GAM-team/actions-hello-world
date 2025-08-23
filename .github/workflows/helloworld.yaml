@@ -87,7 +87,7 @@ jobs:
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
-        signtool sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe &
+        signtool sign "/sha1" 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e "/tr" http://time.certum.pl "/td" SHA256 "/fd" SHA256 "/v" dist/helloworld.exe &
         myotp=$("$python" totp.py)
         
          
