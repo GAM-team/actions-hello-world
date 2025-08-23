@@ -88,7 +88,7 @@ jobs:
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
-        Start-Process -Filepath "C:\Program Files\Certum\SimplySign Desktop\SimplySignDesktop.exe"
+        "C:\Program Files\Certum\SimplySign Desktop\SimplySignDesktop.exe"
         Sleep 20
         $wshell = New-Object -ComObject wscript.shell
         $isOpen = $wshell.AppActivate('SimplySign Desktop')
