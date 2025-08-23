@@ -58,7 +58,6 @@ jobs:
         fi
         "$python" -m pip install --upgrade pyinstaller
         echo "print('Hello World.')" > helloworld.py
-        ls -alRF venv
         "$pyinstaller" --onefile helloworld.py
         file dist/helloworld*
         dist/helloworld
