@@ -90,6 +90,7 @@ jobs:
       run: |
         "C:\Program Files\Certum\SimplySign Desktop\SimplySignDesktop.exe"
         Sleep 20
+        Get-Process
         $wshell = New-Object -ComObject wscript.shell
         $isOpen = $wshell.AppActivate('SimplySign Desktop')
         if ( $isOpen ) {
