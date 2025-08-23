@@ -56,7 +56,8 @@ jobs:
           python=venv/bin/python
           pyinstaller=venv/bin/pyinstaller
         fi
-        "$python" -m pip install --upgrade pyinstaller
+        echo "python=${python}" >> $GITHUB_ENV
+        "$python" -m pip install --upgrade pyinstaller pyotp
         echo "print('Hello World.')" > helloworld.py
         "$pyinstaller" --onefile helloworld.py
         file dist/helloworld*
@@ -75,14 +76,12 @@ jobs:
         $procMain.WaitForExit() 
         $procLog.Kill()
 
-    - name: Install oathtool
-      if: runner.os == 'Windows'
-      run: |
-        choco install -y oathtool
-
-    - name: Generate OTP and Login
+    - name: Generate OTP, login and sign
       if: runner.os == 'Windows'
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
-        oathtool --totp=SHA256 --base32 "$TOTP_SECRET"
+        signtool sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td sha256 /fd sha256 /v dist/helloworld.exe &
+        myotp=$("$python" totp.py)
+        
+         
