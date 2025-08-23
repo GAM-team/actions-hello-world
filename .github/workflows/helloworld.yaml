@@ -90,7 +90,7 @@ jobs:
       run: |
         Get-ChildItem "C:\Program Files"
         Get-ChildItem "C:\Program Files\Certum" -Recurse
-        Start-Process -Filepath "C:\Program Files\Certum\SimplySign Desktop\Certum SmartSign\SimplySignDesktop.exe"
+        Start-Process -Filepath "C:\Program Files\Certum\SimplySign Desktop\SimplySignDesktop.exe"
         Sleep 5
         $wshell = New-Object -ComObject wscript.shell
         $isOpen = $wshell.AppActivate('SimplySign Desktop')
@@ -103,9 +103,6 @@ jobs:
         } else {
           Write-Output "SimplySign Desktop not open"
         }
-
-
-
         signtool sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe
         
          
