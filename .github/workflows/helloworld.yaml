@@ -45,6 +45,14 @@ jobs:
       with:
         arch: ${{ runner.arch }}
 
+    - name: Install WinAppDriver
+      run: |
+        choco install -y winappdriver
+
+    - name: Enable developer-mode
+      run : |
+       reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1"
+
     - name: run stuff
       env:
         cid: ${{ job.container.id }}
@@ -88,21 +96,9 @@ jobs:
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
-        "C:\Program Files\Certum\SimplySign Desktop\SimplySignDesktop.exe"
-        Get-Process SimplySignDesktop | Format-List *
-        Sleep 20
-        Get-Process SimplySignDesktop | Format-List *
-        $wshell = New-Object -ComObject wscript.shell
-        $isOpen = $wshell.AppActivate('SimplySign Desktop')
-        if ( $isOpen ) {
-          $myotp = venv\scripts\python.exe totp.py
-          $wshell.SendKeys("jay0lee@gmail.com")
-          $wshell.SendKeys('{TAB}')
-          $wshell.SendKeys($mypsk)
-          $wshell.SendKeys('{ENTER}')
-        } else {
-          Write-Output "SimplySign Desktop not open"
-        }
+        Start-Process --FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
+        $myotp = venv\scripts\python.exe totp.py
+        venv\scripts\python.exe wad.py $myotp
         signtool sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe
         
          
