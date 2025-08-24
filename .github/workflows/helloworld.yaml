@@ -53,6 +53,11 @@ jobs:
       run : |
        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1"
 
+    - name: Install NPM stuff
+      run: |
+        npm install --save-dev @wdio/cli
+        npm install -g appium
+
     - name: run stuff
       env:
         cid: ${{ job.container.id }}
@@ -96,9 +101,10 @@ jobs:
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
-        Start-Process --FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
+        Start-Process --FilePath "appium"
         $myotp = venv\scripts\python.exe totp.py
-        venv\scripts\python.exe wad.py $myotp
+        node ssd.js
+        node ssd.js
         signtool sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe
         
          
