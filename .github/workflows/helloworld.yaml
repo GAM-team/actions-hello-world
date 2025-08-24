@@ -105,7 +105,7 @@ jobs:
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
-        Start-Process -NoNewWindow -FilePath "appium"
+        Start-Process -Filepath "powershell.exe" -ArgumentList "-File", "appium.ps1"
         write-host "appium started"
         $myotp = venv\scripts\python.exe totp.py
         write-host "running ssd"
