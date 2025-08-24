@@ -1,9 +1,10 @@
 const wdio = require("webdriverio");
 const { Key } = require('webdriverio');
 
-async function runNotepadTest() {
+async function runSSD() {
     const opts = {
-        port: 4723, // Default Appium port
+        port: 4723,
+        logLevel: "silent",
         capabilities: {
             platformName: "Windows",
             "appium:app": "C:\\Program Files\\Certum\\SimplySign Desktop\\SimplySignDesktop.exe",
@@ -27,11 +28,9 @@ async function runNotepadTest() {
         token_arr =  [...token_value];
         await driver.sendKeys(token_arr);
         await driver.sendKeys([Key.Enter]);
-        
-        
 
     } catch (error) {
-        console.error("Error during Appium test:", error);
+        console.error("Error during Appium run:", error);
     } finally {
         if (client) {
             await client.deleteSession(); // Close the Appium session
