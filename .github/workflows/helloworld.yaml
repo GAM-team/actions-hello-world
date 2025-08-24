@@ -108,14 +108,14 @@ jobs:
       run: |
         $appiumCmd = Get-Command appium
         $appiumPath = $appiumCmd.Path
-        Start-Process -NoNewWindow -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath
+        Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath
         Start-Sleep -Seconds 10
         write-host "appium started"
         $myotp = venv\scripts\python.exe totp.py
         write-host "running ssd"
         node ssd.js
         write-host "running ssd again"
-        node ssd.js
+        node ssd.js $myotp
         signtool sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe
         
          
