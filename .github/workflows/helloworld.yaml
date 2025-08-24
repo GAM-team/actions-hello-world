@@ -25,10 +25,8 @@ jobs:
           - macos-13
           - macos-14
           - macos-15
-          - macos-latest
           - ubuntu-22.04
           - ubuntu-24.04
-          - ubuntu-latest
           - ubuntu-24.04-arm
           - ubuntu-22.04-arm
           - windows-11-arm
@@ -121,6 +119,6 @@ jobs:
     - name: Archive artifacts
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # 4.6.2
       with:
-        name: helloworld-${{ matrix.os }}.exe
+        name: helloworld-${{ matrix.os }}
         path: |
           dist/helloworld*
