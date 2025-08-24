@@ -46,14 +46,17 @@ jobs:
         arch: ${{ runner.arch }}
 
     - name: Install WinAppDriver
+      if: runner.os == 'Windows'
       run: |
         choco install -y winappdriver
 
     - name: Enable developer-mode
+      if: runner.os == 'Windows'
       run : |
        reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /t REG_DWORD /f /v "AllowDevelopmentWithoutDevLicense" /d "1"
 
     - name: Install NPM stuff
+      if: runner.os == 'Windows'
       run: |
         npm install --save-dev @wdio/cli
         npm install -g appium
