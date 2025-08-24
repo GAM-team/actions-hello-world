@@ -113,9 +113,11 @@ jobs:
         write-host "appium started"
         $myotp = venv\scripts\python.exe totp.py
         write-host "running ssd"
-        node ssd.js
+        node ssd.js --log-level warn $myotp
         write-host "running ssd again"
-        node ssd.js $myotp
+        node ssd.js --log-level warn $myotp
+        write-host "sleeping during login..."
+        Start-Sleep 10
         signtool sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe
         
          
