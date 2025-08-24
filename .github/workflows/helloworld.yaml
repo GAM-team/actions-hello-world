@@ -121,6 +121,6 @@ jobs:
     - name: Archive artifacts
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # 4.6.2
       with:
-        name: helloworld.exe
+        name: helloworld-${{ matrix.os }}.exe
         path: |
           dist/helloworld*
