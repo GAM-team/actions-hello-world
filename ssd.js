@@ -38,4 +38,4 @@ async function runSSD() {
     }
 }
 
-runNotepadTest();
+runSSD();
