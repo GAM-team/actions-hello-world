@@ -21,8 +21,7 @@ async function runNotepadTest() {
         id_arr =  [...id_value];
         await driver.sendKeys(id_arr);
         await driver.sendKeys([Key.Tab]);
-        const token_text = await driver.$('//Text[@Name="Token:"]');
-        token_value = const apiKey = process.env.myotp;
+        token_value = process.env.myotp;
         console.log('MyOTP length: ');
         console.log(token_value.length);
         token_arr =  [...token_value];
