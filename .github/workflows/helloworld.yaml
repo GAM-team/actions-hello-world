@@ -107,7 +107,7 @@ jobs:
       run: |
         $appiumCmd = Get-Command appium
         $appiumPath = $appiumCmd.Path
-        Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath
+        Start-Process -NoNewWindow -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath
         write-host "appium started"
         $myotp = venv\scripts\python.exe totp.py
         write-host "running ssd"
