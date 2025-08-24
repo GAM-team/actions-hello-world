@@ -105,7 +105,7 @@ jobs:
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
-        Start-Process --FilePath "appium"
+        Start-Process -FilePath "appium"
         $myotp = venv\scripts\python.exe totp.py
         node ssd.js
         node ssd.js
