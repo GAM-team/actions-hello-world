@@ -35,11 +35,14 @@ async function runSSD() {
 
     } catch (error) {
         console.error("Error during Appium run:", error);
-    } finally {
-        if (driver) {
-            await driver.deleteSession(); // Close the Appium session
-        }
     }
+
+    // INTENTIONALL Keep driver open so tray icon for Certum doesn't close
+    // finally {
+    //    if (driver) {
+    //        await driver.deleteSession(); // Close the Appium session
+    //    }
+    //}
 }
 
 runSSD();
