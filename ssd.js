@@ -12,10 +12,14 @@ async function runSSD() {
         },
     };
 
-    let client;
+    let driver;
     try {
         driver = await wdio.remote(opts);
         windows = await driver.getWindowHandles();
+        if (!Array.isArray(windows) || windows.length === 0) {
+          console.log('No windows for app. Quitting.');
+          return;
+        }
         login_window = windows[0]
         await driver.switchWindow(login_window);
         id_value = 'jay0lee@gmail.com';
@@ -32,8 +36,8 @@ async function runSSD() {
     } catch (error) {
         console.error("Error during Appium run:", error);
     } finally {
-        if (client) {
-            await client.deleteSession(); // Close the Appium session
+        if (driver) {
+            await driver.deleteSession(); // Close the Appium session
         }
     }
 }
