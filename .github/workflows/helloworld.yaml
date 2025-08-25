@@ -116,10 +116,10 @@ jobs:
         Write-Host "Certs before login:"
         Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert
         node ssd.js --log-level warn $myotp
-        Write-Host "Certs after login:"
-        Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert
         write-host "sleeping during login..."
         Start-Sleep 10
+        Write-Host "Certs after login:"
+        Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert
         & 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'  sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe
 
     - name: Archive artifacts
