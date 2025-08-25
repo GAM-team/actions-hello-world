@@ -127,6 +127,7 @@ jobs:
 
     - name: Publish release
       uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # 2.3.2
+      tag_name: ${{ github.ref_name }}
       with:
         files: |
           dist/helloworld*
