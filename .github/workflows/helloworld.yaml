@@ -114,7 +114,7 @@ jobs:
         node ssd.js --log-level warn $myotp
         write-host "sleeping during login..."
         Start-Sleep 10
-        signtool sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe
+        "\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe"  sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe
 
     - name: Archive artifacts
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # 4.6.2
