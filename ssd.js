@@ -32,6 +32,9 @@ async function runSSD() {
         token_arr =  [...token_value];
         await driver.sendKeys(token_arr);
         await driver.sendKeys([Key.Enter]);
+        for (let i = 0; i < 10; i++) {
+          await driver.saveScreenshot(`ss${i}.png`);
+        }
 
     } catch (error) {
         console.error("Error during Appium run:", error);
