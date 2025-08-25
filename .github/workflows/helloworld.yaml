@@ -1,7 +1,9 @@
 name: Build and test
 
 permissions:
-  contents: write
+  contents: read
+  id-token: write
+  attestations: write
 
 defaults:
   run:
@@ -114,11 +116,17 @@ jobs:
         node ssd.js --log-level warn $myotp
         write-host "sleeping during login..."
         Start-Sleep 10
-        & '\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'  sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe
+        & 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'  sign /sha1 590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e /tr http://time.certum.pl /td SHA256 /fd SHA256 /v dist/helloworld.exe
 
     - name: Archive artifacts
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # 4.6.2
       with:
         name: helloworld-${{ matrix.os }}
         path: |
+          dist/helloworld*
+
+    - name: Publish release
+      uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # 2.3.2
+      with:
+        files: |
           dist/helloworld*
