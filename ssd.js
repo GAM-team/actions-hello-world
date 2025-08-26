@@ -19,25 +19,26 @@ async function runSSD() {
     let driver;
     try {
         driver = await wdio.remote(opts);
-        console.log('env variables;');
-        console.log(process.env);
-        await sleep(3000); // Pause execution for 3 seconds
-        await driver.saveScreenshot("oob1.png");
-        await driver.sendKeys([Key.Enter]);
-        await sleep(3000); // Pause execution for 3 seconds
-        await driver.saveScreenshot("oob2.png");
-        await driver.sendKeys([Key.Enter]);
-        await sleep(3000); // Pause execution for 3 seconds
-        await driver.saveScreenshot("oob3.png");
-        await driver.sendKeys([Key.Enter]);
-        await sleep(3000); // Pause execution for 3 seconds
-        await driver.saveScreenshot("oob4.png");
-        await driver.sendKeys([Key.Enter]);
-        await sleep(3000); // Pause execution for 3 seconds
-        await driver.saveScreenshot("oob5.png");
-        await sleep(3000); // Pause execution for 3 seconds
-        await driver.sendKeys([Key.Escape]);
-        await driver.saveScreenshot("oob6.png");
+        const runner_arch =  process.env.RUNNER_ARCH;
+        if ( runner_arch === "ARM64" ) {
+          await sleep(3000); // Pause execution for 3 seconds
+          await driver.saveScreenshot("oob1.png");
+          await driver.sendKeys([Key.Enter]);
+          await sleep(3000); // Pause execution for 3 seconds
+          await driver.saveScreenshot("oob2.png");
+          await driver.sendKeys([Key.Enter]);
+          await sleep(3000); // Pause execution for 3 seconds
+          await driver.saveScreenshot("oob3.png");
+          await driver.sendKeys([Key.Enter]);
+          await sleep(3000); // Pause execution for 3 seconds
+          await driver.saveScreenshot("oob4.png");
+          await driver.sendKeys([Key.Enter]);
+          await sleep(3000); // Pause execution for 3 seconds
+          await driver.saveScreenshot("oob5.png");
+          await sleep(3000); // Pause execution for 3 seconds
+          await driver.sendKeys([Key.Escape]);
+          await driver.saveScreenshot("oob6.png");
+        }
         windows = await driver.getWindowHandles();
         if (!Array.isArray(windows) || windows.length === 0) {
           console.log('No windows for app. Quitting.');
