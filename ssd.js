@@ -8,8 +8,9 @@ function sleep(ms) {
 
 async function executeCommand(command) {
   try {
-    const { stdout, stderr } = await exec(command);
-    return stdout.trim();
+    let { stdout, stderr } = await exec(command);
+    trimmed = stdout.trim()
+    return trimmed;
   } catch (error) {
     console.error(`Error executing command: ${command}`);
     console.error(`Error details: ${error}`);
