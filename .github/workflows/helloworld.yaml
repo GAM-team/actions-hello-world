@@ -116,10 +116,6 @@ jobs:
         $myotp = venv\scripts\python.exe totp.py
         write-host "running ssd"
         node ssd.js --log-level warn $myotp
-        write-host "running ssd again"
-        Write-Host "Certs before login:"
-        Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert
-        node ssd.js --log-level warn $myotp
         write-host "sleeping during login..."
         Start-Sleep 10
         Write-Host "Certs after login:"
