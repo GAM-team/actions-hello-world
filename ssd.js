@@ -46,8 +46,6 @@ async function runSSD() {
             console.error(`exec error: ${error}`);
             return;
           }
-          console.log(`stdout: ${stdout}`);
-          console.error(`stderr: ${stderr}`);
         });
         await sleep(3000); // Pause execution for 3 seconds
 
@@ -74,7 +72,7 @@ async function runSSD() {
         await driver.sendKeys([Key.Tab]);
         //token_value = process.argv[4];
         let token_value;
-        exec('venv/scripts/python.exe totp.py', (error, stdout, stderr) => {
+        exec('"venv\\scripts\\python.exe" totp.py', (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
