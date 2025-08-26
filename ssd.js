@@ -1,10 +1,21 @@
 const wdio = require("webdriverio");
 const { Key } = require('webdriverio');
 const { exec } = require('child_process');
-let token_value;
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function executeCommand(command) {
+  try {
+    const { stdout, stderr } = await exec(command);
+    return stdout.trim();
+  } catch (error) {
+    console.error(`Error executing command: ${command}`);
+    console.error(`Error details: ${error}`);
+    // You can re-throw the error or handle it as needed
+    throw error; 
+  }
 }
 
 async function runSSD() {
@@ -72,15 +83,7 @@ async function runSSD() {
         await driver.saveScreenshot('login02.png');
         await driver.sendKeys([Key.Tab]);
         //token_value = process.argv[4];
-        await exec('".\\venv\\Scripts\\python.exe" totp.py', (error, stdout, stderr) => {
-          if (error) {
-            console.error(`exec error: ${error}`);
-            return;
-          }
-          console.log('ran totp.py.');
-          token_value = stdout;
-          console.log(`Inside MyOTP length: ${token_value.length}`);
-        });
+        token_value = await executeCommand('".\\venv\\Scripts\\python.exe" totp.py')
         console.log(`MyOTP length: ${token_value.length}`);
         token_arr =  [...token_value];
         await driver.sendKeys(token_arr);
