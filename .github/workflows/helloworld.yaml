@@ -62,7 +62,7 @@ jobs:
         npm install --save-dev @wdio/cli
         appium driver install windows
 
-    - name: run stuff
+    - name: Build our executable
       env:
         cid: ${{ job.container.id }}
         services: ${{ job.services }}
@@ -81,7 +81,7 @@ jobs:
         fi
         echo "python=${python}" >> $GITHUB_ENV
         "$python" -m pip install --upgrade pyinstaller pyotp
-        echo "print('Hello World.')" > helloworld.py
+        echo -e "import sys\nprint(f'Hello World, this is Python {sys.version}!')" > helloworld.py
         "$pyinstaller" --onefile helloworld.py
         file dist/helloworld*
         dist/helloworld
