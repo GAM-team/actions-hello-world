@@ -97,8 +97,10 @@ async function runSSD() {
         await sleep(500);
         await driver.saveScreenshot('login12.png');
 
-
     } catch (error) {
+        if (error.name === 'WebDriverError') {
+          console.log('WebDriverError (may be expected)');
+        }
         console.error("Error during Appium run:", error);
     }
 
