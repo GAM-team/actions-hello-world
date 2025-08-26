@@ -1,7 +1,6 @@
 const wdio = require("webdriverio");
 const { Key } = require('webdriverio');
 const { exec } = require('child_process');
-const ssdapp = 'C:\\Program Files\\Certum\\SimplySign Desktop\\SimplySignDesktop.exe'
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -13,7 +12,7 @@ async function runSSD() {
         logLevel: "silent",
         capabilities: {
             platformName: "Windows",
-            "appium:app": ssdapp,
+            "appium:app": "C:\\Program Files\\Certum\\SimplySign Desktop\\SimplySignDesktop.exe",
             "appium:automationName": "Windows",
         },
     };
@@ -46,7 +45,7 @@ async function runSSD() {
         }
 
         //  Execute SSD again to open login dialog
-        exec(ssdapp, (error, stdout, stderr) => {
+        exec('"C:\\Program Files\\Certum\\SimplySign Desktop\\SimplySignDesktop.exe"', (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
