@@ -72,9 +72,16 @@ async function runSSD() {
         await driver.sendKeys(id_arr);
         await driver.saveScreenshot('login02.png');
         await driver.sendKeys([Key.Tab]);
-        token_value = process.argv[4];
-        console.log('MyOTP length: ');
-        console.log(token_value.length);
+        //token_value = process.argv[4];
+        let token_value;
+        exec('python totp.py', (error, stdout, stderr) => {
+          if (error) {
+            console.error(`exec error: ${error}`);
+            return;
+          }
+          token_value = stdout;
+        });
+        console.log(`MyOTP length: ${token_value.length}`);
         token_arr =  [...token_value];
         await driver.sendKeys(token_arr);
         await driver.saveScreenshot('login03.png');
