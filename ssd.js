@@ -23,6 +23,7 @@ async function runSSD() {
         driver = await wdio.remote(opts);
         const runner_arch =  process.env.RUNNER_ARCH;
         if ( runner_arch === "ARM64" ) {
+          console.log('Running on ARM64...');
           await sleep(3000); // Pause execution for 3 seconds
           await driver.saveScreenshot("oob1.png");
           await driver.sendKeys([Key.Enter]);
@@ -40,6 +41,8 @@ async function runSSD() {
           await sleep(3000); // Pause execution for 3 seconds
           await driver.sendKeys([Key.Escape]);
           await driver.saveScreenshot("oob6.png");
+        } else {
+          console.log('NOT running on ARM64');
         }
 
         //  Execute SSD again to open login dialog
