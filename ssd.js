@@ -1,6 +1,7 @@
 const wdio = require("webdriverio");
 const { Key } = require('webdriverio');
 const { exec } = require('child_process');
+const token_value;
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -71,7 +72,6 @@ async function runSSD() {
         await driver.saveScreenshot('login02.png');
         await driver.sendKeys([Key.Tab]);
         //token_value = process.argv[4];
-        let token_value;
         exec('".\\venv\\Scripts\\python.exe" totp.py', (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
