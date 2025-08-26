@@ -85,6 +85,8 @@ async function runSSD() {
         //token_value = process.argv[4];
         let token_value;
         token_value = await executeCommand('".\\venv\\Scripts\\python.exe" totp.py');
+        console.log(typeof token_value);
+        token_value = token_value.toString();
         token_value = token_value.replace(/\s/g, "");
         console.log(`MyOTP length: ${token_value.length}`);
         token_arr =  [...token_value];
