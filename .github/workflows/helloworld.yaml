@@ -113,9 +113,8 @@ jobs:
         Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath, "--log-level", "error"
         Start-Sleep -Seconds 10
         write-host "appium started"
-        $myotp = venv\scripts\python.exe totp.py
         write-host "running ssd"
-        node ssd.js --log-level warn $myotp
+        node ssd.js --log-level warn
         write-host "sleeping during login..."
         Start-Sleep 10
         #Write-Host "Certs after login:"
