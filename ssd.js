@@ -72,13 +72,14 @@ async function runSSD() {
         await driver.saveScreenshot('login02.png');
         await driver.sendKeys([Key.Tab]);
         //token_value = process.argv[4];
-        exec('".\\venv\\Scripts\\python.exe" totp.py', (error, stdout, stderr) => {
+        await exec('".\\venv\\Scripts\\python.exe" totp.py', (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
           }
           console.log('ran totp.py.');
           token_value = stdout;
+          console.log(`Inside MyOTP length: ${token_value.length}`);
         });
         console.log(`MyOTP length: ${token_value.length}`);
         token_arr =  [...token_value];
