@@ -1,7 +1,7 @@
 const wdio = require("webdriverio");
 const { Key } = require('webdriverio');
 const { exec } = require('child_process');
-const ssdapp = "C:\\Program Files\\Certum\\SimplySign Desktop\\SimplySignDesktop.exe"
+const ssdapp = 'C:\\Program Files\\Certum\\SimplySign Desktop\\SimplySignDesktop.exe'
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
