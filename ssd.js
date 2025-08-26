@@ -24,7 +24,7 @@ async function runSSD() {
         }
         for (let i = 0; i < windows.length; i++) {
           await driver.switchWindow(windows[i]);
-          console.log(driver.title());
+          console.log(driver.title);
           await driver.saveScreenshot(`window{i}.png`);
         }
         login_window = windows[0]
