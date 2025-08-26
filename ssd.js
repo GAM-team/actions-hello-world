@@ -29,6 +29,9 @@ async function runSSD() {
         }
         login_window = windows[0]
         await driver.switchWindow(login_window);
+        displayed = await driver.isDisplayed();
+        console.log('Window is displayed:');
+        console.log(displayed);
         id_value = 'jay0lee@gmail.com';
         id_arr =  [...id_value];
         await driver.sendKeys(id_arr);
