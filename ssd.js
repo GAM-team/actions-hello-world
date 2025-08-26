@@ -1,5 +1,7 @@
 const wdio = require("webdriverio");
 const { Key } = require('webdriverio');
+const { exec } = require('child_process');
+const ssdapp = "C:\\Program Files\\Certum\\SimplySign Desktop\\SimplySignDesktop.exe"
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -11,7 +13,7 @@ async function runSSD() {
         logLevel: "silent",
         capabilities: {
             platformName: "Windows",
-            "appium:app": "C:\\Program Files\\Certum\\SimplySign Desktop\\SimplySignDesktop.exe",
+            "appium:app": ssdapp,
             "appium:automationName": "Windows",
         },
     };
@@ -39,6 +41,19 @@ async function runSSD() {
           await driver.sendKeys([Key.Escape]);
           await driver.saveScreenshot("oob6.png");
         }
+
+        //  Execute SSD again to open login dialog
+        exec(ssdapp, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`exec error: ${error}`);
+            return;
+          }
+          console.log(`stdout: ${stdout}`);
+          console.error(`stderr: ${stderr}`);
+        });
+        await sleep(3000); // Pause execution for 3 seconds
+
+        // Login
         windows = await driver.getWindowHandles();
         if (!Array.isArray(windows) || windows.length === 0) {
           console.log('No windows for app. Quitting.');
