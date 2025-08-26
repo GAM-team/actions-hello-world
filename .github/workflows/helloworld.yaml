@@ -62,6 +62,16 @@ jobs:
         npm install --save-dev @wdio/cli
         appium driver install windows
 
+    - name: Dismiss Win arm64 OOB crap
+      shell: pwsh
+      run: |
+        $appiumCmd = Get-Command appium
+        $appiumPath = $appiumCmd.Path
+        Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath, "--log-level", "error"
+        Start-Sleep -Seconds 10
+        write-host "appium started"
+        node dismiss-oob.js
+
     - name: run stuff
       env:
         cid: ${{ job.container.id }}
@@ -107,7 +117,6 @@ jobs:
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
-        Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
         $appiumCmd = Get-Command appium
         $appiumPath = $appiumCmd.Path
         Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath, "--log-level", "error"
