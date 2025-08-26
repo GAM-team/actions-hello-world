@@ -15,6 +15,8 @@ async function runSSD() {
     let driver;
     try {
         driver = await wdio.remote(opts);
+        console.log('env variables;');
+        console.log(process.env);
         await driver.saveScreenshot("np0.png");
         await driver.sendKeys([Key.Enter]);
         await driver.saveScreenshot("np1.png");
@@ -27,11 +29,11 @@ async function runSSD() {
         console.error("Error during Notepad run:", error);
     }
 
-     finally {
-        if (driver) {
-            await driver.deleteSession(); // Close the Appium session
-        }
-    }
+     //finally {
+     //   if (driver) {
+     //       await driver.deleteSession(); // Close the Appium session
+     //   }
+    //}
 }
 
 runSSD();
