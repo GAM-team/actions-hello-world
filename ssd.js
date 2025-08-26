@@ -1,7 +1,7 @@
 const wdio = require("webdriverio");
 const { Key } = require('webdriverio');
 const { exec } = require('child_process');
-const token_value;
+let token_value;
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
