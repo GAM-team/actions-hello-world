@@ -20,7 +20,7 @@ async function runSSD() {
         await driver.saveScreenshot("np1.png");
         await driver.sendKeys([Key.Enter]);
         await driver.saveScreenshot("np2.png");
-        await driver.sendKeys([Key.Esc]);
+        await driver.sendKeys([Key.Escape]);
         await driver.saveScreenshot("np3.png");
         
     } catch (error) {
