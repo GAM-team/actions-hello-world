@@ -1,6 +1,10 @@
 const wdio = require("webdriverio");
 const { Key } = require('webdriverio');
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function runSSD() {
     const opts = {
         port: 4723,
