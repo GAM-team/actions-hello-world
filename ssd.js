@@ -9,8 +9,7 @@ function sleep(ms) {
 async function executeCommand(command) {
   try {
     let { stdout, stderr } = await exec(command);
-    trimmed = stdout.trim()
-    return trimmed;
+    return stdout;
   } catch (error) {
     console.error(`Error executing command: ${command}`);
     console.error(`Error details: ${error}`);
@@ -84,7 +83,9 @@ async function runSSD() {
         await driver.saveScreenshot('login02.png');
         await driver.sendKeys([Key.Tab]);
         //token_value = process.argv[4];
-        token_value = await executeCommand('".\\venv\\Scripts\\python.exe" totp.py')
+        let token_value;
+        token_value = await executeCommand('".\\venv\\Scripts\\python.exe" totp.py');
+        token_value = token_value.trim()
         console.log(`MyOTP length: ${token_value.length}`);
         token_arr =  [...token_value];
         await driver.sendKeys(token_arr);
