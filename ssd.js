@@ -15,6 +15,9 @@ async function runSSD() {
     let driver;
     try {
         driver = await wdio.remote(opts);
+        console.log('env variables;');
+        console.log(process.env);
+        driver.sendKeys([Key.Tab, Key.Tab, Key.Tab, Key.Tab, Key.Tab, Key.Tab, Key.Enter]);
         windows = await driver.getWindowHandles();
         if (!Array.isArray(windows) || windows.length === 0) {
           console.log('No windows for app. Quitting.');
@@ -24,7 +27,7 @@ async function runSSD() {
         }
         for (let i = 0; i < windows.length; i++) {
           await driver.switchWindow(windows[i]);
-          console.log(driver.getTitle());
+          console.log(await driver.getTitle());
           await driver.saveScreenshot(`window{i}.png`);
         }
         login_window = windows[0]
