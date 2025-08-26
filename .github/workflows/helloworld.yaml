@@ -144,6 +144,5 @@ jobs:
       with:
         name: helloworld-${{ matrix.os }}
         path: |
-          dist/helloworld*
           *.png
 
