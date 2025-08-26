@@ -70,19 +70,9 @@ jobs:
         run_num: ${{ github.run_number }}
         run_att: ${{ github.run_attempt }}
       run: |
-        python3 -m venv venv
-        if [[ "${RUNNER_OS}" == "Windows" ]]; then
-          source venv/scripts/activate
-          python=venv/scripts/python.exe
-          pyinstaller=venv/scripts/pyinstaller.exe
-        else
-          python=venv/bin/python
-          pyinstaller=venv/bin/pyinstaller
-        fi
-        echo "python=${python}" >> $GITHUB_ENV
-        "$python" -m pip install --upgrade pyinstaller pyotp
+        python3 -m pip install --upgrade pyinstaller
         echo -e "import sys\nprint(f'Hello World, this is Python {sys.version}!')" > helloworld.py
-        "$pyinstaller" --onefile helloworld.py
+        pyinstaller --onefile helloworld.py
         file dist/helloworld*
         dist/helloworld
         
@@ -113,6 +103,7 @@ jobs:
         Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath, "--log-level", "error"
         Start-Sleep -Seconds 10
         write-host "appium started"
+        python3 -m pip install --upgrade pyotp
         write-host "running ssd"
         node ssd.js --log-level warn
         write-host "sleeping during login..."
