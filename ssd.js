@@ -34,13 +34,6 @@ async function runSSD() {
           await driver.sendKeys([Key.Enter]);
           await sleep(3000); // Pause execution for 3 seconds
           await driver.saveScreenshot("oob3.png");
-          await driver.sendKeys([Key.Enter]);
-          await sleep(3000); // Pause execution for 3 seconds
-          await driver.saveScreenshot("oob4.png");
-          await driver.sendKeys([Key.Enter]);
-          await sleep(3000); // Pause execution for 3 seconds
-          await driver.saveScreenshot("oob5.png");
-          await sleep(3000); // Pause execution for 3 seconds
           await driver.sendKeys([Key.Escape]);
           await driver.saveScreenshot("oob6.png");
         } else {
