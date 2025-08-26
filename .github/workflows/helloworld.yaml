@@ -48,7 +48,7 @@ jobs:
       run: |
         choco install -y winappdriver
 
-    - name: Enable developer-mode
+    - name: Windows prep work
       if: runner.os == 'Windows'
       shell: cmd
       run : |
@@ -63,8 +63,10 @@ jobs:
         appium driver install windows
 
     - name: Dismiss Win arm64 OOB crap
+      if: runner.os == 'Windows' && runner.arch == 'ARM64'
       shell: pwsh
       run: |
+        Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
         $appiumCmd = Get-Command appium
         $appiumPath = $appiumCmd.Path
         Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath, "--log-level", "error"
