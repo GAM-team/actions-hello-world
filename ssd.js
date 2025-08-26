@@ -73,16 +73,20 @@ async function runSSD() {
         //}
         login_window = windows[0]
         await driver.switchWindow(login_window);
+        await driver.saveScreenshot('login1.png');
         id_value = 'jay0lee@gmail.com';
         id_arr =  [...id_value];
         await driver.sendKeys(id_arr);
+        await driver.saveScreenshot('login2.png');
         await driver.sendKeys([Key.Tab]);
         token_value = process.argv[4];
         console.log('MyOTP length: ');
         console.log(token_value.length);
         token_arr =  [...token_value];
         await driver.sendKeys(token_arr);
+        await driver.saveScreenshot('login3.png');
         await driver.sendKeys([Key.Enter]);
+        await driver.saveScreenshot('login4.png');
 
     } catch (error) {
         console.error("Error during Appium run:", error);
