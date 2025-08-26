@@ -19,6 +19,13 @@ async function runSSD() {
         if (!Array.isArray(windows) || windows.length === 0) {
           console.log('No windows for app. Quitting.');
           return;
+        } else {
+          console.log('There are ' + windows.length + ' windows.');
+        }
+        for (let i = 0; i < windows.length; i++) {
+          await driver.switchWindow(windows[i]);
+          console.log(driver.title());
+          await driver.saveScreenshot(`window{i}.png`);
         }
         login_window = windows[0]
         await driver.switchWindow(login_window);
