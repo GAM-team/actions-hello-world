@@ -74,7 +74,7 @@ async function runSSD() {
         await driver.sendKeys([Key.Tab]);
         //token_value = process.argv[4];
         let token_value;
-        exec('python totp.py', (error, stdout, stderr) => {
+        exec('venv/scripts/python.exe totp.py', (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
