@@ -20,6 +20,9 @@ async function runSSD() {
     let driver;
     try {
         driver = await wdio.remote(opts);
+        
+        // Win ARM64 is stuck on a OOB screen that steals focus
+        // These enter / escapes should dismiss it.
         const runner_arch =  process.env.RUNNER_ARCH;
         if ( runner_arch === "ARM64" ) {
           console.log('Running on ARM64...');
@@ -57,17 +60,17 @@ async function runSSD() {
 
         // Login
         windows = await driver.getWindowHandles();
-        if (!Array.isArray(windows) || windows.length === 0) {
-          console.log('No windows for app. Quitting.');
-          return;
-        } else {
-          console.log('There are ' + windows.length + ' windows.');
-        }
-        for (let i = 0; i < windows.length; i++) {
-          await driver.switchWindow(windows[i]);
-          console.log(await driver.getTitle());
-          await driver.saveScreenshot(`window{i}.png`);
-        }
+        //if (!Array.isArray(windows) || windows.length === 0) {
+        //  console.log('No windows for app. Quitting.');
+        //  return;
+        //} else {
+        //  console.log('There are ' + windows.length + ' windows.');
+        //}
+        //for (let i = 0; i < windows.length; i++) {
+        //  await driver.switchWindow(windows[i]);
+        //  console.log(await driver.getTitle());
+          //await driver.saveScreenshot(`window{i}.png`);
+        //}
         login_window = windows[0]
         await driver.switchWindow(login_window);
         id_value = 'jay0lee@gmail.com';
@@ -80,9 +83,6 @@ async function runSSD() {
         token_arr =  [...token_value];
         await driver.sendKeys(token_arr);
         await driver.sendKeys([Key.Enter]);
-        for (let i = 0; i < 10; i++) {
-          await driver.saveScreenshot(`ss${i}.png`);
-        }
 
     } catch (error) {
         console.error("Error during Appium run:", error);
