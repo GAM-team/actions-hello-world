@@ -62,18 +62,6 @@ jobs:
         npm install --save-dev @wdio/cli
         appium driver install windows
 
-    - name: Dismiss Win arm64 OOB crap
-      if: runner.os == 'Windows' && runner.arch == 'ARM64'
-      shell: pwsh
-      run: |
-        Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
-        $appiumCmd = Get-Command appium
-        $appiumPath = $appiumCmd.Path
-        Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath, "--log-level", "error"
-        Start-Sleep -Seconds 10
-        write-host "appium started"
-        node dismiss-oob.js
-
     - name: run stuff
       env:
         cid: ${{ job.container.id }}
@@ -119,6 +107,7 @@ jobs:
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
+        Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
         $appiumCmd = Get-Command appium
         $appiumPath = $appiumCmd.Path
         Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath, "--log-level", "error"
@@ -136,8 +125,6 @@ jobs:
         Write-Host "Certs after login:"
         Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert
         Start-Process -NoNewWindow -ErrorAction Continue -FilePath 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'  -ArgumentList "sign", "/sha1", "590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e", "/tr", "http://time.certum.pl", "/td", "SHA256", "/fd", "SHA256", "/v", "dist/helloworld.exe"
-        #Get-WinEvent -LogName Application | fl
-        Get-Process
 
     - name: Archive artifacts
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # 4.6.2
