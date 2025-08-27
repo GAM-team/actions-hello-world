@@ -125,10 +125,10 @@ jobs:
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
-        #Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+        Set-NetFirewallProfile -Profile Private -Enabled False
         $appiumCmd = Get-Command appium
         $appiumPath = $appiumCmd.Path
-        Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath, "--log-level", "error"
+        Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath, "--address", "127.0.0.1", "--log-level", "error"
         Start-Sleep -Seconds 10
         write-host "appium started"
         write-host "running ssd"
