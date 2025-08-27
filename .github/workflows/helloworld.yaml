@@ -78,7 +78,7 @@ jobs:
     - name: Install NPM stuff
       if: runner.os == 'Windows'
       run: |
-        npm install -g appium totp-generator
+        npm install -g appium otplib
         npm install --save-dev @wdio/cli
         appium driver install windows
 
