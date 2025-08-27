@@ -72,7 +72,7 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         echo "Installing appium..."
-        npm install appium
+        npm install -g appium
         echo "Installing otplib..."
         npm install otplib
         echo "Installing wdio..."
