@@ -3,6 +3,7 @@ import { exec } from 'child_process';
 import { TOTP } from 'totp-generator';
 
 async function screenshot(driver, filename) {
+  // uncomment to save screenshots
   //await driver.saveScreenshot(filename);
   return
 }
@@ -18,7 +19,6 @@ async function executeCommand(command) {
   } catch (error) {
     console.error(`Error executing command: ${command}`);
     console.error(`Error details: ${error}`);
-    // You can re-throw the error or handle it as needed
     throw error; 
   }
 }
@@ -38,7 +38,7 @@ async function runSSD() {
     try {
         driver = await remote(opts);
         
-        // Win ARM64 is stuck on a OOB screen that steals focus
+        // Github Actions Win ARM64 is stuck on a OOB screen that steals focus
         // These enter / escapes should dismiss it.
         const runner_arch =  process.env.RUNNER_ARCH;
         if ( runner_arch === "ARM64" ) {
@@ -64,21 +64,10 @@ async function runSSD() {
             return;
           }
         });
-        await sleep(3000); // Pause execution for 3 seconds
+        await sleep(3000);
 
         // Login
         const windows = await driver.getWindowHandles();
-        //if (!Array.isArray(windows) || windows.length === 0) {
-        //  console.log('No windows for app. Quitting.');
-        //  return;
-        //} else {
-        //  console.log('There are ' + windows.length + ' windows.');
-        //}
-        //for (let i = 0; i < windows.length; i++) {
-        //  await driver.switchWindow(windows[i]);
-        //  console.log(await driver.getTitle());
-          //await driver.saveScreenshot(`window{i}.png`);
-        //}
         const login_window = windows[0]
         await driver.switchWindow(login_window);
         await screenshot(driver, 'login01.png');
@@ -87,11 +76,17 @@ async function runSSD() {
         await driver.sendKeys(id_arr);
         await screenshot(driver, 'login02.png');
         await driver.sendKeys([Key.Tab]);
+        // We wait until the last possible second to generate
+        // our TOTP to ensure it's still valid.
         const token_value = TOTP.generate(process.env.TOTP_SECRET, {algorithm: 'SHA-256'}).otp;
         const token_arr =  [...token_value];
         await driver.sendKeys(token_arr);
         await screenshot(driver, 'login03.png');
         await driver.sendKeys([Key.Enter]);
+
+        // TODO: it's expected that on successful login the window
+        // will close and these screenshots will error out. Figure
+        // out how to handle that gracefully.
         await screenshot(driver, 'login04.png');
         await sleep(500);
         await screenshot(driver, 'login05.png');
@@ -114,7 +109,7 @@ async function runSSD() {
         console.error("Error during Appium run:", error.name);
     }
 
-    // INTENTIONALL Keep driver open so tray icon for Certum doesn't close
+    // INTENTIONAL Keep driver open so tray icon for Certum doesn't close
     // finally {
     //    if (driver) {
     //        await driver.deleteSession(); // Close the Appium session
