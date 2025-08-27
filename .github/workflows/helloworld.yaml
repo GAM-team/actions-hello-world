@@ -72,11 +72,11 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         echo "Installing appium..."
-        npm install -g appium
+        npm install appium
         echo "Installing otplib..."
-        npm install -g otplib
+        npm install otplib
         echo "Installing wdio..."
-        npm install --save-dev @wdio/cli
+        npm install @wdio/cli
         echo "Installing appium win driver..."
         appium driver install windows
 
