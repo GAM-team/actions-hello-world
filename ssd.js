@@ -1,4 +1,4 @@
-import { Key, wdio } from 'webdriverio';
+import { Key, remote } from 'webdriverio';
 import { exec } from 'child_process';
 import { TOTP } from 'totp-generator';
 
@@ -31,7 +31,7 @@ async function runSSD() {
 
     let driver;
     try {
-        driver = await wdio.remote(opts);
+        driver = await remote(opts);
         
         // Win ARM64 is stuck on a OOB screen that steals focus
         // These enter / escapes should dismiss it.
