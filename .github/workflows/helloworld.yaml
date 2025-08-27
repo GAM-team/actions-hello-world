@@ -37,17 +37,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Non-Windows Get npm cache directory
-      if: runner.os != 'Windows'
+    - name: Get npm cache directory
       id: npm-cache-dir
-      shell: bash
-      run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
-
-    - name: Windows Get npm cache directory
-      if: runner.os == 'Windows'
-      id: npm-cache-dir
-      shell: pwsh
-      run: echo "dir=$(npm config get cache)" >> ${env:GITHUB_OUTPUT}
+      run: |
+        echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
 
     - uses: actions/cache@v4
       id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
