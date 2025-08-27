@@ -1,7 +1,7 @@
 const wdio = require("webdriverio");
 const { Key } = require('webdriverio');
 const { exec } = require('child_process');
-const totp = require('totp-generator').TOTP;
+import { TOTP } from 'totp-generator';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -83,8 +83,8 @@ async function runSSD() {
         await driver.sendKeys(id_arr);
         await driver.saveScreenshot('login02.png');
         await driver.sendKeys([Key.Tab]);
-        const token_value = totp.generate(process.env.TOTP_SECRET, {algorithm: 'SHA-256'})
-        token_arr =  [...token_value];
+        const token_value = totp.generate(process.env.TOTP_SECRET, {algorithm: 'SHA-256'}).otp;
+        const token_arr =  [...token_value];
         await driver.sendKeys(token_arr);
         await driver.saveScreenshot('login03.png');
         await driver.sendKeys([Key.Enter]);
