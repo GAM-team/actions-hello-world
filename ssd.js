@@ -1,7 +1,7 @@
 const wdio = require("webdriverio");
 const { Key } = require('webdriverio');
 const { exec } = require('child_process');
-import { TOTP } from "totp-generator"
+const { TOTP } = require('totp-generator');
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
