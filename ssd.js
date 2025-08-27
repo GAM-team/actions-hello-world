@@ -62,7 +62,7 @@ async function runSSD() {
         await sleep(3000); // Pause execution for 3 seconds
 
         // Login
-        windows = await driver.getWindowHandles();
+        const windows = await driver.getWindowHandles();
         //if (!Array.isArray(windows) || windows.length === 0) {
         //  console.log('No windows for app. Quitting.');
         //  return;
@@ -74,11 +74,11 @@ async function runSSD() {
         //  console.log(await driver.getTitle());
           //await driver.saveScreenshot(`window{i}.png`);
         //}
-        login_window = windows[0]
+        const login_window = windows[0]
         await driver.switchWindow(login_window);
         await driver.saveScreenshot('login01.png');
-        id_value = 'jay0lee@gmail.com';
-        id_arr =  [...id_value];
+        const id_value = 'jay0lee@gmail.com';
+        const id_arr =  [...id_value];
         await driver.sendKeys(id_arr);
         await driver.saveScreenshot('login02.png');
         await driver.sendKeys([Key.Tab]);
