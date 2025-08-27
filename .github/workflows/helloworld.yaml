@@ -73,8 +73,8 @@ jobs:
       run: |
         echo "Installing appium..."
         npm install -g appium
-        echo "Installing otplib..."
-        npm install otplib
+        echo "Installing totp-generator..."
+        npm install "totp-generator"
         echo "Installing wdio..."
         npm install @wdio/cli
         echo "Installing appium win driver..."
