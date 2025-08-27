@@ -132,7 +132,7 @@ jobs:
         Start-Sleep -Seconds 10
         write-host "appium started"
         write-host "running ssd"
-        node ssd.js --log-level warn
+        node ssd.mjs --log-level warn
         write-host "sleeping during login..."
         Start-Sleep 10
         Start-Process -Wait -NoNewWindow -ErrorAction Continue -FilePath 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'  -ArgumentList "sign", "/sha1", "590dc5bb10dfb31dbff38c0e2f9c35ef0f6d0e9e", "/tr", "http://time.certum.pl", "/td", "SHA256", "/fd", "SHA256", "/v", "dist/helloworld.exe"
