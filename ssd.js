@@ -1,6 +1,5 @@
-const wdio = require("webdriverio");
-const { Key } = require('webdriverio');
-const { exec } = require('child_process');
+import { Key, wdio } from 'webdriverio';
+import { exec } from 'child_process';
 import { TOTP } from 'totp-generator';
 
 function sleep(ms) {
