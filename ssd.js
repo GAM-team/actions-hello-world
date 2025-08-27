@@ -84,7 +84,7 @@ async function runSSD() {
         await driver.saveScreenshot('login02.png');
         await driver.sendKeys([Key.Tab]);
         totp.options = { algorithm: 'sha256' }
-        const { token_value } = totp.generate(process.env.TOTP_SECRET)
+        const token_value = totp.generate(process.env.TOTP_SECRET, {algorithm: 'sha256'})
         token_arr =  [...token_value];
         await driver.sendKeys(token_arr);
         await driver.saveScreenshot('login03.png');
