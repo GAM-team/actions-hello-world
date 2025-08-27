@@ -106,10 +106,7 @@ async function runSSD() {
         await driver.saveScreenshot('login12.png');
 
     } catch (error) {
-        if (error.name === 'WebDriverError') {
-          console.log('WebDriverError (may be expected)');
-        }
-        console.error("Error during Appium run:", error);
+        console.error("Error during Appium run:", error.name);
     }
 
     // INTENTIONALL Keep driver open so tray icon for Certum doesn't close
