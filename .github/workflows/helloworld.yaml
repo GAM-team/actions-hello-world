@@ -125,7 +125,7 @@ jobs:
       env:
           TOTP_SECRET: ${{ secrets.TOTP_SECRET }}
       run: |
-        Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+        #Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
         $appiumCmd = Get-Command appium
         $appiumPath = $appiumCmd.Path
         Start-Process -Filepath "powershell.exe" -ArgumentList "-File", $appiumPath, "--log-level", "error"
