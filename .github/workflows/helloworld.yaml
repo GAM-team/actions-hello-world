@@ -71,8 +71,13 @@ jobs:
     - name: Install NPM stuff
       if: runner.os == 'Windows'
       run: |
-        npm install -g appium otplib
+        echo "Installing appium..."
+        npm install -g appium
+        echo "Installing otplib..."
+        npm install -g otplib
+        echo "Installing wdio..."
         npm install --save-dev @wdio/cli
+        echo "Installing appium win driver..."
         appium driver install windows
 
     - name: Build our executable
