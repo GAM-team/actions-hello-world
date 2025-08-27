@@ -2,6 +2,11 @@ import { Key, remote } from 'webdriverio';
 import { exec } from 'child_process';
 import { TOTP } from 'totp-generator';
 
+async function screenshot(driver, filename) {
+  //await driver.saveScreenshot(filename);
+  return
+}
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -39,15 +44,15 @@ async function runSSD() {
         if ( runner_arch === "ARM64" ) {
           console.log('Running on ARM64...');
           await sleep(3000); // Pause execution for 3 seconds
-          await driver.saveScreenshot("oob1.png");
+          await screenshot(driver, 'oob1.png');
           await driver.sendKeys([Key.Enter]);
           await sleep(3000); // Pause execution for 3 seconds
-          await driver.saveScreenshot("oob2.png");
+          await screenshot(driver, 'oob2.png');
           await driver.sendKeys([Key.Enter]);
           await sleep(3000); // Pause execution for 3 seconds
-          await driver.saveScreenshot("oob3.png");
+          await screenshot(driver, 'oob3.png');
           await driver.sendKeys([Key.Escape]);
-          await driver.saveScreenshot("oob6.png");
+          await screenshot(driver, 'oob6.png');
         } else {
           console.log('NOT running on ARM64');
         }
@@ -76,34 +81,34 @@ async function runSSD() {
         //}
         const login_window = windows[0]
         await driver.switchWindow(login_window);
-        await driver.saveScreenshot('login01.png');
+        await screenshot(driver, 'login01.png');
         const id_value = 'jay0lee@gmail.com';
         const id_arr =  [...id_value];
         await driver.sendKeys(id_arr);
-        await driver.saveScreenshot('login02.png');
+        await screenshot(driver, 'login02.png');
         await driver.sendKeys([Key.Tab]);
         const token_value = TOTP.generate(process.env.TOTP_SECRET, {algorithm: 'SHA-256'}).otp;
         const token_arr =  [...token_value];
         await driver.sendKeys(token_arr);
-        await driver.saveScreenshot('login03.png');
+        await screenshot(driver, 'login03.png');
         await driver.sendKeys([Key.Enter]);
-        await driver.saveScreenshot('login04.png');
+        await screenshot(driver, 'login04.png');
         await sleep(500);
-        await driver.saveScreenshot('login05.png');
+        await screenshot(driver, 'login05.png');
         await sleep(500);
-        await driver.saveScreenshot('login06.png');
+        await screenshot(driver, 'login06.png');
         await sleep(500);
-        await driver.saveScreenshot('login07.png');
+        await screenshot(driver, 'login07.png');
         await sleep(500);
-        await driver.saveScreenshot('login08.png');
+        await screenshot(driver, 'login08.png');
         await sleep(500);
-        await driver.saveScreenshot('login09.png');
+        await screenshot(driver, 'login09.png');
         await sleep(500);
-        await driver.saveScreenshot('login10.png');
+        await screenshot(driver, 'login10.png');
         await sleep(500);
-        await driver.saveScreenshot('login11.png');
+        await screenshot(driver, 'login11.png');
         await sleep(500);
-        await driver.saveScreenshot('login12.png');
+        await screenshot(driver, 'login12.png');
 
     } catch (error) {
         console.error("Error during Appium run:", error.name);
