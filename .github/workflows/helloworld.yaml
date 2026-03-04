@@ -40,6 +40,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: test gh servers
+      run: |
+        curl --head https://raw.githubusercontent.com
+
     - name: Get npm cache directory
       id: npm-cache-dir
       run: |
