@@ -43,6 +43,11 @@ jobs:
       run: |
         curl --head https://raw.githubusercontent.com
 
+    - name: Debug OIDC Claims
+      uses: github/actions-oidc-debugger@main
+      with:
+        audience: '${{ github.server_url }}/${{ github.repository_owner }}'
+          
     - name: Get npm cache directory
       id: npm-cache-dir
       run: |
