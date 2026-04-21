@@ -14,7 +14,7 @@ if __name__ == "__main__":
         help="Select the multiprocessing start method (fork, forkserver, spawn)"
     )
     args = parser.parse_args()
-    print(f"Python version: {sys.version}")
+    #print(f"Python version: {sys.version}")
     print(f"Available methods: {available_methods}")
     print(f"Selected method: {multiprocessing.get_start_method()}")
     print("-" * 30)
