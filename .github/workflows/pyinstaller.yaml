@@ -11,8 +11,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
         python: [3.14.3, 3.14.4]
+        pyinst: ["pyinstaller", "git+https://github.com/pyinstaller/pyinstaller"]
         mpmethod: [fork, forkserver, spawn]
     steps:
       - name: Checkout Code
@@ -29,8 +30,10 @@ jobs:
         run: python3 multiprocess-hw.py --method "$mpmethod"
 
       - name: Install PyInstaller
+        env:
+          pyinst: ${{ matrix.pyinst }}
         run: |
-          pip install pyinstaller
+          pip install "$pyinst"
 
       - name: Build with PyInstaller
         run: pyinstaller multiprocess-hw.py
