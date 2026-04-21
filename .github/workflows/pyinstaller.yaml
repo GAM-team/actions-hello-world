@@ -23,14 +23,14 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Install PyInstaller
-        run: |
-          pip install pyinstaller
-
       - name: run python script
         env:
           mpmethod: ${{ matrix.mpmethod }}
         run: python3 multiprocess-hw.py --method "$mpmethod"
+
+      - name: Install PyInstaller
+        run: |
+          pip install pyinstaller
 
       - name: Build with PyInstaller
         run: pyinstaller multiprocess-hw.py
