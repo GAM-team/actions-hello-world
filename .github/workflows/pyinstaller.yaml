@@ -8,6 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         python: [3.14.3, 3.14.4]
+        mpmethod: [fork, forkserver, spawn]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -22,12 +23,16 @@ jobs:
           pip install pyinstaller
 
       - name: run python script
-        run: python3 multiprocess-hw.py
+        env:
+          mpmethod: ${{ matrix.mpmethod }}
+        run: python3 multiprocess-hw.py --method "$mpmethod"
 
       - name: Build with PyInstaller
         run: pyinstaller multiprocess-hw.py
 
       - name: Run pyinstaller app
+        env:
+          method: ${{ matrix.mpmathod }}
         run: |
           ls -alRF dist/
-          dist/multiprocess-hw/multiprocess-hw
+          dist/multiprocess-hw/multiprocess-hw --method "$mpmethod"
