@@ -17,7 +17,7 @@ if __name__ == "__main__":
     print(f"Python version: {sys.version}")
     print(f"Available methods: {available_methods}")
     #print(f"Selected method: {multiprocessing.get_start_method()}")
-    print("-" * 30)
+    #print("-" * 30)
     if args.method not in available_methods:
         print(f'This OS does not support {args.method}. Exiting quietly.')
         sys.exit(0)
