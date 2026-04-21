@@ -22,5 +22,3 @@ if __name__ == "__main__":
     p = multiprocessing.Process(target=worker)
     p.start()
     p.join()
-    print(f'Hello again from main process! (PID: {multiprocessing.current_process().pid})')
-    
