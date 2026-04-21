@@ -18,8 +18,9 @@ if __name__ == "__main__":
         multiprocessing.set_start_method(args.method)
     print(f"Python Version: {sys.version}")
     print(f"Multiprocessing Method: {multiprocessing.get_start_method()}")
-    print(f'Hello from main process! (PID: {multiprocessing.current_process().pid})')
     print("-" * 30)
     p = multiprocessing.Process(target=worker)
     p.start()
     p.join()
+    print(f'Hello again from main process! (PID: {multiprocessing.current_process().pid})')
+    
