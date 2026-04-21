@@ -3,17 +3,16 @@ on: [push]
 
 jobs:
   build:
+    runs-n: ubuntu-latest
     strategy:
-      runs-on: ubuntu-latest
       matrix:
         python: [3.14.3, 3.14.4]
-    
     steps:
       - name: Checkout Code
-        uses: [actions/checkout@v4](https://github.com)
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: [actions/setup-python@v5](https://github.com/actions/setup-python)
+        uses: actions/setup-python@v5
         with:
           python-version: {{ matrix.python }}
 
