@@ -21,6 +21,9 @@ jobs:
         run: |
           pip install pyinstaller
 
+      - name: run python script
+        run: python3 multiprocess-hw.py
+
       - name: Build with PyInstaller
         run: pyinstaller multiprocess-hw.py
 
