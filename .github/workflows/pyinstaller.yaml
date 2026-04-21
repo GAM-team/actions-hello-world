@@ -32,7 +32,5 @@ jobs:
 
       - name: Run pyinstaller app
         env:
-          method: ${{ matrix.mpmethod }}
-        run: |
-          ls -alRF dist/
-          dist/multiprocess-hw/multiprocess-hw --method "$mpmethod"
+          mpmethod: ${{ matrix.mpmethod }}
+        run: dist/multiprocess-hw/multiprocess-hw --method "$mpmethod"
