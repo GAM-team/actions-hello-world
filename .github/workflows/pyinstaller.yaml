@@ -32,7 +32,7 @@ jobs:
 
       - name: Run pyinstaller app
         env:
-          method: ${{ matrix.mpmathod }}
+          method: ${{ matrix.mpmethod }}
         run: |
           ls -alRF dist/
           dist/multiprocess-hw/multiprocess-hw --method "$mpmethod"
