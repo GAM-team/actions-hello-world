@@ -5,6 +5,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python: [3.14.3, 3.14.4]
     steps:
@@ -21,7 +22,7 @@ jobs:
           pip install pyinstaller
 
       - name: Build with PyInstaller
-        run: pyinstaller hw-multiprocess.py
+        run: pyinstaller multiprocess-hw.py
 
       - name: Run pyinstaller app
         run: |
