@@ -11,10 +11,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Multiprocessing Method Tester")
     parser.add_argument(
         "--method", 
-        choices=available_methods, 
-        help="Select the multiprocessing start method"
+        help="Select the multiprocessing start method (fork, forkserver, spawn)"
     )
     args = parser.parse_args()
+    if args.method not in available_methods:
+        print(f'This OS does not support {args.method}. Exiting quietly.')
+        sys.exit(0)
     if args.method:
         try:
             multiprocessing.set_start_method(args.method)
